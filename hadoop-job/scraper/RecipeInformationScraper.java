@@ -13,13 +13,11 @@ import com.google.gson.Gson;
 
 public class RecipeInformationScraper {
 	
-	private OutputToStorage outputStorage;
-	Gson gson;
+	private Subscriber<org.bson.Document> recipeSubscriber;
+	private static final Gson gson = new Gson();
 	
-	
-	public RecipeInformationScraper(OutputToStorage outputStorage){
-		this.outputStorage = outputStorage;
-		gson = new Gson();
+	public RecipeInformationScraper(Subscriber<org.bson.Document> recipeSubscriber){
+		this.recipeSubscriber = recipeSubscriber;
 	}
 	
 	public void scrapeRecipeInformation(ArrayList<String> recipeURLs){
@@ -29,6 +27,7 @@ public class RecipeInformationScraper {
 	}
 	
 	public void scrapeRecipeInformation(String recipeURL){
+		recipeURL = "http://cooking.nytimes.com" + recipeURL;
 		Document doc;
 		try {
 			doc = Jsoup.connect(recipeURL).get();
@@ -170,10 +169,10 @@ public class RecipeInformationScraper {
 			
 			//create recipe
 			Recipe recipe = new Recipe(title, description, pictureURL, servings, prepTime, tags, preparation, ingredients, nutritionInformation, numOfIngredients, numOfPreparationSteps);
-			outputStorage.sendOutput(gson.toJson(recipe));
+			recipeSubscriber.onPublished(org.bson.Document.parse(gson.toJson(recipe)));
 			
-		} catch (IOException e) {
-			System.out.printf("\n\nFailed to connect: " + recipeURL + "\n\n");
+			} catch (Exception e) {
+			System.out.println("Error for:" + recipeURL);
 		}
 		
 
