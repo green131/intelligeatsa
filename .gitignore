@@ -21,9 +21,9 @@ bower_components
 .bundle
 
 # IDE
-.iml
-.idea
-.ipr
-.iws
-.project
-.classpath
+*.iml
+*.idea
+*.ipr
+*.iws
+*.project
+*.classpath
