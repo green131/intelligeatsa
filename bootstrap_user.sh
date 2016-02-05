@@ -8,9 +8,13 @@ if [ ! -d "$HOME/activator-1.3.7-minimal" ]; then
     rm typesafe-activator-1.3.7-minimal.zip
 fi
 
+output=$(grep -Fqo "$PLAY_HOME" .bashrc)
 # env vars
-if ! grep -Fq "$PLAY_HOME" .bashrc ; then
-    echo -e "# intelligeatsa env vars\nexport JAVA_HOME=/opt/java/jdk1.8.0_72/\nexport PLAY_HOME=\$HOME/activator-1.3.7-minimal\nexport PATH=\$PLAY_HOME:\$PATH\n" >> .bashrc
+if [ ${#output} -eq 0 ]; then
+    echo "# intelligeatsa env vars" >> .bashrc
+    echo "export JAVA_HOME=/opt/java/jdk1.8.0_72/" >> .bashrc
+    echo "export PLAY_HOME=\$HOME/activator-1.3.7-minimal" >> .bashrc
+    echo "export PATH=\$PLAY_HOME:\$PATH" >> .bashrc
 fi
 
 # link /vagrant to ~/app
