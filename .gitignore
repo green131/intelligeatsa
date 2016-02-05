@@ -13,6 +13,8 @@ hs_err_pid*
 
 #node.js
 node_modules
+#bower deps
+bower_components
 
 # Vagrant stuff
 .vagrant
