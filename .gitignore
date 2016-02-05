@@ -19,3 +19,11 @@ bower_components
 # Vagrant stuff
 .vagrant
 .bundle
+
+# IDE
+.iml
+.idea
+.ipr
+.iws
+.project
+.classpath
