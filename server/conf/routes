@@ -1,5 +1,2 @@
 # hello world page
 GET / controllers.HelloWorld.show()
-
-# homepage - to get custom homepage for user, add POST parameter "user"
-POST /homepage controllers.HomePage.getHomepage()
