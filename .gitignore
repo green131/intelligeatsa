@@ -20,6 +20,10 @@ bower_components
 .vagrant
 .bundle
 
+#apple
+.DS_STORE
+
+
 # IDE
 *.iml
 *.idea

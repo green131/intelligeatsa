@@ -1,9 +1,10 @@
 'use strict';
 
-// Declare app level module which depends components
+// Declare root level module which depends components
 var rootModule = angular.module('intelligeatsa', [
   'ngRoute',
-  'intelligeatsa.header',
+  'intelligeatsa.components',
+  'intelligeatsa.containers'
 ]);
 
 rootModule.config(['$routeProvider', function($routeProvider) {
