@@ -9,14 +9,14 @@ import org.bson.Document;
 /**
  * Created by jethva on 2/8/16.
  */
-public class MongoSubscriber implements ISubscriber{
+public class MongoSubscriber implements ISubscriber {
 
   private MongoClient mongoClient;
   private MongoDatabase mongoDatabase;
   private MongoCollection<Document> mongoCollection;
   private String host, database, collection;
 
-  public MongoSubscriber(String host, String database, String collection){
+  public MongoSubscriber(String host, String database, String collection) {
     this.host = host;
     this.database = database;
     this.collection = collection;
