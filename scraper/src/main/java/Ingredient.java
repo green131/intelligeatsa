@@ -1,4 +1,4 @@
-package scraper;
+package main.java;
 
 public class Ingredient {
 	String quantity, item, optionalInformation;

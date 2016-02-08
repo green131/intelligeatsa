@@ -1,8 +1,9 @@
-package scraper;
+package main.java;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import main.java.Subscribers.ISubscriber;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,15 +12,15 @@ import org.jsoup.select.Elements;
 import com.google.gson.Gson;
 
 
-public class RecipeInformationScraper {
+public class RecipeInformationScraper<T> {
 	
-	private OutputToStorage outputStorage;
-	Gson gson;
-	TreeMap<String, Integer> tagWordMap;
+	private ISubscriber subscriber;
+	private Gson gson;
+	private TreeMap<String, Integer> tagWordMap;
 	int successfullyScraped;
 	
-	public RecipeInformationScraper(OutputToStorage outputStorage){
-		this.outputStorage = outputStorage;
+	public RecipeInformationScraper( ISubscriber subscriber){
+		this.subscriber = subscriber;
 		gson = new Gson();
 		tagWordMap = new TreeMap<String, Integer>();
 		successfullyScraped = 0;
@@ -184,14 +185,18 @@ public class RecipeInformationScraper {
 			
 			//create recipe
 			Recipe recipe = new Recipe(title, description, pictureURL, servings, prepTime, tags, preparation, ingredients, nutritionInformation, numOfIngredients, numOfPreparationSteps);
-			//outputStorage.sendOutput(gson.toJson(recipe));
+			publishRecipe(recipe);
 			successfullyScraped++;
 			
 		} catch (Exception e) {
 			//e.printStackTrace();
 			System.out.printf("\n\nFailed to scrape: " + recipeURL + "\n\n");
 		}
-		
 
 	}
+
+  public void publishRecipe(Recipe toPublish){
+    subscriber.onPublished(gson.toJson(toPublish));
+  }
+
 }
