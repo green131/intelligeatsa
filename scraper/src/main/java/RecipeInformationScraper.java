@@ -29,13 +29,10 @@ public class RecipeInformationScraper<T> {
   public void scrapeRecipeInformation(ArrayList<String> recipeURLs) {
     int counter = 1;
     for (String recipeURL : recipeURLs) {
-      System.out.printf("Recipe %5d\n", counter++);
-      if (counter % 5000 == 0) {
-        System.out.printf("\nbreakpoint!\n");
-      }
+      System.out.println(counter);
       scrapeRecipeInformation(recipeURL);
+      counter++;
     }
-    System.out.printf("\nbreakpoint!\n");
   }
 
   public void scrapeRecipeInformation(String recipeURL) {
@@ -103,7 +100,7 @@ public class RecipeInformationScraper<T> {
 
       //get ingredients
       //dividing ingredients into groups if needed
-      ArrayList<IngredientSection> ingredients = new ArrayList<IngredientSection>();
+      ArrayList<main.java.IngredientSection> ingredients = new ArrayList<IngredientSection>();
       Elements ingredientHeaders = doc.select("section[class=recipe-ingredients-wrap]").select("h4[class=part-name]");
       Elements ingredientLists = doc.select("section[class=recipe-ingredients-wrap]").select("ul[class=recipe-ingredients]");
       int numOfIngredients = 0;
@@ -183,8 +180,7 @@ public class RecipeInformationScraper<T> {
       successfullyScraped++;
 
     } catch (Exception e) {
-      //e.printStackTrace();
-      System.out.printf("\n\nFailed to scrape: " + recipeURL + "\n\n");
+      System.out.println("Failed to scrape " + recipeURL + ".");
     }
 
   }
