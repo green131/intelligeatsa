@@ -1,11 +1,9 @@
 package controllers;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
+import com.mongodb.async.client.MongoClient;
+import com.mongodb.async.client.MongoClients;
+import com.mongodb.async.client.MongoCollection;
+import com.mongodb.async.client.MongoDatabase;
 
 import controllers.Constants.*;
 
@@ -13,11 +11,11 @@ public class MongoConnector {
 
   public boolean auth = false;
   private MongoClient mongo;
-  private DB db;
+  private MongoDatabase db;
 
   public MongoConnector() {
-    mongo = new MongoClient(DB_ADDRESS, DB_PORT.toString());
-    db = mongoClient.getDB(DB_NAME);
+    mongo = MongoClients.create(new ConnectionString(DB_ADDRESS, DB_PORT.toString()));
+    db = mongoClient.getDatabase(DB_NAME);
     auth = db.authenticate(DB_USERNAME, DB_PASSWORD.toCharArray());
     if (!auth && AUTH_ENABLED) {
       throw new SecurityException();
@@ -26,27 +24,27 @@ public class MongoConnector {
   }
 
   public DB getTableByName(String tableName) {
-    return mongo.getDB(tableName);
+    return mongo.getDatabase(tableName);
   }
 
   public DBCollection getCollectionByName(String tableName, String collectionName) {
-    DB db = mongo.getDB(tableName);
+    DB db = mongo.getDatabase(tableName);
     return db.getCollection(collectionName);
   }
 
   public DBCollection getCollectionByName(String collectionName) {
-    DB db = mongo.getDB(DB_NAME);
+    DB db = mongo.getDatabase(DB_NAME);
     return db.getCollection(collectionName);
   }
 
   public boolean saveDocument(String tableName, String collectionName, BasicDBObject document) {
-    DB db = mongo.getDB(tableName);
+    DB db = mongo.getDatabase(tableName);
     DBCollection table = db.getCollection(collectionName);
     return table.insert(document);
   }
 
   public boolean saveDocument(String collectionName, BasicDBObject document) {
-    DB db = mongo.getDB(DB_NAME);
+    DB db = mongo.getDatabase(DB_NAME);
     DBCollection table = db.getCollection(collectionName);
     return table.insert(document);
   }
