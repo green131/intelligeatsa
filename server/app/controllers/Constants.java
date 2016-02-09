@@ -1,4 +1,4 @@
-package models;
+package controllers;
 
 public final class Constants {
   public static final String AUTH_ENABLED = true;
