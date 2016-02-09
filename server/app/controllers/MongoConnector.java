@@ -16,9 +16,11 @@ public class MongoConnector {
   public MongoConnector() {
     mongo = MongoClients.create(new ConnectionString(DB_ADDRESS, DB_PORT.toString()));
     db = mongoClient.getDatabase(DB_NAME);
-    auth = db.authenticate(DB_USERNAME, DB_PASSWORD.toCharArray());
-    if (!auth && AUTH_ENABLED) {
-      throw new SecurityException();
+    if (AUTH_ENABLED) {
+      auth = db.authenticate(DB_USERNAME, DB_PASSWORD.toCharArray());
+      if (!auth) {
+        throw new SecurityException();
+      }
     }
     return auth;
   }
