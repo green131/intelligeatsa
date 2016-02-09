@@ -1,19 +1,8 @@
 package models;
 
-import models.Constants.*;
+public abstract class BaseModelClass {
 
-public class BaseModelClass {
-
-  public BaseModelClass() {
-
-    if (this.jongo == false) {
-      this.db = new MongoClient().getDB(DB_NAME);
-      this.jongo = new Jongo(db);
-    }
-
-  }
-
-  public int Save() {
-  }
+  public abstract int create();
+  public abstract int save();
 
 }
