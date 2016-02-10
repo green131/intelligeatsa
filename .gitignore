@@ -13,12 +13,17 @@ hs_err_pid*
 
 #node.js
 node_modules
+*.log
 #bower deps
 bower_components
 
 # Vagrant stuff
 .vagrant
 .bundle
+
+#apple
+.DS_Store
+
 
 # IDE
 *.iml
