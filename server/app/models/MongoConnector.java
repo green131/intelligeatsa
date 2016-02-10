@@ -30,12 +30,12 @@ public class MongoConnector {
     mongoClient = MongoClients.create(settings);
   }
 
-  public MongoDatabase getTableByName(String tableName) {
+  public MongoDatabase getDatabaseByName(String tableName) {
     return mongoClient.getDatabase(tableName);
   }
 
   public MongoCollection<Document> getCollectionByName(String tableName, String collectionName) {
-    MongoDatabase db = mongoClient.getDatabase(tableName);
+    MongoDatabase db = this.getDatabaseByName(tableName);
     return db.getCollection(collectionName);
   }
 
