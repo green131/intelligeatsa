@@ -5,4 +5,3 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.4")
 
 // Typesafe snapshots
 resolvers += "Typesafe Snapshots" at "https://repo.typesafe.com/typesafe/snapshots/"
-

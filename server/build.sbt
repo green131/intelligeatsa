@@ -8,4 +8,6 @@ initialize ~= { _ =>
 	System.setProperty("http.port", "8080")
 }
 
+libraryDependencies += "org.mongodb" % "mongodb-driver-async" % "3.2.1"
+
 lazy val root = (project in file(".")).enablePlugins(PlayJava)

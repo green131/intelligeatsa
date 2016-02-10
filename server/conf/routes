@@ -1,2 +1,2 @@
 # hello world page
-GET / controllers.HelloWorld.show
+GET / controllers.HelloWorld.show()
