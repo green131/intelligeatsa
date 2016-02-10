@@ -30,12 +30,12 @@ public class MongoConnector {
     mongoClient = MongoClients.create(settings);
   }
 
-  public MongoDatabase getDatabaseByName(String tableName) {
-    return mongoClient.getDatabase(tableName);
+  public MongoDatabase getDatabaseByName(String databaseName) {
+    return mongoClient.getDatabase(databaseName);
   }
 
-  public MongoCollection<Document> getCollectionByName(String tableName, String collectionName) {
-    MongoDatabase db = this.getDatabaseByName(tableName);
+  public MongoCollection<Document> getCollectionByName(String databaseName, String collectionName) {
+    MongoDatabase db = this.getDatabaseByName(databaseName);
     return db.getCollection(collectionName);
   }
 
@@ -43,8 +43,8 @@ public class MongoConnector {
     return getCollectionByName(Constants.Mongo.DATABASE, collectionName);
   }
 
-  public void saveDocument(String tableName, String collectionName, Document document) {
-    MongoCollection<Document> mongoCollection = getCollectionByName(collectionName);
+  public void saveDocument(String databaseName, String collectionName, Document document) {
+    MongoCollection<Document> mongoCollection = getCollectionByName(databaseName, collectionName);
     mongoCollection.insertOne(document, new SingleResultCallback<Void>() {
       @Override
       public void onResult(final Void result, final Throwable t) {
