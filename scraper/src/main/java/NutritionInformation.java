@@ -1,4 +1,4 @@
-package scraper;
+package main.java;
 
 
 public class NutritionInformation {
