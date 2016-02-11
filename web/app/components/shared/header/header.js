@@ -13,4 +13,8 @@ componentsModule.component('header',{
 function HeaderController($http){
   var ctrl = this;
 
+  this.login = function(){
+    console.log('going to login');
+  }
+
 }
