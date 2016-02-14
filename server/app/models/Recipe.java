@@ -27,7 +27,7 @@ public class Recipe extends BaseModelClass {
 	 * i.e: if tags == Indian,Chicken, this function will return all
 	 * recipes that contain the tag "Indian", as well as the tag "Chicken"
 	 */
-	public static ArrayList<Recipe> getRecipesByTag(MongoConnector conn, String tags[]){
+	public static ArrayList<Recipe> getRecipesByTag(MongoConnector conn, ArrayList<String> tags){
 		final ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
 		MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
 		

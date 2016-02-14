@@ -27,20 +27,29 @@ public class Recipes extends Controller {
 	
 	public static Result getRecipesByTag() {
 		
-		//get POST parameter data
-		DynamicForm dynamicForm = play.data.Form.form().bindFromRequest();
-		String tagData = dynamicForm.get("tags");
-		if(Utils.isNullOrBlank(tagData)){
-			System.out.println("No tags specified!");
-			return ok("-1");
+		//check if request is json
+		JsonNode requestJson = request().body().asJson();
+		if(requestJson == null) {
+			return badRequest("Expecting Json data!");
 		}
-		tagData = tagData.replaceAll("\\s+","");
-		String tags[] = tagData.split(",");
+		
+		//check if request is json array
+		JsonNode tagNode = requestJson.findPath("tags");
+		if(!tagNode.isArray()){
+			return badRequest("Expecting Json array!");
+		}
+		
+		//extract tags from request
+		ArrayList<String> tags = new ArrayList<String>();
+		for(JsonNode node : tagNode){
+			String tag = node.textValue();
+			tag = tag.replaceAll("\\s+","");
+			tags.add(tag);
+		}
 		
 		
-		if(tags.length == 0){
-			System.out.println("Invalid tags!");
-			return ok("-1");
+		if(tags.size() == 0){
+			return badRequest("Invalid tags!");
 		}
 		else{
 			
@@ -58,6 +67,7 @@ public class Recipes extends Controller {
 				return ok("-1");
 			}
 		}
+		
 	}
 
 }
