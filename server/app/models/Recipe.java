@@ -3,7 +3,6 @@ package server.app.models;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.and;
 import java.util.ArrayList;
-import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.mongodb.client.FindIterable;
@@ -11,17 +10,17 @@ import com.mongodb.client.MongoCollection;
 
 
 public class Recipe extends BaseModelClass {
-
+	
 	
 	public Recipe(MongoConnector mongoConnector) {
 		super(Constants.Mongo.RECIPES_COLLECTION);
 	}
-
+	
 	
 	public Recipe(Document doc) {
 		super(Constants.Mongo.RECIPES_COLLECTION, doc);
 	}
-
+	
 	
 	/*
 	 * Returns a list of recipes that contain ALL of the specified tags.

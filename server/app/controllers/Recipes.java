@@ -30,11 +30,16 @@ public class Recipes extends Controller {
 		//get POST parameter data
 		DynamicForm dynamicForm = play.data.Form.form().bindFromRequest();
 		String tagData = dynamicForm.get("tags");
-		tagData.replaceAll("\\s+","");
+		if(Utils.isNullOrBlank(tagData)){
+			System.out.println("No tags specified!");
+			return ok("-1");
+		}
+		tagData = tagData.replaceAll("\\s+","");
 		String tags[] = tagData.split(",");
 		
+		
 		if(tags.length == 0){
-			System.out.println("No tags specified!");
+			System.out.println("Invalid tags!");
 			return ok("-1");
 		}
 		else{
