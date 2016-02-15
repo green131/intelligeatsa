@@ -1,5 +1,6 @@
 package server.app.models;
 
+
 public class Constants {
 
   public static final class Mongo {

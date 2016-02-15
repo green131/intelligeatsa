@@ -2,11 +2,11 @@ package server.app.models;
 
 import org.bson.Document;
 
+
 public abstract class BaseModelClass {
 
   public String collection;
   public Document doc;
-
 
   public BaseModelClass(String collection) {
     this.collection = collection;
