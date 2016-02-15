@@ -13,8 +13,11 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "hashicorp/precise64"
-  config.vm.provision :shell, path: "bootstrap_root.sh", privileged: true
-  config.vm.provision :shell, path: "bootstrap_user.sh", privileged: false
+  config.vm.provision "MiscDependencies", type: "shell", path: "provisioners/misc_dependencies.sh", privileged: true
+  config.vm.provision "Java", type: "shell", path: "provisioners/javac.sh", privileged: true
+  config.vm.provision "MongoDB", type: "shell", path: "provisioners/mongod.sh", privileged: true
+  config.vm.provision "TypeseafeActivator", type: "shell", path: "provisioners/typesafe_activator.sh", privileged: false
+  config.vm.provision "EnvVars", type: "shell", path:"provisioners/env_vars.sh", privileged: false
   config.vm.network "forwarded_port", guest: 8080, host: 8080
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
