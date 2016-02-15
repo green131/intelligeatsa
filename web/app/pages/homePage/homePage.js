@@ -6,7 +6,8 @@ var pagesModule = angular.module('intelligeatsa.pages');
 pagesModule.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/home',{
     templateUrl: 'pages/homePage/homePage.html',
-     controller: HomePageController
+    controller: HomePageController,
+    controllerAs: '$ctrl'
   });
 }]);
 

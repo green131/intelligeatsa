@@ -6,7 +6,6 @@ componentsModule.component('header',{
   templateUrl:'components/shared/header/headerTemplate.html',
   controller:HeaderController,
   bindings:{
-    title:'@'
   }
 });
 
