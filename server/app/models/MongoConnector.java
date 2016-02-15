@@ -1,4 +1,4 @@
-package models;
+package server.app.models;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;

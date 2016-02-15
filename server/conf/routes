@@ -1,2 +1,9 @@
 # hello world page
-GET / controllers.HelloWorld.show()
+GET / server.app.controllers.HelloWorld.show()
+
+
+# Get recipe list given a list of tags
+# REQUIRED: POST parameter 'tags' (comma separated list of tags)
+# EXAMPLE:  tags = Indian,Chicken
+#           will find all recipes that contain BOTH of the above tags
+POST /getRecipesByTag server.app.controllers.Recipes.getRecipesByTag()

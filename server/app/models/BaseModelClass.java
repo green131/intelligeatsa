@@ -1,11 +1,12 @@
-package models;
+package server.app.models;
 
 import org.bson.Document;
 
 public abstract class BaseModelClass {
 
-  String collection;
-  Document doc;
+  public String collection;
+  public Document doc;
+
 
   public BaseModelClass(String collection) {
     this.collection = collection;
