@@ -1,6 +1,5 @@
 package server.app.models;
 
-
 public class Constants {
 
   public static final class Mongo {
@@ -8,7 +7,7 @@ public class Constants {
     public static final String HOST = "localhost";
     public static final int PORT = 27017;
     public static final String DESCRIPTION = "mongodb-server-conn";
-    public static final String DATABASE = "test";
+    public static final String DATABASE = "intelligeatsa";
     public static final String USER = "intelligeatsaUser";
     public static final char[] USER_PASS = "12345678".toCharArray();
 
