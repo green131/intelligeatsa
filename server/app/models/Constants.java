@@ -1,4 +1,4 @@
-package models;
+package server.app.models;
 
 public class Constants {
 

@@ -8,6 +8,9 @@ initialize ~= { _ =>
 	System.setProperty("http.port", "8080")
 }
 
-libraryDependencies += "org.mongodb" % "mongodb-driver-async" % "3.2.1"
+libraryDependencies += "org.mongodb" % "mongodb-driver" % "3.2.1"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.3"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.6.3"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.3"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)

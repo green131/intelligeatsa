@@ -1,41 +1,33 @@
-package models;
+package server.app.models;
 
 import org.bson.Document;
 
+
 public abstract class BaseModelClass {
 
-  MongoConnector mongoConnector;
-  String collection;
-  Document doc;
+  public String collection;
+  public Document doc;
 
-  public BaseModelClass(MongoConnector mongoConnector, String collection) {
-    this.mongoConnector = mongoConnector;
+  public BaseModelClass(String collection) {
     this.collection = collection;
   }
 
-  public BaseModelClass(MongoConnector mongoConnector, String collection, String key, String val) {
-    this.mongoConnector = mongoConnector;
+  public BaseModelClass(String collection, String key, String val) {
     this.collection = collection;
     this.doc = new Document(key, val);
   }
 
-  public BaseModelClass(MongoConnector mongoConnector, String collection, Document doc) {
-    this.mongoConnector = mongoConnector;
+  public BaseModelClass(String collection, Document doc) {
     this.collection = collection;
     this.doc = doc;
   }
 
-  public BaseModelClass(MongoConnector mongoConnector, String collection, String json) {
-    this.mongoConnector = mongoConnector;
+  public BaseModelClass(String collection, String json) {
     this.collection = collection;
     this.doc = importToDocument(json);
   }
 
-  public void save() {
-    mongoConnector.saveDocument(this.collection, this.doc);
-  }
-
-  public String exportToJson(Document doc) {
+  public String exportToString(Document doc) {
     return doc.toJson();
   }
 
@@ -45,6 +37,17 @@ public abstract class BaseModelClass {
 
   public void addAttribute(String key, String val) {
     this.doc.append(key, val);
+  }
+
+  public void removeAttribute(String key) {
+    this.doc.remove(key);
+  }
+
+  public void changeAttribute(String key, String val) {
+    if (this.doc.containsKey(key)) {
+      this.removeAttribute(key);
+    }
+    this.addAttribute(key, val);
   }
 
 }
