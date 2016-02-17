@@ -16,6 +16,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "MiscDependencies", type: "shell", path: "provisioners/misc_dependencies.sh", privileged: true
   config.vm.provision "Java", type: "shell", path: "provisioners/javac.sh", privileged: true
   config.vm.provision "MongoDB", type: "shell", path: "provisioners/mongod.sh", privileged: true
+  config.vm.provision "PredictionIO", type: "shell", path: "provisioners/prediction_io.sh", privileged: false
   config.vm.provision "TypeseafeActivator", type: "shell", path: "provisioners/typesafe_activator.sh", privileged: false
   config.vm.provision "EnvVars", type: "shell", path:"provisioners/env_vars.sh", privileged: false
   config.vm.network "forwarded_port", guest: 8080, host: 8080
