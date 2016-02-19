@@ -7,3 +7,7 @@ GET / server.app.controllers.HelloWorld.show()
 # EXAMPLE:  tags = Indian,Chicken
 #           will find all recipes that contain BOTH of the above tags
 POST /getRecipesByTag server.app.controllers.Recipes.getRecipesByTag()
+
+# Search recipe titles
+# REQUIRED: { title: <title_text> }
+POST /searchRecipeTitles server.app.controllers.Recipes.searchRecipeTitles()
