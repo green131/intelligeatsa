@@ -1,5 +1,6 @@
 package server.app.models;
 
+import server.app.Constants;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
