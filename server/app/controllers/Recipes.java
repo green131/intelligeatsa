@@ -1,8 +1,8 @@
 package server.app.controllers;
 
 import java.util.ArrayList;
+import server.app.Global;
 import org.bson.types.ObjectId;
-import server.app.models.MongoConnector;
 import server.app.models.Recipe;
 import server.app.Constants;
 import play.mvc.Controller;
@@ -21,7 +21,6 @@ import java.util.Arrays;
 public class Recipes extends Controller {
 
   public static Result getRecipesByTag(String tags, int range_start, int range_end) {
-    MongoConnector mongoConnector = new MongoConnector();
     ObjectMapper mapper = new ObjectMapper();
 
     //extract tags from request
@@ -32,7 +31,7 @@ public class Recipes extends Controller {
     }
 
     //get recipes
-    ArrayList<Recipe> recipes = Recipe.getRecipesByTag(mongoConnector, tags_list, range_start, range_end);
+    ArrayList<Recipe> recipes = Recipe.getRecipesByTag(Global.mongoConnector, tags_list, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
           .put("error", "no recipes found"));
@@ -52,14 +51,13 @@ public class Recipes extends Controller {
   }
 
   public static Result searchRecipeTitles(String recipe_title, int range_start, int range_end) {
-    MongoConnector conn = new MongoConnector();
     ObjectMapper mapper = new ObjectMapper();
 
     if (range_end < range_start || range_end < 0 || range_start < 0) {
       return badRequest(mapper.createObjectNode()
           .put("error", String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
     }
-    ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(conn, recipe_title, range_start, range_end);
+    ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(Global.mongoConnector, recipe_title, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
           .put("error", "no recipes found"));
@@ -79,8 +77,6 @@ public class Recipes extends Controller {
   }
 
   public static Result getRecipeById(String id) {
-    MongoConnector mongoConnector = new MongoConnector();
-
     // parse object id
     ObjectId oid;
     try {
@@ -91,7 +87,7 @@ public class Recipes extends Controller {
     }
 
     //get recipe
-    Recipe recipe = Recipe.getRecipeById(mongoConnector, oid);
+    Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, oid);
     if (recipe.doc == null) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put("error", "could not find recipe matching id"));
