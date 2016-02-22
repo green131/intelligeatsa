@@ -1,21 +1,20 @@
 package server.app.models;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.and;
-
-import java.util.ArrayList;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import server.app.Constants;
+import server.app.Utils;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+
+import static com.mongodb.client.model.Filters.*;
 
 public class Recipe extends BaseModelClass {
-
-  private static final String KEY_TITLE = "title";
-  private static final String INDEX_TITLE_TEXT = "title_text";
 
   public Recipe(Document doc) {
     super(Constants.Mongo.RECIPES_COLLECTION, doc);
@@ -26,7 +25,7 @@ public class Recipe extends BaseModelClass {
    * i.e: if tags == Indian,Chicken, this function will return all
    * recipes that contain the tag "Indian", as well as the tag "Chicken"
    */
-  public static ArrayList<Recipe> getRecipesByTag(MongoConnector conn, ArrayList<String> tags) {
+  public static ArrayList<Recipe> getRecipesByTag(MongoConnector conn, ArrayList<String> tags, int range_start, int range_end) {
     final ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
     MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
 
@@ -40,6 +39,8 @@ public class Recipe extends BaseModelClass {
 
     //get recipes
     FindIterable<Document> iter = mongoCollection.find(finalQuery);
+    Utils.setupPaginator(iter, range_start, range_end);
+
     for (Document doc : iter) {
       Recipe recipe = new Recipe(doc);
       recipeList.add(recipe);
@@ -59,15 +60,42 @@ public class Recipe extends BaseModelClass {
     ListIndexesIterable<Document> indexes = recipeCollection.listIndexes();
     boolean hasSearchIndex = false;
     for (Document index : indexes) {
-      if (index.getString("name").equals(INDEX_TITLE_TEXT)) {
+      if (index.getString("name").equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
         hasSearchIndex = true;
         break;
       }
     }
     // create it if it doesn't exist
     if (!hasSearchIndex) {
-      recipeCollection.createIndex(new Document(KEY_TITLE, "text"), new IndexOptions().name(INDEX_TITLE_TEXT));
+      recipeCollection.createIndex(new Document(Constants.Recipe.KEY_TITLE, "text"), new IndexOptions().name(Constants.Recipe.INDEX_TITLE_TEXT));
     }
+  }
+
+  public static ArrayList<Recipe> searchRecipesByTitle(MongoConnector conn, String recipe_title, int range_start, int range_end) {
+    // Find all titles matching this title
+    MongoCollection<Document> recipeCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
+    FindIterable<Document> searchResults = recipeCollection.find(text(recipe_title));
+    ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+
+    Utils.setupPaginator(searchResults, range_start, range_end);
+
+    for (Document doc : searchResults) {
+      recipeList.add(new Recipe(doc));
+    }
+
+    return recipeList;
+  }
+
+  public static Recipe getRecipeById(MongoConnector conn, ObjectId id) {
+    MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
+
+    //create query
+    Bson query = eq("_id", id);
+
+    //get recipes
+    FindIterable<Document> iter = mongoCollection.find(query);
+    Recipe r = new Recipe(iter.first());
+    return r;
   }
 
 }

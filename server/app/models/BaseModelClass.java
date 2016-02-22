@@ -2,7 +2,6 @@ package server.app.models;
 
 import org.bson.Document;
 
-
 public abstract class BaseModelClass {
 
   public String collection;
@@ -27,7 +26,7 @@ public abstract class BaseModelClass {
     this.doc = importToDocument(json);
   }
 
-  public String exportToString(Document doc) {
+  public String exportToString() {
     return doc.toJson();
   }
 
