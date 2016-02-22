@@ -1,21 +1,19 @@
 package server.app.models;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.and;
-
-import java.util.ArrayList;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 public class Recipe extends BaseModelClass {
-
-  private static final String KEY_TITLE = "title";
-  private static final String INDEX_TITLE_TEXT = "title_text";
 
   public Recipe(Document doc) {
     super(Constants.Mongo.RECIPES_COLLECTION, doc);
@@ -59,15 +57,27 @@ public class Recipe extends BaseModelClass {
     ListIndexesIterable<Document> indexes = recipeCollection.listIndexes();
     boolean hasSearchIndex = false;
     for (Document index : indexes) {
-      if (index.getString("name").equals(INDEX_TITLE_TEXT)) {
+      if (index.getString("name").equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
         hasSearchIndex = true;
         break;
       }
     }
     // create it if it doesn't exist
     if (!hasSearchIndex) {
-      recipeCollection.createIndex(new Document(KEY_TITLE, "text"), new IndexOptions().name(INDEX_TITLE_TEXT));
+      recipeCollection.createIndex(new Document(Constants.Recipe.KEY_TITLE, "text"), new IndexOptions().name(Constants.Recipe.INDEX_TITLE_TEXT));
     }
+  }
+
+  public static Recipe getRecipeById(MongoConnector conn, String id) {
+    MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
+
+    //create query
+    Bson query = eq("_id", new ObjectId(id));
+
+    //get recipes
+    FindIterable<Document> iter = mongoCollection.find(query);
+    Recipe r = new Recipe(iter.first());
+    return r;
   }
 
 }

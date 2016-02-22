@@ -27,8 +27,8 @@ public abstract class BaseModelClass {
     this.doc = importToDocument(json);
   }
 
-  public String exportToString(Document doc) {
-    return doc.toJson();
+  public String exportToString() {
+    return this.doc.toJson();
   }
 
   public Document importToDocument(String json) {
@@ -49,5 +49,7 @@ public abstract class BaseModelClass {
     }
     this.addAttribute(key, val);
   }
+
+  public Object getAttribute(Object key) { return this.doc.get(key); }
 
 }

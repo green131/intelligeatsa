@@ -3,11 +3,15 @@ GET / server.app.controllers.HelloWorld.show()
 
 
 # Get recipe list given a list of tags
-# REQUIRED: POST parameter 'tags' (comma separated list of tags)
+# REQUIRED: GET parameter 'recipe_tags' (comma separated list of tags)
 # EXAMPLE:  tags = Indian,Chicken
 #           will find all recipes that contain BOTH of the above tags
-POST /getRecipesByTag server.app.controllers.Recipes.getRecipesByTag()
+GET /recipe/tags/:recipe_tags      server.app.controllers.Recipes.getRecipesByTag(recipe_tags: String)
 
 # Search recipe titles
-# REQUIRED: { title: <title_text> }
-POST /searchRecipeTitles server.app.controllers.Recipes.searchRecipeTitles()
+# REQUIRED: { title: <recipe_title> }
+GET /recipe/search/:recipe_title    server.app.controllers.Recipes.searchRecipeTitles(recipe_title: String)
+
+# Get recipe by id
+# REQUIRED: { id: <recipe_id> }
+GET /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
