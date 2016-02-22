@@ -2,7 +2,6 @@ package server.app.models;
 
 import org.bson.Document;
 
-
 public abstract class BaseModelClass {
 
   public String collection;
