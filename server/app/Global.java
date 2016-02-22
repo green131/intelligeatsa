@@ -13,4 +13,3 @@ public class Global extends GlobalSettings {
     Recipe.setupSearchIndex(conn);
   }
 }
-
