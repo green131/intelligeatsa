@@ -3,13 +3,21 @@ package server.test;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.mvc.Result;
 import server.app.controllers.Recipes;
 import server.app.models.MongoConnector;
 import server.app.models.Recipe;
+import static play.test.Helpers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RecipeTest {
 
@@ -17,46 +25,60 @@ public class RecipeTest {
 	
   @Test
   public void testGetRecipeById_found() {
-    Recipe recipe = Recipe.getRecipeById(mongoConnector, "56ba001c82064421f55cf903");
-    System.out.println(recipe.toString());
+    Result res = Recipes.getRecipeById("56ba001c82064421f55cf903");
+    assertEquals(res.status(),200);
   }
   
   @Test
   public void testGetRecipeById_notFound() {
-  	Recipe recipe = Recipe.getRecipeById(mongoConnector, "56ba");
-    System.out.println(recipe.toString());
+  	Result res = Recipes.getRecipeById("000000000000000000000000");
+  	assertEquals(res.status(),400);
   }
   
   @Test
   public void testGetRecipeById_invalidHexadecimal() {
-  	Recipe recipe = Recipe.getRecipeById(mongoConnector, "abc");
-    System.out.println(recipe.toString());
+  	Result res = Recipes.getRecipeById("abc");
+  	assertEquals(res.status(),400);
   }
     
   @Test
   public void testGetRecipeByTags_notfound() {
-  	ArrayList<String> tags = new ArrayList<String>();
-  	tags.add("yolo");
-  	ArrayList<Recipe> list = Recipe.getRecipesByTag(mongoConnector, tags);
-    System.out.println(list.toString());
+  	String tags = "ayy lmao";
+    Result res = Recipes.getRecipesByTag(tags);
+    assertEquals(400, res.status());
   }
-  
   
   @Test
   public void testGetRecipeByTags_Found() {
-  	ArrayList<String> tags = new ArrayList<String>();
-  	tags.add("Indian");
-    ArrayList<Recipe> list = Recipe.getRecipesByTag(mongoConnector, tags);
-    System.out.println(list.toString());
+  	String tags = "Mango";
+    Result res = Recipes.getRecipesByTag(tags);
+    assertEquals(200, res.status());
+    assertTrue(contentAsString(res).contains("Mango"));
   }
   
   @Test
   public void testGetRecipeFullText() {
   	String title = "Mango";
-  	ArrayList<String> tags = new ArrayList<String>();
-  	tags.add("Indian");
-    ArrayList<Recipe> list = Recipe.getRecipesByTag(mongoConnector, tags);
-    System.out.println(list.toString());
+    Result res = Recipes.getRecipesByTag(title);
+    assertEquals(200, res.status());
+    
+    System.out.println((contentAsString(res)));
+    
+    try{
+    	
+    	//check that all recipe titles contain mango
+    	ObjectMapper mapper = new ObjectMapper();
+    	JsonNode resNode = mapper.readTree(contentAsString(res));
+    	for(JsonNode recipeNode : resNode){
+    		JsonNode docNode = recipeNode.get("doc");
+    		String recipeTitle = docNode.get("title").asText();
+    		assertTrue(recipeTitle.contains("Mango"));
+    	}
+    }
+    catch(Exception e){
+			e.printStackTrace();
+		}
+    
   }
 
 }
