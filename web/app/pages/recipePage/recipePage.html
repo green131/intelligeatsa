@@ -1,2 +1,19 @@
 <header title="Recipe Page"></header>
 <header title="---------"></header>
+<div class="container">
+    <a>{{$ctrl.title}}</a>
+    <img ng-src="{{$ctrl.pictureUrl}}"/>
+    <p> {{$ctrl.descritpion}} </p>
+    <!-- ingredient list -->
+    <ul class="ingredients">
+      <li ng-repeat="ingredient in ingredients">
+          <a>{{ingredient.quantity}}+" "+{{ingredient.item}}</a>
+      </li>
+    </ul>
+    <!-- instruction list -->
+    <ol class="instructions">
+      <li ng-repeat="instruction in instructions">
+        <a>{{instruction}}</a>
+      </li>
+    </ol>
+</div>
