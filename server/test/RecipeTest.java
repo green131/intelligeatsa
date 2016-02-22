@@ -44,14 +44,14 @@ public class RecipeTest {
   @Test
   public void testGetRecipeByTags_notfound() {
   	String tags = "ayy lmao";
-    Result res = Recipes.getRecipesByTag(tags);
+    Result res = Recipes.getRecipesByTagDefault(tags);
     assertEquals(400, res.status());
   }
   
   @Test
   public void testGetRecipeByTags_Found() {
   	String tags = "Mango";
-    Result res = Recipes.getRecipesByTag(tags);
+    Result res = Recipes.getRecipesByTagDefault(tags);
     assertEquals(200, res.status());
     assertTrue(contentAsString(res).contains("Mango"));
   }
@@ -59,13 +59,10 @@ public class RecipeTest {
   @Test
   public void testGetRecipeFullText() {
   	String title = "Mango";
-    Result res = Recipes.getRecipesByTag(title);
+    Result res = Recipes.searchRecipeTitlesDefault(title);
     assertEquals(200, res.status());
     
-    System.out.println((contentAsString(res)));
-    
     try{
-    	
     	//check that all recipe titles contain mango
     	ObjectMapper mapper = new ObjectMapper();
     	JsonNode resNode = mapper.readTree(contentAsString(res));
