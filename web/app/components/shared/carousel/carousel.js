@@ -14,7 +14,7 @@ componentsModule.component('carousel',{
 
 function CarouselController($http){
   var ctrl = this;
-  var recipesByTagUrl = "http://localhost:8080/recipe/tags/"+ ctrl.cuisineType;
+  var recipesByTagUrl = "http://localhost:8080/recipe/tags/"+ ctrl.cuisineType + "/0/25";
   $http({
   method: 'GET',
   headers: { 'Content-Type': 'application/json' },
@@ -24,4 +24,5 @@ function CarouselController($http){
   }, function errorCallback(response) {
     console.log(response);
   });
+
 }
