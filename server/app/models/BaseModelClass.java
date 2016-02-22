@@ -9,6 +9,7 @@ public abstract class BaseModelClass {
 
   public BaseModelClass(String collection) {
     this.collection = collection;
+    this.doc = null;
   }
 
   public BaseModelClass(String collection, String key, String val) {
