@@ -1,8 +1,5 @@
 package server.app.models;
 
-import server.app.Constants;
-import server.app.Utils;
-
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
@@ -10,8 +7,11 @@ import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import server.app.Constants;
+import server.app.Utils;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -44,7 +44,13 @@ public class Recipe extends BaseModelClass {
     FindIterable<Document> iter = mongoCollection.find(finalQuery);
     Utils.setupPaginator(iter, range_start, range_end);
 
-    for (Document doc : iter) {
+    for (Document d : iter) {
+      TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
+      keyMap.put("_id", new ObjectId(d.get("_id").toString()).toString());
+      keyMap.put("title", d.get("title"));
+      keyMap.put("description", d.get("description"));
+      keyMap.put("pictureURL", d.get("pictureURL"));
+      Document doc = new Document(keyMap);
       Recipe recipe = new Recipe(doc);
       recipeList.add(recipe);
     }
