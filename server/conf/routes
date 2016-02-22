@@ -4,9 +4,9 @@ GET / server.app.controllers.HelloWorld.show()
 
 # Get recipe list given a list of tags
 # REQUIRED: { :<recipe_tags> }
-# OPTIONAL: { :<recipe_tags>/:< }
-# EXAMPLE:  tags = Indian,Vegan, count = 5
-#           /Indian,Vegan/5
+# OPTIONAL: { :<recipe_tags>/:<range_start>/:<range_end> }
+# EXAMPLE:  tags = Indian,Vegan, range_start = 5, range_end = 10
+#           /Indian,Vegan/5/10
 GET /recipe/tags/:recipe_tags                           server.app.controllers.Recipes.getRecipesByTagDefault(recipe_tags: String)
 GET /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.Recipes.getRecipesByTag(recipe_tags: String, range_start: Integer, range_end: Integer)
 
