@@ -5,6 +5,10 @@ GET / server.app.controllers.HelloWorld.show()
 # REQUIRED {"user":<username>, "pass":<password>}
 # Returns user token
 POST /user/login            server.app.controllers.Users.loginUser()
+
+# User registration endpoint
+# REQUIRED {"user":<username>, "pass":<password>}
+# Returns user token
 POST /user/register         server.app.controllers.Users.registerUser()
 
 # Get recipe list given a list of tags

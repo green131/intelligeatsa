@@ -1,6 +1,8 @@
 package server.app.controllers;
 
 import java.util.ArrayList;
+
+import org.bson.Document;
 import server.app.Global;
 import org.bson.types.ObjectId;
 import server.app.models.User;
@@ -76,6 +78,8 @@ public class Users extends Controller {
 
     // create new user doc and store in db
     User u = new User(username);
+    u.doc = new Document();
+    u.addAttribute(Constants.Mongo.ID_USERNAME, username);
     u.addAttribute(Constants.Mongo.ID_PASSWORD, password);
     Global.mongoConnector.saveDocument(u.collection, u.doc);
 

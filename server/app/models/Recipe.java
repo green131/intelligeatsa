@@ -69,7 +69,7 @@ public class Recipe extends BaseModelClass {
     ListIndexesIterable<Document> indexes = recipeCollection.listIndexes();
     boolean hasSearchIndex = false;
     for (Document index : indexes) {
-      if (index.getString(Constants.Recipe.KEY_NAME).equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
+      if (index.getString("name").equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
         hasSearchIndex = true;
         break;
       }
