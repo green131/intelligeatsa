@@ -1,22 +1,13 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-
-import org.bson.Document;
-import server.app.Global;
-import org.bson.types.ObjectId;
-import server.app.models.User;
-import server.app.Constants;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.BodyParser;
-import play.data.DynamicForm;
-import play.data.Form;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import play.libs.Json;
-import play.libs.Json.*;
-import java.util.Arrays;
+import org.bson.Document;
+import play.mvc.Controller;
+import play.mvc.Result;
+import server.app.Constants;
+import server.app.Global;
+import server.app.models.User;
 
 
 //API for user information
