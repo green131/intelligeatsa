@@ -27,14 +27,14 @@ public class Recipes extends Controller {
     ArrayList<String> tags_list = new ArrayList<String>(Arrays.asList(tags.split(",")));
     if (tags_list.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "unable to parse tags"));
+          .put(Constants.Generic.ERROR, "unable to parse tags"));
     }
 
     //get recipes
     ArrayList<Recipe> recipes = Recipe.getRecipesByTag(Global.mongoConnector, tags_list, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "no recipes found"));
+          .put(Constants.Generic.ERROR, "no recipes found"));
     }
     try {
       String json = mapper.writeValueAsString(recipes);
@@ -55,12 +55,12 @@ public class Recipes extends Controller {
 
     if (range_end < range_start || range_end < 0 || range_start < 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
+          .put(Constants.Generic.ERROR, String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
     }
     ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(Global.mongoConnector, recipe_title, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "no recipes found"));
+          .put(Constants.Generic.ERROR, "no recipes found"));
     }
     try {
       String json = mapper.writeValueAsString(recipes);
@@ -83,14 +83,14 @@ public class Recipes extends Controller {
       oid = new ObjectId(id);
     } catch (IllegalArgumentException e) {
       return badRequest(new ObjectMapper().createObjectNode()
-          .put("error", "malformed recipe id, not hexadecimal"));
+          .put(Constants.Generic.ERROR, "malformed recipe id, not hexadecimal"));
     }
 
     //get recipe
     Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, oid);
     if (recipe.doc == null) {
       return badRequest(new ObjectMapper().createObjectNode()
-          .put("error", "could not find recipe matching id"));
+          .put(Constants.Generic.ERROR, "could not find recipe matching id"));
     }
     try {
       return ok(recipe.exportToString());

@@ -36,7 +36,7 @@ public abstract class BaseModelClass {
   }
 
   public void addAttribute(String key, String val) {
-    this.doc.append(key, val);
+    this.doc.put(key, val);
   }
 
   public void removeAttribute(String key) {
