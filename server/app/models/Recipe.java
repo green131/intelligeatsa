@@ -69,7 +69,7 @@ public class Recipe extends BaseModelClass {
     ListIndexesIterable<Document> indexes = recipeCollection.listIndexes();
     boolean hasSearchIndex = false;
     for (Document index : indexes) {
-      if (index.getString("name").equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
+      if (index.getString(Constants.Recipe.KEY_NAME).equals(Constants.Recipe.INDEX_TITLE_TEXT)) {
         hasSearchIndex = true;
         break;
       }
@@ -99,7 +99,7 @@ public class Recipe extends BaseModelClass {
     MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
 
     //create query
-    Bson query = eq("_id", id);
+    Bson query = eq(Constants.Mongo.ID, id);
 
     //get recipes
     FindIterable<Document> iter = mongoCollection.find(query);
