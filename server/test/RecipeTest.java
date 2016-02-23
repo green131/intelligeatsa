@@ -1,27 +1,23 @@
 package server.test;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.junit.Test;
 import play.mvc.Result;
+import server.app.Global;
 import server.app.controllers.Recipes;
 import server.app.models.MongoConnector;
-import server.app.models.Recipe;
 
-import static play.test.Helpers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static play.test.Helpers.contentAsString;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RecipeTest {
+
+  public RecipeTest() {
+    Global.mongoConnector = new MongoConnector();
+  }
 
   @Test
   public void testGetRecipeById_found() {
