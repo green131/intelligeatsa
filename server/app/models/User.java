@@ -20,7 +20,7 @@ public class User extends BaseModelClass {
     MongoCollection<Document> mongoCollection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
 
     //create query
-    Bson query = eq("username", username);
+    Bson query = eq(Constants.Mongo.ID_USERNAME, username);
 
     //get user
     FindIterable<Document> iter = mongoCollection.find(query);
@@ -31,11 +31,22 @@ public class User extends BaseModelClass {
     // TODO decrypt pass using private key
     // return whether password is valid
     if (this.doc == null || pass == null) return false;
-    return this.getAttribute("password").equals(pass);
+    return this.getAttribute(Constants.Mongo.ID_PASSWORD).equals(pass);
   }
 
   public String generateUserToken() {
-    return this.getAttribute("_id").toString();
+    return this.getAttribute(Constants.Mongo.ID).toString();
+  }
+
+  public static boolean usernameExists(String username) {
+    MongoCollection<Document> mongoCollection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
+
+    //create query
+    Bson query = eq(Constants.Mongo.ID_USERNAME, username);
+
+    //get user
+    FindIterable<Document> iter = mongoCollection.find(query);
+    return iter.first() != null;
   }
 
 }

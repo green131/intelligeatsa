@@ -1,20 +1,13 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-import server.app.Global;
-import org.bson.types.ObjectId;
-import server.app.models.User;
-import server.app.Constants;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.BodyParser;
-import play.data.DynamicForm;
-import play.data.Form;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import play.libs.Json;
-import play.libs.Json.*;
-import java.util.Arrays;
+import org.bson.Document;
+import play.mvc.Controller;
+import play.mvc.Result;
+import server.app.Constants;
+import server.app.Global;
+import server.app.models.User;
 
 
 //API for user information
@@ -24,14 +17,16 @@ public class Users extends Controller {
     //check if request is json
     JsonNode requestJson = request().body().asJson();
     if(requestJson == null) {
-      return badRequest("Expecting Json data!");
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Expecting Json data!"));
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath("user");
-    JsonNode passNode = requestJson.findPath("pass");
+    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
+    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
     if(!userNode.isTextual() || !passNode.isTextual()){
-      return badRequest("Expecting Json array!");
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
     }
 
     String username = userNode.textValue();
@@ -42,7 +37,49 @@ public class Users extends Controller {
       return ok(u.generateUserToken());
     }
     return badRequest(new ObjectMapper().createObjectNode()
-        .put("error", "invalid credentials"));
+        .put(Constants.Generic.ERROR, "invalid credentials"));
+  }
+
+  public static Result registerUser() {
+    //check if request is json
+    JsonNode requestJson = request().body().asJson();
+    if(requestJson == null) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Expecting Json data!"));
+    }
+
+    //check if request is json array
+    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
+    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
+
+    if(!userNode.isTextual() || !passNode.isTextual()){
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
+    }
+
+    String username = userNode.textValue();
+    String password = passNode.textValue();
+
+    if (User.usernameExists(username)) {
+      return badRequest("Username already exists!");
+    } else if (password.length() < 5) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Password needs to be 5 characters or more!"));
+    }
+
+    // create new user doc and store in db
+    User u = new User(username);
+    u.doc = new Document();
+    u.addAttribute(Constants.Mongo.ID_USERNAME, username);
+    u.addAttribute(Constants.Mongo.ID_PASSWORD, password);
+    Global.mongoConnector.saveDocument(u.collection, u.doc);
+
+    // check doc was saved correctly and return token
+    if (u.isAuthValid(password)) {
+      return ok(u.generateUserToken());
+    }
+    return badRequest(new ObjectMapper().createObjectNode()
+        .put(Constants.Generic.ERROR, "could not save new user account"));
   }
 
 }

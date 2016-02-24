@@ -11,9 +11,9 @@ public class Global extends GlobalSettings {
 
   @Override
   public void onStart(Application app) {
-    this.mongoConnector = new MongoConnector();
+    mongoConnector = new MongoConnector();
     // create full text search index on recipes
-    Recipe.setupSearchIndex(this.mongoConnector);
+    Recipe.setupSearchIndex(mongoConnector);
   }
 
 }
