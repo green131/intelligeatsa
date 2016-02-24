@@ -44,9 +44,9 @@ public class RecipeModelTest {
       new Document(
         new HashMap<String, Object>() {{
           put(Constants.Mongo.ID, new ObjectId("000000000000000000000000"));
-          put("title", "Title");
-          put("description", "Desc");
-          put("pictureURL", "photo");
+          put(Constants.Recipe.KEY_TITLE, "Title");
+          put(Constants.Recipe.KEY_DESC, "Desc");
+          put(Constants.Recipe.KEY_PIC_URL, "photo");
         }}
      )
     );
@@ -133,9 +133,9 @@ public class RecipeModelTest {
       new Document(
         new HashMap<String, Object>() {{
           put(Constants.Mongo.ID, new ObjectId("000000000000000000000000"));
-          put("title", "Title");
-          put("description", "Desc");
-          put("pictureURL", "photo");
+          put(Constants.Recipe.KEY_TITLE, "Title");
+          put(Constants.Recipe.KEY_DESC, "Desc");
+          put(Constants.Recipe.KEY_PIC_URL, "photo");
         }}
       )
     );
@@ -171,9 +171,9 @@ public class RecipeModelTest {
         new Document(
           new HashMap<String, Object>() {{
             put(Constants.Mongo.ID, id);
-            put("title", "Title");
-            put("description", "Desc");
-            put("pictureURL", "photo");
+            put(Constants.Recipe.KEY_TITLE, "Title");
+            put(Constants.Recipe.KEY_DESC, "Desc");
+            put(Constants.Recipe.KEY_PIC_URL, "photo");
           }}
         )
     );
