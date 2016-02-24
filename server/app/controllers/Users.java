@@ -22,8 +22,8 @@ public class Users extends Controller {
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
-    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
+    JsonNode userNode = requestJson.findPath(Constants.User.ID_USER);
+    JsonNode passNode = requestJson.findPath(Constants.User.ID_PASS);
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
@@ -34,7 +34,8 @@ public class Users extends Controller {
 
     User u = new User(username);
     if (u.isAuthValid(password)) {
-      return ok(u.generateUserToken());
+      return ok(new ObjectMapper().createObjectNode()
+          .put(Constants.User.ID_TOKEN, u.generateUserToken()));
     }
     return badRequest(new ObjectMapper().createObjectNode()
         .put(Constants.Generic.ERROR, "invalid credentials"));
@@ -49,8 +50,8 @@ public class Users extends Controller {
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
-    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
+    JsonNode userNode = requestJson.findPath(Constants.User.ID_USER);
+    JsonNode passNode = requestJson.findPath(Constants.User.ID_PASS);
 
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
@@ -70,13 +71,14 @@ public class Users extends Controller {
     // create new user doc and store in db
     User u = new User(username);
     u.doc = new Document();
-    u.addAttribute(Constants.Mongo.ID_USERNAME, username);
-    u.addAttribute(Constants.Mongo.ID_PASSWORD, password);
+    u.addAttribute(Constants.User.ID_USER, username);
+    u.addAttribute(Constants.User.ID_PASS, password);
     Global.mongoConnector.saveDocument(u.collection, u.doc);
 
     // check doc was saved correctly and return token
     if (u.isAuthValid(password)) {
-      return ok(u.generateUserToken());
+      return ok(new ObjectMapper().createObjectNode()
+          .put(Constants.User.ID_TOKEN, u.generateUserToken()));
     }
     return badRequest(new ObjectMapper().createObjectNode()
         .put(Constants.Generic.ERROR, "could not save new user account"));
