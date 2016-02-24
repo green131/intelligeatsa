@@ -1,0 +1,34 @@
+
+<header></header>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12" style="text-align:right;">
+      <nav>
+        <ul class="pager">
+          <li class="previous"><a ng-click="$ctrl.previous();"><span aria-hidden="true">&larr;</span> Previous</a></li>
+          <li ng-if="$ctrl.lastPage == false" class="next"><a ng-click="$ctrl.next();">More <span aria-hidden="true">&rarr;</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10" style="text-align:center;">
+      <ul class="list-inline" style="padding:10px;">
+        <li ng-repeat="recipe in $ctrl.recipes" style="width:200px;">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <a href="#/recipe/{{recipe.doc.id}}">
+                <img class="img-rounded" style="width:128px;height:128px;" src="assets/crossed-knife-and-fork.png" ng-src="{{recipe.doc.pictureURL}}"/>
+              </a>
+            </div>
+            <div class="panel-footer">
+              <a href="#"><h5  title="{{recipe.doc.title}}" class="panel-title carousel-item-title">{{recipe.doc.title}}</h5></a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+</div>
