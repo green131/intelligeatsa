@@ -46,7 +46,7 @@ public class Recipe extends BaseModelClass {
 
     for (Document d : iter) {
       TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
-      keyMap.put("_id", new ObjectId(d.get("_id").toString()).toString());
+      keyMap.put("_id", d.get("_id"));
       keyMap.put("title", d.get("title"));
       keyMap.put("description", d.get("description"));
       keyMap.put("pictureURL", d.get("pictureURL"));
@@ -114,5 +114,10 @@ public class Recipe extends BaseModelClass {
       return doc.equals(otherRecipe.doc);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return doc.toString();
   }
 }

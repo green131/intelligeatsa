@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import server.app.Constants;
@@ -42,7 +43,7 @@ public class RecipeModelTest {
     List<Document> expectedRecipeDocuments = Arrays.asList(
       new Document(
         new HashMap<String, Object>() {{
-          put("_id", "000000000000000000000000");
+          put(Constants.Mongo.ID, new ObjectId("000000000000000000000000"));
           put("title", "Title");
           put("description", "Desc");
           put("pictureURL", "photo");
@@ -70,12 +71,13 @@ public class RecipeModelTest {
       return iter;
     });
     // insure expected recipe documents are actually returned
-    ArrayList<Recipe> actualRecipes = Recipe.getRecipesByTag(conn, new ArrayList<String>(Arrays.asList("tag0", "tag1")), 0, 2);
-    ArrayList<Recipe> expectedRecipes = new ArrayList<>(expectedRecipeDocuments.stream().map(Recipe::new).collect(Collectors.toList()));
+    List<Recipe> actualRecipes = Recipe.getRecipesByTag(conn, new ArrayList<String>(Arrays.asList("tag0", "tag1")), 0, 1);
+    List<Recipe> expectedRecipes = new ArrayList<>(expectedRecipeDocuments.stream().map(Recipe::new).collect(Collectors.toList()));
     assertEquals(expectedRecipes, actualRecipes);
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void testSetupSearchIndexAlreadyExists() {
     MongoConnector conn = mock(MongoConnector.class);
     MongoCollection<Document> coll = (MongoCollection<Document>) mock(MongoCollection.class);
@@ -99,6 +101,7 @@ public class RecipeModelTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void testSetupSearchIndexDoesntExist() {
     MongoConnector conn = mock(MongoConnector.class);
     MongoCollection<Document> coll = (MongoCollection<Document>) mock(MongoCollection.class);
@@ -118,5 +121,77 @@ public class RecipeModelTest {
       return null;
     });
     Recipe.setupSearchIndex(conn);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void testSearchRecipesByTitle() {
+    MongoConnector conn = mock(MongoConnector.class);
+    MongoCollection<Document> coll = (MongoCollection<Document>) mock(MongoCollection.class);
+    when(conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION)).thenReturn(coll);
+    List<Document> expectedDocuments = Arrays.asList(
+      new Document(
+        new HashMap<String, Object>() {{
+          put(Constants.Mongo.ID, new ObjectId("000000000000000000000000"));
+          put("title", "Title");
+          put("description", "Desc");
+          put("pictureURL", "photo");
+        }}
+      )
+    );
+    when(coll.find(isA(Bson.class))).thenAnswer(invocation -> {
+      // verify we are searching for text
+      Bson query = (Bson) invocation.getArguments()[0];
+      assertNotNull(query);
+      assertEquals(
+        Filters.text("search term")
+        .toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()),
+        query
+        .toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry())
+      );
+      FindIterable<Document> iter = mock(FindIterable.class);
+      when(iter.skip(anyInt())).thenReturn(iter);
+      when(iter.limit(anyInt())).thenReturn(iter);
+      when(iter.iterator()).thenReturn(new MongoCursorWrapper(expectedDocuments.iterator()));
+      return iter;
+    });
+    List<Recipe> actualRecipes = Recipe.searchRecipesByTitle(conn, "search term", 0, 1);
+    List<Recipe> expectedRecipes = new ArrayList<>(expectedDocuments.stream().map(Recipe::new).collect(Collectors.toList()));
+    assertEquals(expectedRecipes, actualRecipes);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void testGetRecipeByIdExists() {
+    MongoConnector conn = mock(MongoConnector.class);
+    MongoCollection<Document> coll = (MongoCollection<Document>) mock(MongoCollection.class);
+    when(conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION)).thenReturn(coll);
+    ObjectId id = new ObjectId("000000000000000000000000");
+    List<Document> expectedDocuments = Arrays.asList(
+        new Document(
+          new HashMap<String, Object>() {{
+            put(Constants.Mongo.ID, id);
+            put("title", "Title");
+            put("description", "Desc");
+            put("pictureURL", "photo");
+          }}
+        )
+    );
+    when(coll.find(isA(Bson.class))).thenAnswer(invocation -> {
+      Bson query = (Bson) invocation.getArguments()[0];
+      assertNotNull(query);
+      assertEquals(
+          Filters.eq(Constants.Mongo.ID, id)
+          .toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()),
+          query
+          .toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry())
+      );
+      FindIterable<Document> iter = (FindIterable<Document>) mock(FindIterable.class);
+      when(iter.first()).thenReturn(expectedDocuments.get(0));
+      return iter;
+    });
+    Recipe actualRecipe = Recipe.getRecipeById(conn, id);
+    Recipe expectedRecipe = new Recipe(expectedDocuments.get(0));
+    assertEquals(expectedRecipe, actualRecipe);
   }
 }
