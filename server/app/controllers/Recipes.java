@@ -1,19 +1,15 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-import org.bson.types.ObjectId;
-import server.app.models.MongoConnector;
-import server.app.models.Recipe;
-import server.app.Constants;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.BodyParser;
-import play.data.DynamicForm;
-import play.data.Form;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import play.libs.Json;
-import play.libs.Json.*;
+import org.bson.types.ObjectId;
+import play.mvc.Controller;
+import play.mvc.Result;
+import server.app.Constants;
+import server.app.Global;
+import server.app.models.Recipe;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -21,21 +17,20 @@ import java.util.Arrays;
 public class Recipes extends Controller {
 
   public static Result getRecipesByTag(String tags, int range_start, int range_end) {
-    MongoConnector mongoConnector = new MongoConnector();
     ObjectMapper mapper = new ObjectMapper();
 
     //extract tags from request
     ArrayList<String> tags_list = new ArrayList<String>(Arrays.asList(tags.split(",")));
     if (tags_list.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "unable to parse tags"));
+          .put(Constants.Generic.ERROR, "unable to parse tags"));
     }
 
     //get recipes
-    ArrayList<Recipe> recipes = Recipe.getRecipesByTag(mongoConnector, tags_list, range_start, range_end);
+    ArrayList<Recipe> recipes = Recipe.getRecipesByTag(Global.mongoConnector, tags_list, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "no recipes found"));
+          .put(Constants.Generic.ERROR, "no recipes found"));
     }
     try {
       String json = mapper.writeValueAsString(recipes);
@@ -52,17 +47,16 @@ public class Recipes extends Controller {
   }
 
   public static Result searchRecipeTitles(String recipe_title, int range_start, int range_end) {
-    MongoConnector conn = new MongoConnector();
     ObjectMapper mapper = new ObjectMapper();
 
     if (range_end < range_start || range_end < 0 || range_start < 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
+          .put(Constants.Generic.ERROR, String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
     }
-    ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(conn, recipe_title, range_start, range_end);
+    ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(Global.mongoConnector, recipe_title, range_start, range_end);
     if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
-          .put("error", "no recipes found"));
+          .put(Constants.Generic.ERROR, "no recipes found"));
     }
     try {
       String json = mapper.writeValueAsString(recipes);
@@ -79,22 +73,20 @@ public class Recipes extends Controller {
   }
 
   public static Result getRecipeById(String id) {
-    MongoConnector mongoConnector = new MongoConnector();
-
     // parse object id
     ObjectId oid;
     try {
       oid = new ObjectId(id);
     } catch (IllegalArgumentException e) {
       return badRequest(new ObjectMapper().createObjectNode()
-          .put("error", "malformed recipe id, not hexadecimal"));
+          .put(Constants.Generic.ERROR, "malformed recipe id, not hexadecimal"));
     }
 
     //get recipe
-    Recipe recipe = Recipe.getRecipeById(mongoConnector, oid);
+    Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, oid);
     if (recipe.doc == null) {
       return badRequest(new ObjectMapper().createObjectNode()
-          .put("error", "could not find recipe matching id"));
+          .put(Constants.Generic.ERROR, "could not find recipe matching id"));
     }
     try {
       return ok(recipe.exportToString());

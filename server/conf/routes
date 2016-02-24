@@ -1,23 +1,32 @@
 # hello world page
 GET / server.app.controllers.HelloWorld.show()
 
+# User login endpoint
+# REQUIRED {"user":<username>, "pass":<password>}
+# Returns user token
+POST /user/login            server.app.controllers.Users.loginUser()
+
+# User registration endpoint
+# REQUIRED {"user":<username>, "pass":<password>}
+# Returns user token
+POST /user/register         server.app.controllers.Users.registerUser()
 
 # Get recipe list given a list of tags
 # REQUIRED: { :<recipe_tags> }
 # OPTIONAL: { :<recipe_tags>/:<range_start>/:<range_end> }
 # EXAMPLE:  tags = Indian,Vegan, range_start = 5, range_end = 10
 #           /Indian,Vegan/5/10
-GET /recipe/tags/:recipe_tags                           server.app.controllers.Recipes.getRecipesByTagDefault(recipe_tags: String)
-GET /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.Recipes.getRecipesByTag(recipe_tags: String, range_start: Integer, range_end: Integer)
+POST /recipe/tags/:recipe_tags                           server.app.controllers.Recipes.getRecipesByTagDefault(recipe_tags: String)
+POST /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.Recipes.getRecipesByTag(recipe_tags: String, range_start: Integer, range_end: Integer)
 
 # Search recipe titles
 # REQUIRED: { :<recipe_title> }
 # OPTIONAL: { :<recipe_title>/:<range_start>/:<range_end> }
 # EXAMPLE:  title = Pizza, range_start = 5, range_end = 10
 #           /Pizza/5/10
-GET /recipe/search/:recipe_title                            server.app.controllers.Recipes.searchRecipeTitlesDefault(recipe_title: String)
-GET /recipe/search/:recipe_title/:range_start/:range_end    server.app.controllers.Recipes.searchRecipeTitles(recipe_title: String, range_start: Integer, range_end: Integer)
+POST /recipe/search/:recipe_title                            server.app.controllers.Recipes.searchRecipeTitlesDefault(recipe_title: String)
+POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controllers.Recipes.searchRecipeTitles(recipe_title: String, range_start: Integer, range_end: Integer)
 
 # Get recipe by id
 # REQUIRED: { id: <recipe_id> }
-GET /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
+POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)

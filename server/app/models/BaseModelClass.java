@@ -9,6 +9,7 @@ public abstract class BaseModelClass {
 
   public BaseModelClass(String collection) {
     this.collection = collection;
+    this.doc = null;
   }
 
   public BaseModelClass(String collection, String key, String val) {
@@ -35,7 +36,7 @@ public abstract class BaseModelClass {
   }
 
   public void addAttribute(String key, String val) {
-    this.doc.append(key, val);
+    this.doc.put(key, val);
   }
 
   public void removeAttribute(String key) {
