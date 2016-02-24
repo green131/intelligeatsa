@@ -107,4 +107,12 @@ public class Recipe extends BaseModelClass {
     return r;
   }
 
+  @Override
+  public boolean equals(Object other) {
+    if (other instanceof Recipe) {
+      Recipe otherRecipe = (Recipe) other;
+      return doc.equals(otherRecipe.doc);
+    }
+    return false;
+  }
 }
