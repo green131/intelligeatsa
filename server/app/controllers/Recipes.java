@@ -55,8 +55,7 @@ public class Recipes extends Controller {
     }
     ArrayList<Recipe> recipes = Recipe.searchRecipesByTitle(Global.mongoConnector, recipe_title, range_start, range_end);
     if (recipes.size() == 0) {
-      return badRequest(mapper.createObjectNode()
-          .put(Constants.Generic.ERROR, "no recipes found"));
+      return ok();
     }
     try {
       String json = mapper.writeValueAsString(recipes);
