@@ -2,8 +2,10 @@ package server.app.models;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import server.app.Constants;
 import server.app.Global;
 
@@ -34,8 +36,8 @@ public class User extends BaseModelClass {
     return this.getAttribute(Constants.User.ID_PASS).equals(pass);
   }
 
-  public String generateUserToken() {
-    return this.getAttribute(Constants.Mongo.ID).toString();
+  public ObjectId generateUserToken() {
+    return getId();
   }
 
   public static boolean usernameExists(String username) {
@@ -47,6 +49,26 @@ public class User extends BaseModelClass {
     //get user
     FindIterable<Document> iter = mongoCollection.find(query);
     return iter.first() != null;
+  }
+
+  public static User getUserFromToken(ObjectId userToken) {
+    Document userDoc = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
+      .find(eq(Constants.Mongo.ID, userToken))
+      .first();
+    return userDoc != null ? new User(userDoc) : null;
+  }
+
+  public static User getUserFromRequest(JsonNode json) {
+    if (!json.has(Constants.User.ID_TOKEN)) {
+      return null;
+    }
+    ObjectId id;
+    try {
+      id = new ObjectId(json.get(Constants.User.ID_TOKEN).textValue());
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+    return getUserFromToken(id);
   }
 
 }
