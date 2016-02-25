@@ -1,6 +1,8 @@
 package server.app.models;
 
+import server.app.Constants;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public abstract class BaseModelClass {
 
@@ -51,5 +53,9 @@ public abstract class BaseModelClass {
   }
 
   public Object getAttribute(Object key) { return this.doc.get(key); }
+
+  public ObjectId getId() {
+    return doc.getObjectId(Constants.Mongo.ID);
+  }
 
 }

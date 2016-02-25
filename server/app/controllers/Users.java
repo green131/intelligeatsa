@@ -35,7 +35,7 @@ public class Users extends Controller {
     User u = new User(username);
     if (u.isAuthValid(password)) {
       return ok(new ObjectMapper().createObjectNode()
-          .put(Constants.User.ID_TOKEN, u.generateUserToken())
+          .put(Constants.User.ID_TOKEN, u.generateUserToken().toHexString())
           .put(Constants.User.ID_USER, u.doc.getString(Constants.User.ID_USER)));
     }
     return badRequest(new ObjectMapper().createObjectNode()
@@ -79,7 +79,7 @@ public class Users extends Controller {
     // check doc was saved correctly and return token
     if (u.isAuthValid(password)) {
       return ok(new ObjectMapper().createObjectNode()
-          .put(Constants.User.ID_TOKEN, u.generateUserToken())
+          .put(Constants.User.ID_TOKEN, u.generateUserToken().toHexString())
           .put(Constants.User.ID_USER, u.doc.getString(Constants.User.ID_USER)));
     }
     return badRequest(new ObjectMapper().createObjectNode()
