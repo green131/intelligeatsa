@@ -8,12 +8,12 @@ initialize ~= { _ =>
 	System.setProperty("http.port", "8080")
 }
 
-libraryDependencies += filters
 libraryDependencies += "org.mongodb" % "mongodb-driver" % "3.2.1"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.3"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.6.3"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.3"
 libraryDependencies += "junit" % "junit" % "4.11"
+libraryDependencies += "org.mockito" % "mockito-core" % "1.+"
 
 
 
