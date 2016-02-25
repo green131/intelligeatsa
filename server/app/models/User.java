@@ -51,14 +51,14 @@ public class User extends BaseModelClass {
     return iter.first() != null;
   }
 
-  public static User getUserFromToken(ObjectId userToken) {
-    Document userDoc = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
+  public static User getUserFromToken(MongoConnector conn, ObjectId userToken) {
+    Document userDoc = conn.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
       .find(eq(Constants.Mongo.ID, userToken))
       .first();
     return userDoc != null ? new User(userDoc) : null;
   }
 
-  public static User getUserFromRequest(JsonNode json) {
+  public static User getUserFromRequest(MongoConnector conn, JsonNode json) {
     if (!json.has(Constants.User.ID_TOKEN)) {
       return null;
     }
@@ -68,7 +68,16 @@ public class User extends BaseModelClass {
     } catch (IllegalArgumentException e) {
       return null;
     }
-    return getUserFromToken(id);
+    return getUserFromToken(conn, id);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other instanceof User) {
+      User otherUser = (User) other;
+      return doc.equals(otherUser.doc);
+    }
+    return false;
   }
 
 }
