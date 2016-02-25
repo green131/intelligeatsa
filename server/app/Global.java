@@ -8,7 +8,6 @@ import play.libs.F.Promise;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
-import org.bson.types.ObjectId;
 
 public class Global extends GlobalSettings {
 
