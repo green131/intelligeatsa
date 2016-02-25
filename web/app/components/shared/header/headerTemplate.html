@@ -14,8 +14,14 @@
       <a href="#/home"><h2  style="text-align:center;color:#EDEDED;">Intelligeatsa</h2></a>
     </div>
     <div class="col-md-4" style="padding:20px;text-align:center;">
-      <div class="btn-group" role="group">
-        <a type="button" data-toggle="modal" data-target="#loginModal" class="btn btn-default">Sign up or Login!</a>
+      <div ng-if="$ctrl.sessionExists == false">
+        <div class="btn-group" role="group">
+          <a type="button" data-toggle="modal" data-target="#loginModal" class="btn btn-default">Sign up or Login!</a>
+        </div>
+      </div>
+      <div ng-if="$ctrl.sessionExists">
+        <p>{{$ctrl.user}}</p>
+        <button type="button" ng-click="$ctrl.logout();" class="btn btn-default">Logout</button>
       </div>
     </div>
     <modal-window modal-id="loginModal">
@@ -31,19 +37,7 @@
           </div>
           <div class="col-md-6">
             <h4 style="text-align:center;">Register</h4><br>
-            <div class="well">
-              <form>
-                <div class="form-group">
-                  <label for="exampleInputEmail1">Email address</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-                </div>
-                <div class="form-group">
-                  <label for="exampleInputPassword1">Password</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                </div>
-                <button  class="btn btn-danger">Create an account</button>
-              </form>
-            </div>
+            <register-form placeholder-email="Email" placeholder-password="Password"></register-form>
           </div>
         </div>
       </div>

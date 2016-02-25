@@ -1,13 +1,16 @@
 'use strict';
 
 // Declare root level module and dependencies
-var rootModule = angular.module('intelligeatsa', [
+angular.module('intelligeatsa', [
   'ngRoute',
   'intelligeatsa.services',
   'intelligeatsa.components',
   'intelligeatsa.pages'
-]);
-
-rootModule.config(['$routeProvider', function($routeProvider) {
+]).config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/home'});
-}]);
+}])
+// root constants
+.constant('SESSION_EVENTS',{
+  SESSION_CREATED: 'SESSION_CREATED',
+  SESSION_CLOSED: 'SESSION_CLOSED'
+});

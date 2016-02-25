@@ -11,23 +11,14 @@ angular.module('intelligeatsa.components')
 });
 
 
-function LoginFormController($http){
+function LoginFormController($http, userSession){
   var ctrl = this;
-  ctrl.loginApiUrl = 'http://localhost:8080/user/login';
-  ctrl.userToken = null;
   ctrl.authenticate = function(){
-    $http({
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    url: ctrl.loginApiUrl,
-    data:{
-      'user': ctrl.email,
-      'pass': ctrl.password
-    }
-  }).then(function successCallback(response) {
-      ctrl.userToken = response.data;
-    }, function errorCallback(response) {
-      console.log(response);
+    userSession.createSessionFromExistingUser(ctrl.email,ctrl.password,function success(){
+      console.log(userSession.getUser());
+      $('#loginModal').modal('hide');
+    },function error(){
+      console.log('error');
     });
   };
 }

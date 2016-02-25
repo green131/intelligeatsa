@@ -13,8 +13,4 @@ componentsModule.component('modalWindow',{
 
 function ModalWindowController($http){
   var ctrl = this;
-  ctrl.login = function(){
-    console.log('going to login');
-  }
-  console.log(ctrl.modalId + ' = modalId');
 }
