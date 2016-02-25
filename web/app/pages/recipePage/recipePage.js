@@ -6,7 +6,8 @@ var pagesModule = angular.module('intelligeatsa.pages');
 pagesModule.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/recipe/:id',{
     templateUrl: 'pages/recipePage/recipePage.html',
-     controller: RecipePageController
+     controller: RecipePageController,
+     controllerAs: '$ctrl'
   });
 }]);
 
