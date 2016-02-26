@@ -12,7 +12,7 @@ componentsModule.component('carousel',{
 });
 
 
-function CarouselController($http){
+function CarouselController($http,mongoUtils){
   var ctrl = this;
   var recipesByTagUrl = "http://localhost:8080/recipe/tags/"+ ctrl.cuisineType + "/0/25";
   $http({
@@ -24,5 +24,9 @@ function CarouselController($http){
   }, function errorCallback(response) {
     console.log(response);
   });
+
+  ctrl.generateRecipePageUrl = function(mongoIdObj){
+    return '#/recipe/' + mongoUtils.mongoIdObjToString(mongoIdObj);
+  };
 
 }

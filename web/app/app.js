@@ -8,9 +8,4 @@ angular.module('intelligeatsa', [
   'intelligeatsa.pages'
 ]).config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/home'});
-}])
-// root constants
-.constant('SESSION_EVENTS',{
-  SESSION_CREATED: 'SESSION_CREATED',
-  SESSION_CLOSED: 'SESSION_CLOSED'
-});
+}]);
