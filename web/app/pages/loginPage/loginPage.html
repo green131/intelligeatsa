@@ -1,0 +1,23 @@
+<header></header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <form>
+        <div class="form-group">
+          <h3>Email Address</h3>
+          <input type="email" class="form-control" ng-model="$ctrl.emailAddress" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <h3>Password</h3>
+          <input type="password" class="form-control" ng-model="$ctrl.password" placeholder="Password">
+        </div>
+        <button type="submit" ng-click="$ctrl.register()" class="btn btn-default">Log In!</button>
+      </form>
+      {{$ctrl.emailAddress + '- ' + $ctrl.password }}
+    </div>
+    <div class="col-md-6">
+      <br>
+      <h2>Join the millions who enjoy Intelligeatsa to plan their meals!</h2>
+    </div>
+  </div>
+</div>
