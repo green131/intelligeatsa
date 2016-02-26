@@ -1,12 +1,11 @@
-
 <header></header>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12" style="text-align:right;">
       <nav>
         <ul class="pager">
-          <li class="previous"><a ng-click="$ctrl.previous();"><span aria-hidden="true">&larr;</span> Previous</a></li>
-          <li ng-if="$ctrl.lastPage == false" class="next"><a ng-click="$ctrl.next();">More <span aria-hidden="true">&rarr;</span></a></li>
+          <li class="previous"><button class="btn btn-primary" ng-click="$ctrl.previous();"><span aria-hidden="true">&larr;</span> Previous</button></li>
+          <li class="next"><button class="btn btn-primary" ng-click="$ctrl.next();">More <span aria-hidden="true">&rarr;</span></button></li>
         </ul>
       </nav>
     </div>
@@ -33,6 +32,9 @@
           </div>
         </li>
       </ul>
+      <div ng-if="$ctrl.lastPage" style="text-align:center;">
+        <h3>That's all!</h3>
+      </div>
     </div>
     <div class="col-md-1"></div>
   </div>

@@ -13,8 +13,8 @@
         </div>
       </div>
       <div ng-if="$ctrl.sessionExists">
-        <p>{{$ctrl.user}}</p>
-        <button type="button" ng-click="$ctrl.logout();" class="btn btn-default">Logout</button>
+      
+        <button type="button" ng-click="$ctrl.logout();" class="btn btn-default">Logout {{$ctrl.user.user}}</button>
       </div>
     </div>
     <modal-window modal-id="loginModal">

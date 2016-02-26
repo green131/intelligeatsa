@@ -1,54 +1,44 @@
 'use strict';
 
-var pagesModule = angular.module('intelligeatsa.pages');
-
-// attach to url route
-pagesModule.config(['$routeProvider', function($routeProvider) {
+angular.module('intelligeatsa.pages')
+.constant('searchResultsBatchSize',20)
+.config(['$routeProvider',function($routeProvider) {
   $routeProvider.when('/search/:query',{
     templateUrl: 'pages/searchResultsPage/searchResultsPage.html',
-     controller: SearchResultsPageController,
-     controllerAs: '$ctrl'
+    controller: 'SearchResultsPageController',
+    controllerAs: '$ctrl'
   });
-}]);
+}])
+.controller('SearchResultsPageController',['$http','search','searchResultsBatchSize','$routeParams',SearchResultsPageController]);
 
-function SearchResultsPageController($http,$routeParams){
+function SearchResultsPageController($http,search,searchResultsBatchSize,$routeParams){
   var ctrl = this;
-  ctrl.page = 0;
-  ctrl.showNextButton = false;
   ctrl.query = $routeParams.query;
-  ctrl.rangeStart = 0;
-  ctrl.rangeEnd = 20;
+  var batchSize = searchResultsBatchSize;
+  var paginator = search.query(ctrl.query,batchSize);
+
+  var paginateSuccess = function(data){
+    ctrl.recipes = data;
+    if(ctrl.recipes.length < batchSize){
+      ctrl.lastPage = true;
+    }else{
+      ctrl.lastPage = false;
+    }
+  };
+
+  var paginateError = function(response){
+
+    console.log('no more results');
+  };
 
   ctrl.next = function(){
-    if(ctrl.recipes.length == 20){
-    ctrl.rangeStart+=20;
-    ctrl.rangeEnd+=20;
-    ctrl.getRecipes();
-    }
+    paginator.next(paginateSuccess, paginateError);
   };
   ctrl.previous = function(){
-    if(ctrl.rangeStart > 0 && ctrl.rangeEnd > 20){
-    ctrl.rangeStart-=20;
-    ctrl.rangeEnd-=20;
-    ctrl.getRecipes();
-    }
+    paginator.previous(paginateSuccess,paginateError);
   };
 
-  ctrl.getRecipes = function(){
-    var recipeSearchUrl = 'http://localhost:8080/recipe/search/'+ ctrl.query + '/'+ctrl.rangeStart+'/'+ctrl.rangeEnd;
-    $http({
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    url: recipeSearchUrl,
-  }).then(function successCallback(response) {
-      ctrl.recipes = response.data;
-      if(ctrl.recipes.length < 20){
-        ctrl.lastPage = true;
-      }
-    }, function errorCallback(response) {
-      console.log(response);
-    });
-  };
+  // first page.
+  paginator.next(paginateSuccess,paginateError);
 
-  ctrl.getRecipes();
 }

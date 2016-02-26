@@ -3,9 +3,13 @@
 angular.module('intelligeatsa.services')
 .constant('apiRegistrationUrl','http://localhost:8080/user/register')
 .constant('apiLoginUrl','http://localhost:8080/user/login')
-.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl',UserServiceFactory]);
+.constant('SESSION_EVENTS',{
+  SESSION_CREATED: 'SESSION_CREATED',
+  SESSION_CLOSED: 'SESSION_CLOSED'
+})
+.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl',UserSessionServiceFactory]);
 
-function UserServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl){
+function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl){
 
   var userSessionService = function(){
     var service = this;
