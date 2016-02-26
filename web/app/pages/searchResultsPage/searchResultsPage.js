@@ -9,9 +9,9 @@ angular.module('intelligeatsa.pages')
     controllerAs: '$ctrl'
   });
 }])
-.controller('SearchResultsPageController',['$http','search','searchResultsBatchSize','$routeParams',SearchResultsPageController]);
+.controller('SearchResultsPageController',['$http','search','mongoUtils','searchResultsBatchSize','$routeParams',SearchResultsPageController]);
 
-function SearchResultsPageController($http,search,searchResultsBatchSize,$routeParams){
+function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchSize,$routeParams){
   var ctrl = this;
   ctrl.query = $routeParams.query;
   var batchSize = searchResultsBatchSize;
@@ -40,5 +40,10 @@ function SearchResultsPageController($http,search,searchResultsBatchSize,$routeP
 
   // first page.
   paginator.next(paginateSuccess,paginateError);
+
+  // quick hack
+  ctrl.generateRecipePageUrl = function(mongoIdObj){
+    return '#/recipe/' + mongoUtils.mongoIdObjToString(mongoIdObj);
+  };
 
 }
