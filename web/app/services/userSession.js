@@ -29,7 +29,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         url: apiRegistrationUrl,
         data:{
           'user': email,
-          'pass': password
+          'pass': btoa(password)
         }
       }).then(function (response) {
         user = response.data;
@@ -47,7 +47,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         url: apiLoginUrl,
         data:{
           'user': email,
-          'pass': password
+          'pass': btoa(password)
         }
       }).then(function(response) {
         user = response.data;
