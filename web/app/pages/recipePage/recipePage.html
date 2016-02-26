@@ -1,19 +1,25 @@
-<header title="Recipe Page"></header>
-<header title="---------"></header>
+<header></header>
 <div class="container">
-    <a>{{$ctrl.title}}</a>
-    <img ng-src="{{$ctrl.pictureUrl}}"/>
-    <p> {{$ctrl.descritpion}} </p>
+    <p>{{$ctrl.recipe.title}}</p>
+    <img class="img-rounded" style="width:128px;height:128px;" src="assets/crossed-knife-and-fork.png" ng-src="{{$ctrl.recipe.doc.pictureUrl}}"/>
+    <p> {{$ctrl.recipe.description}} </p>
     <!-- ingredient list -->
-    <ul class="ingredients">
-      <li ng-repeat="ingredient in ingredients">
-          <a>{{ingredient.quantity}}+" "+{{ingredient.item}}</a>
+    <p>Ingredients</p>
+    <ul class="sections">
+      <li ng-repeat="section in $ctrl.recipe.ingredients">
+        <p>{{section.sectionName}}</p>
+        <ul class="ingredients">
+          <li ng-repeat="ingredient in section.sectionIngredients">
+            <p>{{ingredient.quantity}}+" "+{{ingredient.item}}</p>
+          </li>
+      </ul>
       </li>
     </ul>
+    <p>Instructions</p>
     <!-- instruction list -->
     <ol class="instructions">
-      <li ng-repeat="instruction in instructions">
-        <a>{{instruction}}</a>
+      <li ng-repeat="instruction in $ctrl.instructionList">
+        <p>{{instruction}}</p>
       </li>
     </ol>
 </div>
