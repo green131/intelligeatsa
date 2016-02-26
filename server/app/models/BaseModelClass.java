@@ -1,6 +1,8 @@
 package server.app.models;
 
+import server.app.Constants;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public abstract class BaseModelClass {
 
@@ -9,6 +11,7 @@ public abstract class BaseModelClass {
 
   public BaseModelClass(String collection) {
     this.collection = collection;
+    this.doc = null;
   }
 
   public BaseModelClass(String collection, String key, String val) {
@@ -35,7 +38,7 @@ public abstract class BaseModelClass {
   }
 
   public void addAttribute(String key, String val) {
-    this.doc.append(key, val);
+    this.doc.put(key, val);
   }
 
   public void removeAttribute(String key) {
@@ -50,5 +53,9 @@ public abstract class BaseModelClass {
   }
 
   public Object getAttribute(Object key) { return this.doc.get(key); }
+
+  public ObjectId getId() {
+    return doc.getObjectId(Constants.Mongo.ID);
+  }
 
 }

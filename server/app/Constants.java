@@ -2,6 +2,10 @@ package server.app;
 
 public class Constants {
 
+  public static final class Generic {
+    public static final String ERROR = "error";
+  }
+
   public static final class Mongo {
     public static final boolean AUTH_ENABLED = true;
     public static final String HOST = "localhost";
@@ -15,12 +19,21 @@ public class Constants {
 
     public static final String RECIPES_COLLECTION = "recipes";
     public static final String USERS_COLLECTION = "users";
+
+    public static final String ID = "_id";
   }
 
   public static final class Recipe {
-    public static final String ID_TITLE = "_id";
+    public static final String KEY_NAME = "title";
     public static final String KEY_TITLE = "title";
+    public static final String KEY_DESC = "description";
+    public static final String KEY_PIC_URL = "pictureURL";
     public static final String INDEX_TITLE_TEXT = "title_text";
   }
 
+  public static final class User {
+    public static final String ID_USER = "user";
+    public static final String ID_PASS = "pass";
+    public static final String ID_TOKEN = "token";
+  }
 }

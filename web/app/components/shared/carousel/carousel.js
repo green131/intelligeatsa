@@ -16,7 +16,7 @@ function CarouselController($http){
   var ctrl = this;
   var recipesByTagUrl = "http://localhost:8080/recipe/tags/"+ ctrl.cuisineType + "/0/25";
   $http({
-  method: 'GET',
+  method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   url: recipesByTagUrl,
 }).then(function successCallback(response) {
