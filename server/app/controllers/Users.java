@@ -23,6 +23,7 @@ public class Users extends Controller {
     //check if request is json array
     JsonNode userNode = requestJson.findPath(Constants.User.KEY_USER);
     JsonNode passNode = requestJson.findPath(Constants.User.KEY_PASS);
+
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
@@ -33,7 +34,9 @@ public class Users extends Controller {
 
     User u = new User(username);
     if (u.isAuthValid(password)) {
-      return ok(u.generateUserToken());
+      return ok(new ObjectMapper().createObjectNode()
+          .put(Constants.User.KEY_TOKEN, u.generateUserToken().toHexString())
+          .put(Constants.User.KEY_USER, u.doc.getString(Constants.User.KEY_USER)));
     }
     return badRequest(new ObjectMapper().createObjectNode()
         .put(Constants.Generic.ERROR, "invalid credentials"));
@@ -75,7 +78,9 @@ public class Users extends Controller {
 
     // check doc was saved correctly and return token
     if (u.isAuthValid(password)) {
-      return ok(u.generateUserToken());
+      return ok(new ObjectMapper().createObjectNode()
+          .put(Constants.User.KEY_TOKEN, u.generateUserToken().toHexString())
+          .put(Constants.User.KEY_USER, u.doc.getString(Constants.User.KEY_USER)));
     }
     return badRequest(new ObjectMapper().createObjectNode()
         .put(Constants.Generic.ERROR, "could not save new user account"));

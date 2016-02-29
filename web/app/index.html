@@ -11,8 +11,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="components/shared/header/header.css"/>
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
   <link rel="stylesheet" href="components/shared/carousel/carousel.css"/>
+  <link rel="stylesheet" href="components/shared/modalWindow/modalWindow.css"/>
   <link rel="stylesheet" href="app.css"/>
 
 </head>
@@ -30,20 +30,35 @@
   <!-- js dependencies -->
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/js/dropdown.js"></script>
+  <script src="bower_components/bootstrap/js/modal.js"></script>
   <script type="text/javascript"></script>
 
   <!-- angular -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
+
+  <!-- services -->
+  <script src="services/services.js"></script>
+  <script src="services/userSession.js"></script>
+  <script src="services/search.js"></script>
+    <script src="services/mongoUtils.js"></script>
+
+  <!-- components -->
   <script src="components/components.js"></script>
+  <script src="components/shared/modalWindow/modalWindow.js"></script>
   <script src="components/shared/header/header.js"></script>
   <script src="components/shared/carousel/carousel.js"></script>
+  <script src="components/shared/loginForm/loginForm.js"></script>
+  <script src="components/shared/registerForm/registerForm.js"></script>
+  <script src="components/shared/searchBar/searchBar.js"></script>
+
   <script src="pages/pages.js"></script>
   <script src="pages/homePage/homePage.js"></script>
   <script src="pages/recipePage/recipePage.js"></script>
-  <script src="pages/registerPage/registerPage.js"></script>
+  <script src="pages/searchResultsPage/searchResultsPage.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
+
   </script>
 </body>
 </html>

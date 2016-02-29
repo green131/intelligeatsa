@@ -1,6 +1,8 @@
 package server.app.models;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
+import server.app.Constants;
 import server.app.Global;
 
 public abstract class BaseModelClass {
@@ -56,6 +58,10 @@ public abstract class BaseModelClass {
 
   public void saveDoc() {
     Global.mongoConnector.saveDocument(this.collection, this.doc);
+  }
+
+  public ObjectId getId() {
+    return doc.getObjectId(Constants.Mongo.ID);
   }
 
 }

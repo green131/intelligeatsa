@@ -1,2 +1,73 @@
-<header title="Recipe Page"></header>
-<header title="---------"></header>
+<header></header>
+<div class="container">
+  <div class="row">
+    <div style="text-align:center;" class="col-md-12">
+      <h3>{{$ctrl.recipe.title}}</h3>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div style="text-align:center;" class="col-md-4">
+      <img style="width:320px;height:320px;" class="img-rounded" src="assets/crossed-knife-and-fork.png" ng-src="{{$ctrl.recipe.pictureURL}}"/>
+    </div>
+    <div class="col-md-8">
+      <h4>Description</h4>
+      <div class="panel panel-danger">
+        <div class="panel panel-body">
+          <p> {{$ctrl.recipe.description}} </p>
+          <ul class="nav nav-pills">
+            <li role="presentation">Tags: </li>
+            <li role="presentation" ng-repeat="tag in $ctrl.recipe.tags">
+              <span class="badge">{{tag}}</span>
+            </li>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <h4>Ingredients</h4>
+        <div class="panel panel-danger">
+          <div ng-repeat="section in $ctrl.recipe.ingredients">
+            <div class="list-group-item" ng-repeat="ingredient in section.sectionIngredients">
+              <p>{{ingredient.quantity + '' +ingredient.item}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h4>Steps</h4>
+        <div class="panel panel-danger">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="instruction in $ctrl.instructionList">
+              <p>{{instruction}}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- >
+  <p>Ingredients</p>
+  <ul class="sections">
+  <li ng-repeat="section in $ctrl.recipe.ingredients">
+  <p>{{section.sectionName}}</p>
+  <ul class="ingredients">
+  <li ng-repeat="ingredient in section.sectionIngredients">
+  <p>{{ingredient.quantity}}+" "+{{ingredient.item}}</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Instructions</p>
+
+<ul class="list-instructions">
+<li class="list-group-item" ng-repeat="instruction in $ctrl.instructionList">
+<p>{{instruction}}</p>
+</li>
+</ul>
+<!-->
