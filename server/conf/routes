@@ -27,6 +27,17 @@ POST /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.
 POST /recipe/search/:recipe_title                            server.app.controllers.Recipes.searchRecipeTitlesDefault(recipe_title: String)
 POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controllers.Recipes.searchRecipeTitles(recipe_title: String, range_start: Integer, range_end: Integer)
 
+# Search using multiple filters
+# INCLUDE AT LEAST ONE: {
+#    "title":       <keyword>,
+#    "tags":        <recipe_tags>,
+#    "ingredients": <recipe_ingredients>,
+#    "prep_time":   <prep_time>,
+#    "sort_alpha":  <true|false>
+#    "sort_rating": <true|false>
+# }
+POST /recipe/search                  server.app.controllers.Recipes.searchRecipes()
+
 # Get recipe by id
 # REQUIRED: { id: <recipe_id> }
 POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)

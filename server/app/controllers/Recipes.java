@@ -96,4 +96,28 @@ public class Recipes extends Controller {
     }
   }
 
+  public static Result searchRecipes() {
+    // TODO FIX THIS
+    //check if request is json
+    JsonNode requestJson = request().body().asJson();
+    if(requestJson == null) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Expecting Json data!"));
+    }
+
+    //check if request is json array
+    JsonNode userNode = requestJson.findPath(Constants.User.KEY_USER);
+    JsonNode passNode = requestJson.findPath(Constants.User.KEY_PASS);
+    if(!userNode.isTextual() || !passNode.isTextual()){
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
+    }
+
+
+
+
+    return badRequest(new ObjectMapper().createObjectNode()
+        .put(Constants.Generic.ERROR, "invalid credentials"));
+  }
+
 }

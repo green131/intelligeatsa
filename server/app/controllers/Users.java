@@ -6,7 +6,6 @@ import org.bson.Document;
 import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
-import server.app.Global;
 import server.app.models.User;
 
 
@@ -22,8 +21,8 @@ public class Users extends Controller {
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
-    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
+    JsonNode userNode = requestJson.findPath(Constants.User.KEY_USER);
+    JsonNode passNode = requestJson.findPath(Constants.User.KEY_PASS);
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
@@ -49,8 +48,8 @@ public class Users extends Controller {
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath(Constants.Mongo.ID_USER);
-    JsonNode passNode = requestJson.findPath(Constants.Mongo.ID_PASS);
+    JsonNode userNode = requestJson.findPath(Constants.User.KEY_USER);
+    JsonNode passNode = requestJson.findPath(Constants.User.KEY_PASS);
 
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
@@ -70,9 +69,9 @@ public class Users extends Controller {
     // create new user doc and store in db
     User u = new User(username);
     u.doc = new Document();
-    u.addAttribute(Constants.Mongo.ID_USERNAME, username);
-    u.addAttribute(Constants.Mongo.ID_PASSWORD, password);
-    Global.mongoConnector.saveDocument(u.collection, u.doc);
+    u.updateAttribute(Constants.User.KEY_USER, username);
+    u.updateAttribute(Constants.User.KEY_PASS, password);
+    u.saveDoc();
 
     // check doc was saved correctly and return token
     if (u.isAuthValid(password)) {

@@ -1,6 +1,7 @@
 package server.app.models;
 
 import org.bson.Document;
+import server.app.Global;
 
 public abstract class BaseModelClass {
 
@@ -35,7 +36,8 @@ public abstract class BaseModelClass {
     return Document.parse(json);
   }
 
-  public void addAttribute(String key, String val) {
+  // Always use updateAttribute to prevent conflicts!
+  private void addAttribute(String key, String val) {
     this.doc.put(key, val);
   }
 
@@ -43,7 +45,7 @@ public abstract class BaseModelClass {
     this.doc.remove(key);
   }
 
-  public void changeAttribute(String key, String val) {
+  public void updateAttribute(String key, String val) {
     if (this.doc.containsKey(key)) {
       this.removeAttribute(key);
     }
@@ -51,5 +53,9 @@ public abstract class BaseModelClass {
   }
 
   public Object getAttribute(Object key) { return this.doc.get(key); }
+
+  public void saveDoc() {
+    Global.mongoConnector.saveDocument(this.collection, this.doc);
+  }
 
 }

@@ -35,7 +35,7 @@ public class Recipe extends BaseModelClass {
     //create query
     ArrayList<Bson> filters = new ArrayList<Bson>();
     for (String tag : tags) {
-      Bson filter = eq("tags", tag);
+      Bson filter = eq(Constants.Recipe.KEY_TAGS, tag);
       filters.add(filter);
     }
     Bson finalQuery = and(filters);
@@ -46,10 +46,10 @@ public class Recipe extends BaseModelClass {
 
     for (Document d : iter) {
       TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
-      keyMap.put("_id", new ObjectId(d.get("_id").toString()).toString());
-      keyMap.put("title", d.get("title"));
-      keyMap.put("description", d.get("description"));
-      keyMap.put("pictureURL", d.get("pictureURL"));
+      keyMap.put(Constants.Mongo.ID, new ObjectId(d.get(Constants.Mongo.ID).toString()).toString());
+      keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
+      keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
+      keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
       Document doc = new Document(keyMap);
       Recipe recipe = new Recipe(doc);
       recipeList.add(recipe);
