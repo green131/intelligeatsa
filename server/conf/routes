@@ -1,15 +1,18 @@
 # hello world page
 GET / server.app.controllers.HelloWorld.show()
 
+
 # User login endpoint
 # REQUIRED {"user":<username>, "pass":<password>}
 # Returns user token
 POST /user/login            server.app.controllers.Users.loginUser()
 
+
 # User registration endpoint
 # REQUIRED {"user":<username>, "pass":<password>}
 # Returns user token
 POST /user/register         server.app.controllers.Users.registerUser()
+
 
 # Get recipe list given a list of tags
 # REQUIRED: { :<recipe_tags> }
@@ -19,6 +22,7 @@ POST /user/register         server.app.controllers.Users.registerUser()
 POST /recipe/tags/:recipe_tags                           server.app.controllers.Recipes.getRecipesByTagDefault(recipe_tags: String)
 POST /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.Recipes.getRecipesByTag(recipe_tags: String, range_start: Integer, range_end: Integer)
 
+
 # Search recipe titles
 # REQUIRED: { :<recipe_title> }
 # OPTIONAL: { :<recipe_title>/:<range_start>/:<range_end> }
@@ -27,9 +31,19 @@ POST /recipe/tags/:recipe_tags/:range_start/:range_end   server.app.controllers.
 POST /recipe/search/:recipe_title                            server.app.controllers.Recipes.searchRecipeTitlesDefault(recipe_title: String)
 POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controllers.Recipes.searchRecipeTitles(recipe_title: String, range_start: Integer, range_end: Integer)
 
+
 # Get recipe by id
 # REQUIRED: { id: <recipe_id> }
 POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
 
+
 #OPTIONS Request
 OPTIONS /*path                       server.app.Application.preflight(path: String)
+
+
+# Update recipe rating
+# REQUIRED: { :<username>/:<recipe_id>/:<rating> }
+# EXAMPLE:  username = user94, recipe_id = 12345, rating = 4.5
+#           /user94/12345/4.5
+POST /updateRating/:username/:recipe_id/:rating     server.app.controllers.Recipes.updateRating(username: String, recipe_id: String, rating: Double)
+
