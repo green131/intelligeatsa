@@ -117,12 +117,33 @@ public class Recipes extends Controller {
 
 
 
-  public static Result updateRating(String username, String recipeID, double rating){
+  public static Result updateRating(String recipeID, double rating){
 
-    //parse recipeID
-    ObjectId rID;
+    //check if request is json
+    JsonNode requestJson = request().body().asJson();
+    if(requestJson == null) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Expecting Json data!"));
+    }
+    
+    //check if json request contains required information
+    JsonNode userIDNode = requestJson.findPath("userID");
+    if(!userIDNode.isTextual()){
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
+    }
+    String userID = userIDNode.textValue();
+    
+    //parse recipeID and userID
+    ObjectId rID, uID;
     try {
       rID = new ObjectId(recipeID);
+    } catch (IllegalArgumentException e) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "malformed recipe id, not hexadecimal"));
+    }
+    try {
+      uID = new ObjectId(userID);
     } catch (IllegalArgumentException e) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "malformed recipe id, not hexadecimal"));
@@ -134,15 +155,15 @@ public class Recipes extends Controller {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "could not find recipe matching id"));
     }
-    User user = new User(username);
+    User user = User.getUserFromToken(Global.mongoConnector, uID);
     if(user == null){
       return badRequest(new ObjectMapper().createObjectNode()
-          .put(Constants.Generic.ERROR, "could not find user with given username"));    	
+          .put(Constants.Generic.ERROR, "could not find user matching id"));    	
     }
 
     //perform the required database updates
     updateRecipeRating(rID, recipe, rating);  
-    updateUsersListOfRatedRecipes(username, user, rID, rating);
+    updateUsersListOfRatedRecipes(uID, user, rID, rating);
     return ok("Recipe rating updated!");
   }
 
@@ -177,7 +198,7 @@ public class Recipes extends Controller {
 
 
 
-  private static void updateUsersListOfRatedRecipes(String username, User user, ObjectId recipeID, double rating){
+  private static void updateUsersListOfRatedRecipes(ObjectId userID, User user, ObjectId recipeID, double rating){
 
     //create a new list item for the given recipe rating
     Document ratingInfoDoc = new Document();
@@ -196,7 +217,7 @@ public class Recipes extends Controller {
 
     //update database
     MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
-    Bson query = eq(Constants.User.ID_USER, username);
+    Bson query = eq(Constants.Mongo.ID, userID);
     collection.replaceOne(query, user.doc);
   }
 }

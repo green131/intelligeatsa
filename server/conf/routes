@@ -42,8 +42,8 @@ OPTIONS /*path                       server.app.Application.preflight(path: Stri
 
 
 # Update recipe rating
-# REQUIRED: { :<username>/:<recipe_id>/:<rating> }
+# REQUIRED: { "userID":<userID> + recipe/:<recipe_id>/rate/:<rating>}
 # EXAMPLE:  username = user94, recipe_id = 12345, rating = 4.5
-#           /user94/12345/4.5
-POST /updateRating/:username/:recipe_id/:rating     server.app.controllers.Recipes.updateRating(username: String, recipe_id: String, rating: Double)
+#           /recipe/12345/rate/4.5    	 (userID needs to be in JSON)
+POST /recipe/:recipe_id/rate/:rating     server.app.controllers.Recipes.updateRating(recipe_id: String, rating: Double)
 
