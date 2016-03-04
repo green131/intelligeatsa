@@ -26,7 +26,7 @@ import static com.mongodb.client.model.Filters.text;
 //API for getting recipes
 public class Recipes extends Controller {
 
-	
+
   public static Result getRecipesByTag(String tags, int range_start, int range_end) {
     ObjectMapper mapper = new ObjectMapper();
 
@@ -36,7 +36,7 @@ public class Recipes extends Controller {
       return badRequest(mapper.createObjectNode()
           .put(Constants.Generic.ERROR, "unable to parse tags"));
     }
-	
+
     //get recipes
     ArrayList<Recipe> recipes = Recipe.getRecipesByTag(Global.mongoConnector, tags_list, range_start, range_end);
     if (recipes.size() == 0) {
@@ -53,14 +53,14 @@ public class Recipes extends Controller {
     }
   }
 
-  
-  
+
+
   public static Result getRecipesByTagDefault(String tags) {
     return getRecipesByTag(tags, 0, Constants.Mongo.DEFAULT_LIMIT);
   }
 
-  
-  
+
+
   public static Result searchRecipeTitles(String recipe_title, int range_start, int range_end) {
     ObjectMapper mapper = new ObjectMapper();
 
@@ -83,14 +83,14 @@ public class Recipes extends Controller {
     }
   }
 
-  
-  
+
+
   public static Result searchRecipeTitlesDefault(String recipe_title) {
     return searchRecipeTitles(recipe_title, 0, Constants.Mongo.DEFAULT_LIMIT);
   }
 
-  
-  
+
+
   public static Result getRecipeById(String id) {
     // parse object id
     ObjectId oid;
@@ -114,20 +114,20 @@ public class Recipes extends Controller {
       return internalServerError();
     }
   }
-  
-  
-  
+
+
+
   public static Result updateRating(String username, String recipeID, double rating){
-    
-  	//parse recipeID
+
+    //parse recipeID
     ObjectId rID;
     try {
-    	rID = new ObjectId(recipeID);
+      rID = new ObjectId(recipeID);
     } catch (IllegalArgumentException e) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "malformed recipe id, not hexadecimal"));
     }
-    
+
     //check if the given recipe and user exist
     Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, rID);
     if (recipe.doc == null) {
@@ -139,61 +139,61 @@ public class Recipes extends Controller {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "could not find user with given username"));    	
     }
-    
+
     //perform the required database updates
-    updateRecipeRating(rID, recipe, rating);
+    updateRecipeRating(rID, recipe, rating);  
     updateUsersListOfRatedRecipes(username, user, rID, rating);
     return ok("Recipe rating updated!");
   }
-  
-  
-  
+
+
+
   private static void updateRecipeRating(ObjectId recipeID, Recipe recipe, double rating){
-    
+
     //get current rating
     Document recipeDoc = (Document)recipe.doc.get("rating");
     int newNumOfRaters = 1;
     double newRating = rating;
-    
+
     //update rating if needed
     if(recipeDoc != null){
-    	double currentRating = recipeDoc.getDouble("value");
-    	int numOfRaters = recipeDoc.getInteger("numOfRaters");
-    	newNumOfRaters = numOfRaters + 1;
-    	newRating = ((currentRating*numOfRaters) + rating) / newNumOfRaters;
+      double currentRating = recipeDoc.getDouble("value");
+      int numOfRaters = recipeDoc.getInteger("numOfRaters");
+      newNumOfRaters = numOfRaters + 1;
+      newRating = ((currentRating*numOfRaters) + rating) / newNumOfRaters;
     }
-    
+
     //update rating field in document
     Document ratingDoc = new Document();
     ratingDoc.append("value", newRating);
     ratingDoc.append("numOfRaters", newNumOfRaters);
     recipe.doc.append("rating", ratingDoc);
-    
+
     //update database
     MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
     Bson query = eq(Constants.Mongo.ID, recipeID);
     collection.replaceOne(query, recipe.doc);
-	}
+  }
 
-  
-  
+
+
   private static void updateUsersListOfRatedRecipes(String username, User user, ObjectId recipeID, double rating){
-    
-  	//create a new list item for the given recipe rating
-  	Document ratingInfoDoc = new Document();
-  	ratingInfoDoc.append("recipeID", recipeID);
-  	ratingInfoDoc.append("myRating", rating);
-  	
-  	//check if this user already has a ratingList field
-  	ArrayList<Document> ratingListDoc = (ArrayList<Document>)user.doc.get("ratingList");
+
+    //create a new list item for the given recipe rating
+    Document ratingInfoDoc = new Document();
+    ratingInfoDoc.append("recipeID", recipeID);
+    ratingInfoDoc.append("myRating", rating);
+
+    //check if this user already has a ratingList field
+    ArrayList<Document> ratingListDoc = (ArrayList<Document>)user.doc.get("ratingList");
     if(ratingListDoc == null){
-    	ratingListDoc = new ArrayList<Document>();
+      ratingListDoc = new ArrayList<Document>();
     }
-    	
+
     //update ratingList field in document
     ratingListDoc.add(ratingInfoDoc);
     user.doc.append("ratingList", ratingListDoc);
-    	
+
     //update database
     MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
     Bson query = eq(Constants.User.ID_USER, username);
