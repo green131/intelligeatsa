@@ -1,5 +1,6 @@
-# hello world page
-GET / server.app.controllers.HelloWorld.show()
+#serve static files
+GET /                     controllers.Assets.at(path="/public", file= "index.html")
+GET /public/*file         controllers.Assets.at(path="/public", file:String)
 
 
 # User login endpoint
@@ -37,13 +38,8 @@ POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controll
 POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
 
 
-#OPTIONS Request
-OPTIONS /*path                       server.app.Application.preflight(path: String)
-
-
 # Update recipe rating
 # REQUIRED: { "userID":<userID> + recipe/:<recipe_id>/rate/:<rating>}
 # EXAMPLE:  userID = xyz789, recipe_id = 12345, rating = 4.5
 #           /recipe/12345/rate/4.5    	 (userID needs to be in JSON)
 POST /recipe/:recipe_id/rate/:rating     server.app.controllers.Recipes.updateRating(recipe_id: String, rating: Double)
-

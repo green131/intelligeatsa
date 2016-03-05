@@ -1,0 +1,19 @@
+.carousel-container{
+  overflow:auto;
+  padding:0px;
+  white-space: nowrap;
+}
+
+.carousel-item{
+  width:200px;
+  padding:0px;
+  text-align: center;
+  white-space: normal;
+}
+.carousel-item-title{
+  padding:10px;
+  color:#000000;
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
