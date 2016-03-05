@@ -1,5 +1,6 @@
-# hello world page
-GET / server.app.controllers.HelloWorld.show()
+#serve static files
+GET /                     controllers.Assets.at(path="/public", file= "index.html")
+GET /public/*file         controllers.Assets.at(path="/public", file:String)
 
 # User login endpoint
 # REQUIRED {"user":<username>, "pass":<password>}
@@ -30,6 +31,3 @@ POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controll
 # Get recipe by id
 # REQUIRED: { id: <recipe_id> }
 POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
-
-#OPTIONS Request
-OPTIONS /*path                       server.app.Application.preflight(path: String)
