@@ -11,8 +11,8 @@
       <img style="width:320px;height:320px;" class="img-rounded" src="assets/crossed-knife-and-fork.png" ng-src="{{$ctrl.recipe.pictureURL}}"/>
     </div>
     <div class="col-md-8">
-      <h4 ng-if="$ctrl.noRating == false">Rating: {{$ctrl.recipe.rating.value}}</h4>
-      <h4 ng-if="$ctrl.noRating == true">Be the first to rate!</h4>
+      <h4 ng-if="$ctrl.recipe.rating.numOfRaters > 0">Rating: {{$ctrl.recipe.rating.value}}</h4>
+      <h4 ng-if="$ctrl.recipe.rating.numOfRaters == 0">Be the first to rate!</h4>
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" ng-click="$ctrl.rateRecipe(5);" class="btn btn-default"><span class="badge">5</span></button>
         <button type="button" ng-click="$ctrl.rateRecipe(4);" class="btn btn-default"><span class="badge">4</span></button>
