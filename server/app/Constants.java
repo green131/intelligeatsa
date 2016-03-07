@@ -29,11 +29,32 @@ public class Constants {
     public static final String KEY_DESC = "description";
     public static final String KEY_PIC_URL = "pictureURL";
     public static final String INDEX_TITLE_TEXT = "title_text";
+   
+    public static final class Rating {
+      public static final String FIELD_NAME = "rating";
+      public static final String VALUE = "value";
+      public static final String NUM_OF_RATERS = "numOfRaters";
+    }
   }
 
   public static final class User {
     public static final String ID_USER = "user";
     public static final String ID_PASS = "pass";
     public static final String ID_TOKEN = "token";
+    
+    public static final class GroceryList {
+      public static final String FIELD_NAME = "groceryList";
+      public static final String ID_RECIPE = "recipeID";
+    }    
+    
+    public static final class RatingList {
+      public static final String FIELD_NAME = "ratingList";
+      public static final String ID_RECIPE = "recipeID";
+      public static final String MY_RATING = "myRating";
+    }
+  }
+  
+  public static final class Routes {
+    public static final String ID_USER = "userID";
   }
 }
