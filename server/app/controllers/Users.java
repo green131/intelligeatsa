@@ -15,8 +15,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
 import server.app.Global;
+import server.app.exceptions.ServerResultException;
 import server.app.models.Recipe;
-import server.app.models.RecipeUserWrapper;
 import server.app.models.User;
 import server.app.models.Ingredient;
 import server.app.Utils;
@@ -107,39 +107,50 @@ public class Users extends Controller {
 
   public static Result addRecipeToGroceryList(String recipeID){
 
-    RecipeUserWrapper recipeUserWrapper = Utils.getRecipeAndUserFromRequest(request(), recipeID);
-    if(recipeUserWrapper.serverErrorResult != null){
-      //error occured while processing the request
-      return recipeUserWrapper.serverErrorResult;
-    }
-    else{
+    try{
+      //get user and recipe
+      User user = User.getUserFromJsonRequest(request());
+      Recipe recipe = Recipe.getRecipeById(recipeID);
+      ObjectId uID = user.getId();
+      ObjectId rID = recipe.getId();
 
       //check if this user has a groceryList field
-      ArrayList<Document> groceryListDoc = (ArrayList<Document>)recipeUserWrapper.user.doc.get(Constants.User.GroceryList.FIELD_NAME);
-      if(groceryListDoc == null){
+      ArrayList<Document> groceryListDoc;
+      Object groceryListObj = user.doc.get(Constants.User.GroceryList.FIELD_NAME);
+      if(groceryListObj!=null &&  groceryListObj instanceof ArrayList){
+        groceryListDoc = (ArrayList<Document>)groceryListObj;
+      }
+      else if(groceryListObj == null){
         groceryListDoc = new ArrayList<Document>();
       }
+      else{
+        return internalServerError("Grocery list in database not actually a list!");
+      }
 
-      if(groceryListContains(groceryListDoc, recipeUserWrapper.recipeID)){
+
+      if(groceryListContains(groceryListDoc, rID)){
         return badRequest(new ObjectMapper().createObjectNode()
             .put(Constants.Generic.ERROR, "User's grocery list already contains the given recipeID"));  
       }
       else{
         //create new groceryList element
         Document groceryListElementDoc = new Document();
-        groceryListElementDoc.append(Constants.User.GroceryList.ID_RECIPE, recipeUserWrapper.recipeID);
+        groceryListElementDoc.append(Constants.User.GroceryList.ID_RECIPE, rID);
 
         //update groceryList field in document
         groceryListDoc.add(groceryListElementDoc);
-        recipeUserWrapper.user.doc.append(Constants.User.GroceryList.FIELD_NAME, groceryListDoc);
+        user.doc.append(Constants.User.GroceryList.FIELD_NAME, groceryListDoc);
 
         //update database
         MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
-        Bson query = eq(Constants.Mongo.ID, recipeUserWrapper.userID);
-        collection.replaceOne(query, recipeUserWrapper.user.doc);
+        Bson query = eq(Constants.Mongo.ID, uID);
+        collection.replaceOne(query, user.doc);
         return ok("Grocery list updated!");
       }
 
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
     }
 
   }
@@ -147,22 +158,30 @@ public class Users extends Controller {
 
 
   public static Result removeRecipeFromGroceryList(String recipeID){
-    
-    RecipeUserWrapper recipeUserWrapper = Utils.getRecipeAndUserFromRequest(request(), recipeID);
-    if(recipeUserWrapper.serverErrorResult != null){
-      //error occured while processing the request
-      return recipeUserWrapper.serverErrorResult;
-    }
-    else{
+
+    try{
+      //get user and recipe
+      User user = User.getUserFromJsonRequest(request());
+      Recipe recipe = Recipe.getRecipeById(recipeID);
+      ObjectId uID = user.getId();
+      ObjectId rID = recipe.getId();
 
       //check if this user has a groceryList field
-      ArrayList<Document> groceryListDoc = (ArrayList<Document>)recipeUserWrapper.user.doc.get(Constants.User.GroceryList.FIELD_NAME);
-      if(groceryListDoc == null){
+      ArrayList<Document> groceryListDoc;
+      Object groceryListObj = user.doc.get(Constants.User.GroceryList.FIELD_NAME);
+      if(groceryListObj!=null &&  groceryListObj instanceof ArrayList){
+        groceryListDoc = (ArrayList<Document>)groceryListObj;
+      }
+      else if(groceryListObj == null){
         return badRequest(new ObjectMapper().createObjectNode()
-            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));  
+            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID")); 
+      }
+      else{
+        return internalServerError("Grocery list in database not actually a list!");
       }
 
-      if(groceryListContains(groceryListDoc, recipeUserWrapper.recipeID) == false){
+
+      if(groceryListContains(groceryListDoc, rID) == false){
         return badRequest(new ObjectMapper().createObjectNode()
             .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));  
       }
@@ -171,59 +190,77 @@ public class Users extends Controller {
         //update groceryList field in document
         Document recipeIDToRemove = null;
         for(Document doc : groceryListDoc){
-          if(doc.get(Constants.User.GroceryList.ID_RECIPE).equals(recipeUserWrapper.recipeID)){
+          if(doc.get(Constants.User.GroceryList.ID_RECIPE).equals(rID)){
             recipeIDToRemove = doc;
             break;
           }
         }
         groceryListDoc.remove(recipeIDToRemove);
-        recipeUserWrapper.user.doc.append(Constants.User.GroceryList.FIELD_NAME, groceryListDoc);
+        user.doc.append(Constants.User.GroceryList.FIELD_NAME, groceryListDoc);
 
         //update database
         MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
-        Bson query = eq(Constants.Mongo.ID, recipeUserWrapper.userID);
-        collection.replaceOne(query, recipeUserWrapper.user.doc);
+        Bson query = eq(Constants.Mongo.ID, uID);
+        collection.replaceOne(query, user.doc);
         return ok("Grocery list updated!");
       }
 
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
     }
   }
 
 
 
   public static Result getGroceryList(){
-    
-    RecipeUserWrapper recipeUserWrapper = Utils.getUserFromJsonRequest(request());
-    if(recipeUserWrapper.serverErrorResult != null){
-      //error occured while processing the request
-      return recipeUserWrapper.serverErrorResult;
-    }
-    else{
-      
-      //add ingredients from each recipe into the cumulative list
-      ArrayList<Ingredient> cumulativeIngredientList = new ArrayList<Ingredient>();
-      ArrayList<Document> groceryListDoc = (ArrayList<Document>)recipeUserWrapper.user.doc.get(Constants.User.GroceryList.FIELD_NAME);
-      
-      if(groceryListDoc != null){
-        for(Document doc : groceryListDoc){
-          ObjectId recipeID = (ObjectId)doc.get(Constants.User.GroceryList.ID_RECIPE);
-          Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
-          List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
-          cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
+
+    ArrayList<Ingredient> cumulativeIngredientList = new ArrayList<Ingredient>();
+    try{
+      //get user
+      User user = User.getUserFromJsonRequest(request());
+
+      //check if this user has a groceryList field
+      Object groceryListObj = user.doc.get(Constants.User.GroceryList.FIELD_NAME);
+      if(groceryListObj != null){
+        if( !(groceryListObj instanceof ArrayList) ){
+          return internalServerError("Grocery list in database not actually a list!");
+        }
+        else{
+
+          //add ingredients from each recipe into the cumulative list
+          ArrayList<Document> groceryListDoc = (ArrayList<Document>)groceryListObj;
+          for(Document doc : groceryListDoc){
+            Object idObj = doc.get(Constants.User.GroceryList.ID_RECIPE);
+            if(idObj instanceof ObjectId){
+              ObjectId recipeID = (ObjectId)idObj;
+              Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
+              List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
+              cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
+            }
+            else{
+              return internalServerError("Recipe ID not stored as ObjectId in database!");
+            }
+          }
         }
       }
 
-      //create JsonNode and return
-      try {
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(cumulativeIngredientList);
-        JsonNode retNode = mapper.readTree(json);
-        return ok(retNode);
-      } catch (Exception e) {
-        e.printStackTrace();
-        return internalServerError();
-      }
     }
+    catch(ServerResultException e){
+      return e.errorResult;
+    }
+
+    //create JsonNode and return
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(cumulativeIngredientList);
+      JsonNode retNode = mapper.readTree(json);
+      return ok(retNode);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return internalServerError();
+    }
+    
   }
 
 
@@ -236,13 +273,13 @@ public class Users extends Controller {
     }
     return false;
   }
-  
-  
-  
+
+
+
   private static List<Ingredient> getIngredientsInRecipe(Recipe recipe){
     ArrayList<Ingredient> retList = new ArrayList<Ingredient>();
     ArrayList<Document> allIngredientsDoc = (ArrayList<Document>) recipe.doc.get(Constants.Recipe.Ingredients.FIELD_NAME);
-    
+
     for(Document doc : allIngredientsDoc){
       ArrayList<Document> ingredientsInThisSectionDoc = (ArrayList<Document>) doc.get(Constants.Recipe.Ingredients.SECTION_INGREDIENTS);
       for(Document ingredientDoc : ingredientsInThisSectionDoc){

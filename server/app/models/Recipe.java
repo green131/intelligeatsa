@@ -1,14 +1,20 @@
 package server.app.models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import play.mvc.Results;
 import server.app.Constants;
 import server.app.Utils;
+import server.app.Global;
+import server.app.exceptions.ServerResultException;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -105,6 +111,27 @@ public class Recipe extends BaseModelClass {
     FindIterable<Document> iter = mongoCollection.find(query);
     Recipe r = new Recipe(iter.first());
     return r;
+  }
+
+
+  public static Recipe getRecipeById(String recipeID) throws ServerResultException{
+
+    //parse recipeID
+    ObjectId rID = null;
+    try {
+      rID = new ObjectId(recipeID);
+    } catch (IllegalArgumentException e) {
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Malformed recipe id, not hexadecimal")));
+    }
+
+    //check if the given recipe and user exist
+    Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, rID);
+    if (recipe == null) {
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Could not find recipe matching id")));
+    }
+    
+    return recipe;
+    
   }
 
   @Override

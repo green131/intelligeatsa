@@ -3,12 +3,18 @@ package server.app.models;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import play.mvc.Http.Request;
+import play.mvc.Result;
+import play.mvc.Results;
 import server.app.Constants;
 import server.app.Global;
-
+import server.app.exceptions.ServerResultException;
 import static com.mongodb.client.model.Filters.eq;
 
 public class User extends BaseModelClass {
@@ -71,6 +77,41 @@ public class User extends BaseModelClass {
     return getUserFromToken(conn, id);
   }
 
+  
+  public static User getUserFromJsonRequest(Request request) throws ServerResultException{
+    
+    //check if request is json
+    JsonNode requestJson = request.body().asJson();
+    if(requestJson == null) {
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Expecting Json data!")));
+    }
+
+    //check if json request contains required information
+    JsonNode userIDNode = requestJson.findPath(Constants.Routes.ID_USER);
+    if(!userIDNode.isTextual()){
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Malformed request: expecting text information!")));
+    }
+
+    //parse userID
+    String userID = userIDNode.textValue();
+    ObjectId rID = null, uID = null;
+    try {
+      uID = new ObjectId(userID);
+    } catch (IllegalArgumentException e) {
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Malformed user id, not hexadecimal")));
+    }
+
+    //check if the given user exists
+    User user = User.getUserFromToken(Global.mongoConnector, uID);
+    if(user == null){
+      throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Could not find user matching id")));
+    }
+
+    return user;
+    
+  }
+  
+  
   @Override
   public boolean equals(Object other) {
     if (other instanceof User) {

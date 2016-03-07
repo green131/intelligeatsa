@@ -12,8 +12,8 @@ import play.mvc.Result;
 import server.app.Constants;
 import server.app.Global;
 import server.app.Utils;
+import server.app.exceptions.ServerResultException;
 import server.app.models.Recipe;
-import server.app.models.RecipeUserWrapper;
 import server.app.models.User;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -120,16 +120,20 @@ public class Recipes extends Controller {
 
 
   public static Result updateRating(String recipeID, double rating){
-    RecipeUserWrapper recipeUserWrapper = Utils.getRecipeAndUserFromRequest(request(), recipeID);
-    if(recipeUserWrapper.serverErrorResult != null){
-      //error occured while processing the request
-      return recipeUserWrapper.serverErrorResult;
-    }
-    else{
+    try{
+      //get user and recipe
+      User user = User.getUserFromJsonRequest(request());
+      Recipe recipe = Recipe.getRecipeById(recipeID);
+      ObjectId uID = user.getId();
+      ObjectId rID = recipe.getId();
+      
       //perform the required database updates
-      updateRecipeRating(recipeUserWrapper.recipeID, recipeUserWrapper.recipe, rating);  
-      updateUsersListOfRatedRecipes(recipeUserWrapper.userID, recipeUserWrapper.user, recipeUserWrapper.recipeID, rating);
+      updateRecipeRating(rID, recipe, rating);  
+      updateUsersListOfRatedRecipes(uID, user, rID, rating);
       return ok("Recipe rating updated!");
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
     }
   }
 
