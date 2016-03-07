@@ -43,3 +43,7 @@ POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeByI
 # EXAMPLE:  userID = xyz789, recipe_id = 12345, rating = 4.5
 #           /recipe/12345/rate/4.5    	 (userID needs to be in JSON)
 POST /recipe/:recipe_id/rate/:rating     server.app.controllers.Recipes.updateRating(recipe_id: String, rating: Double)
+
+
+#OPTIONS Request
+OPTIONS /*path                       server.app.Application.preflight(path: String)
