@@ -56,7 +56,7 @@ POST /user/groceryList/add/:recipe_id    		server.app.controllers.Users.addRecip
 # REQUIRED: { "userID":<userID> + user/groceryList/remove/:<recipe_id>}
 # EXAMPLE:  userID = xyz789, recipe_id = 12345
 #           user/groceryList/remove/12345 		(userID needs to be in JSON)
-POST /user/groceryList/remove/:recipe_id    	server.app.controllers.Users.removeRecipeFromGroceryList(recipe_id: String)
+POST /user/groceryList/remove/:recipe_id		server.app.controllers.Users.removeRecipeFromGroceryList(recipe_id: String)
 
 
 # Get user's grocery list

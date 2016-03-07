@@ -29,7 +29,14 @@ public class Constants {
     public static final String KEY_DESC = "description";
     public static final String KEY_PIC_URL = "pictureURL";
     public static final String INDEX_TITLE_TEXT = "title_text";
-   
+    
+    public static final class Ingredients {
+      public static final String FIELD_NAME = "ingredients";
+      public static final String SECTION_INGREDIENTS = "sectionIngredients";
+      public static final String ITEM = "item";
+      public static final String QUANTITY = "quantity";
+    }
+    
     public static final class Rating {
       public static final String FIELD_NAME = "rating";
       public static final String VALUE = "value";
