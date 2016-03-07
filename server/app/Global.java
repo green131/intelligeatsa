@@ -19,4 +19,25 @@ public class Global extends GlobalSettings {
     // create full text search index on recipes
     Recipe.setupSearchIndex(mongoConnector);
   }
+
+  // add cors header to each response
+  @Override
+  public Action<?> onRequest(Http.Request request, java.lang.reflect.Method actionMethod) {
+    return new ActionWrapper(super.onRequest(request, actionMethod));
+  }
+
+  /* cors action*/
+  private class ActionWrapper extends Action.Simple {
+    public ActionWrapper(Action<?> action) {
+      this.delegate = action;
+    }
+
+    @Override
+    public Promise<Result> call(Http.Context ctx) throws java.lang.Throwable {
+      Promise<Result> result = this.delegate.call(ctx);
+      Http.Response response = ctx.response();
+      response.setHeader("Access-Control-Allow-Origin", "*");
+      return result;
+    }
+  }
 }
