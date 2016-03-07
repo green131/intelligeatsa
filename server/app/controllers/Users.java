@@ -114,7 +114,7 @@ public class Users extends Controller {
     }
     else{
 
-      //check if this user already has a groceryList field
+      //check if this user has a groceryList field
       ArrayList<Document> groceryListDoc = (ArrayList<Document>)recipeUserWrapper.user.doc.get(Constants.User.GroceryList.FIELD_NAME);
       if(groceryListDoc == null){
         groceryListDoc = new ArrayList<Document>();
@@ -155,7 +155,7 @@ public class Users extends Controller {
     }
     else{
 
-      //check if this user already has a groceryList field
+      //check if this user has a groceryList field
       ArrayList<Document> groceryListDoc = (ArrayList<Document>)recipeUserWrapper.user.doc.get(Constants.User.GroceryList.FIELD_NAME);
       if(groceryListDoc == null){
         return badRequest(new ObjectMapper().createObjectNode()
