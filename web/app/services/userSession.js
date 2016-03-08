@@ -58,6 +58,26 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
       });
     };
 
+    this.createSessionFromFacebookRegistration = function(name,userId,accessToken,successCallback,errorCallback){
+      $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        url: apiRegistrationUrl,
+        data:{
+          'fbname':name,
+          'fbUserId': userId,
+          'fbAccessToken': accessToken
+        }
+      }).then(function (response) {
+        user = response.data;
+        broadcast(SESSION_EVENTS.SESSION_CREATED);
+        successCallback();
+      }, function (response) {
+        errorCallback(response);
+      });
+    };
+
+
     this.getUser = function(){
       return user;
     };
