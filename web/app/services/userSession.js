@@ -33,6 +33,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         }
       }).then(function (response) {
         user = response.data;
+        user.sessionType = 'email';
         broadcast(SESSION_EVENTS.SESSION_CREATED);
         successCallback();
       }, function (response) {
@@ -51,6 +52,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         }
       }).then(function(response) {
         user = response.data;
+        user.sessionType = 'email';
         broadcast(SESSION_EVENTS.SESSION_CREATED);
         successCallback();
       }, function(response) {
@@ -64,12 +66,13 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         headers: { 'Content-Type': 'application/json' },
         url: apiRegistrationUrl,
         data:{
-          'fbname':name,
-          'fbUserId': userId,
-          'fbAccessToken': accessToken
+          'facebookName':name,
+          'facebookUserId': userId,
+          'facebookAccessToken': accessToken
         }
       }).then(function (response) {
         user = response.data;
+        user.sessionType = facebook;
         broadcast(SESSION_EVENTS.SESSION_CREATED);
         successCallback();
       }, function (response) {
@@ -77,6 +80,28 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
       });
     };
 
+    this.createSessionFromGoogleRegistration = function(name, userId, accessToken, successCallback, errorCallback){
+      $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        url: apiRegistrationUrl,
+        data:{
+          'googleName':name,
+          'googleUserId': userId,
+          'googleAccessToken': accessToken
+        }
+      }).then(function (response) {
+        user = response.data;
+        user.sessionType = 'google';
+        broadcast(SESSION_EVENTS.SESSION_CREATED);
+        successCallback();
+      }, function (response) {
+        user = {
+          sessionType:'google'
+        };
+        errorCallback(response);
+      });
+    }
 
     this.getUser = function(){
       return user;
@@ -87,6 +112,12 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
     };
 
     this.closeSession = function(){
+      if(user.sessionType == 'google'){
+        gapi.auth.signOut();
+        console.log('signed out');
+      }else if(user.sessionType == 'facebook'){
+
+      }
       user = null;
       broadcast(SESSION_EVENTS.SESSION_CLOSED);
     };
