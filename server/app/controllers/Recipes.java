@@ -11,7 +11,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
 import server.app.Global;
-import server.app.Utils;
 import server.app.exceptions.ServerResultException;
 import server.app.models.Recipe;
 import server.app.models.User;

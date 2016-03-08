@@ -186,7 +186,6 @@ public class Users extends Controller {
             .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));  
       }
       else{
-
         //update groceryList field in document
         Document recipeIDToRemove = null;
         for(Document doc : groceryListDoc){
