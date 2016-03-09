@@ -64,3 +64,7 @@ POST /user/groceryList/remove/:recipe_id		server.app.controllers.Users.removeRec
 # EXAMPLE:  userID = xyz789
 #           user/groceryList   					(userID needs to be in JSON)
 POST /user/groceryList   						server.app.controllers.Users.getGroceryList()
+
+
+#OPTIONS Request
+OPTIONS /*path                       server.app.Application.preflight(path: String)
