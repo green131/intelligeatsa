@@ -31,12 +31,12 @@
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/js/dropdown.js"></script>
   <script src="bower_components/bootstrap/js/modal.js"></script>
+  <script type="text/javascript" src="typeahead.js"></script>
   <script type="text/javascript"></script>
 
   <!-- angular -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
-
   <!-- services -->
   <script src="services/services.js"></script>
   <script src="services/userSession.js"></script>
@@ -59,7 +59,8 @@
   <script src="pages/searchResultsPage/searchResultsPage.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
-
+  // constructs the suggestion engine
+  $("#searchBar").typeahead({ source:['chicken','rice'] });
   </script>
 </body>
 </html>

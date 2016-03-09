@@ -3,7 +3,7 @@
 angular.module('intelligeatsa.pages')
 .constant('searchResultsBatchSize',20)
 .config(['$routeProvider',function($routeProvider) {
-  $routeProvider.when('/search/:query',{
+  $routeProvider.when('/search/:query/:searchType',{
     templateUrl: 'pages/searchResultsPage/searchResultsPage.html',
     controller: 'SearchResultsPageController',
     controllerAs: '$ctrl'
