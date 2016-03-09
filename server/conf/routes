@@ -15,7 +15,7 @@ POST /user/login            server.app.controllers.Users.loginUser()
 POST /user/register         server.app.controllers.Users.registerUser()
 
 # Link user account endpoint
-# REQUIRED {"user":<username>, ("fbId":<facebook id>|"googleId":<google id>)}
+# REQUIRED {"token":<token>, ("fbId":<facebook id>|"googleId":<google id>)}
 # Returns user token
 POST /user/linkUserAccount  server.app.controllers.Users.linkUserAccount()
 
