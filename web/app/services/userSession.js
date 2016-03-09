@@ -1,10 +1,6 @@
 'use strict';
 
 angular.module('intelligeatsa.services')
-/** @constant
-@type {string}
-@default
-*/
 .constant('apiRegistrationUrl','http://localhost:8080/user/register')
 .constant('apiLoginUrl','http://localhost:8080/user/login')
 .constant('SESSION_EVENTS',{
@@ -58,7 +54,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         errorCallback(response);
       });
     };
-    
+
     /**
     * Creates a session from email login
     * @function
