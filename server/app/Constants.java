@@ -35,5 +35,7 @@ public class Constants {
     public static final String ID_USER = "user";
     public static final String ID_PASS = "pass";
     public static final String ID_TOKEN = "token";
+    public static final String ID_FB = "fbId";
+    public static final String ID_GOOGLE = "googleId";
   }
 }
