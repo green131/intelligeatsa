@@ -167,7 +167,7 @@ public class Recipes extends Controller {
 
 
 
-  private static void updateUsersListOfRatedRecipes(ObjectId userID, User user, ObjectId recipeID, double rating){
+  private static void updateUsersListOfRatedRecipes(ObjectId userID, User user, ObjectId recipeID, double rating) throws ServerResultException{
 
     //create a new list item for the given recipe rating
     Document ratingInfoDoc = new Document();
@@ -175,11 +175,18 @@ public class Recipes extends Controller {
     ratingInfoDoc.append(Constants.User.RatingList.MY_RATING, rating);
 
     //check if this user already has a ratingList field
-    ArrayList<Document> ratingListDoc = (ArrayList<Document>)user.doc.get(Constants.User.RatingList.FIELD_NAME);
-    if(ratingListDoc == null){
+    ArrayList<Document> ratingListDoc;
+    Object ratingListObj = user.doc.get(Constants.User.RatingList.FIELD_NAME);
+    if(ratingListObj!=null &&  ratingListObj instanceof ArrayList){
+      ratingListDoc = (ArrayList<Document>)ratingListObj;
+    }
+    else if(ratingListObj == null){
       ratingListDoc = new ArrayList<Document>();
     }
-
+    else{
+      throw new ServerResultException(internalServerError("Rating list in database not actually a list!"));
+    }
+    
     //update ratingList field in document
     ratingListDoc.add(ratingInfoDoc);
     user.doc.append(Constants.User.RatingList.FIELD_NAME, ratingListDoc);
