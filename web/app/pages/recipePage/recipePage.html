@@ -14,11 +14,11 @@
       <h4 ng-if="$ctrl.recipe.rating.numOfRaters > 0">Rating: {{$ctrl.recipe.rating.value}}</h4>
       <h4 ng-if="$ctrl.recipe.rating.numOfRaters == 0">Be the first to rate!</h4>
       <div class="btn-group" role="group" aria-label="...">
-        <button type="button" ng-click="$ctrl.rateRecipe(5);" class="btn btn-default"><span class="badge">5</span></button>
-        <button type="button" ng-click="$ctrl.rateRecipe(4);" class="btn btn-default"><span class="badge">4</span></button>
-        <button type="button" ng-click="$ctrl.rateRecipe(3);" class="btn btn-default"><span class="badge">3</span></button>
-        <button type="button" ng-click="$ctrl.rateRecipe(2);" class="btn btn-default"><span class="badge">2</span></button>
-        <button type="button" ng-click="$ctrl.rateRecipe(1);" class="btn btn-default"><span class="badge">1</span></button>
+        <button type="button" ng-click="$ctrl.rateRecipe(5);" id="rate_5" class="btn btn-default"><span class="badge">5</span></button>
+        <button type="button" ng-click="$ctrl.rateRecipe(4);" id="rate_4" class="btn btn-default"><span class="badge">4</span></button>
+        <button type="button" ng-click="$ctrl.rateRecipe(3);" id="rate_3" class="btn btn-default"><span class="badge">3</span></button>
+        <button type="button" ng-click="$ctrl.rateRecipe(2);" id="rate_2" class="btn btn-default"><span class="badge">2</span></button>
+        <button type="button" ng-click="$ctrl.rateRecipe(1);" id="rate_1" class="btn btn-default"><span class="badge">1</span></button>
       </div>
       <h4>Description</h4>
       <div class="panel panel-danger">
