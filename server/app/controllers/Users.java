@@ -36,17 +36,17 @@ public class Users extends Controller {
     }
 
     // check for social login
-    String socialIdName = null;
+    String socialIdType = null;
     if (requestJson.has(Constants.User.ID_FB) && requestJson.has(Constants.User.ID_GOOGLE)) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Can only specify 1 social id!"));
     } else if (requestJson.has(Constants.User.ID_FB)) {
-      socialIdName = Constants.User.ID_FB;
+      socialIdType = Constants.User.ID_FB;
     } else if (requestJson.has(Constants.User.ID_GOOGLE)) {
-      socialIdName = Constants.User.ID_GOOGLE;
+      socialIdType = Constants.User.ID_GOOGLE;
     }
-    if (socialIdName != null) {
-      User user = User.getUserFromSocialId(Global.mongoConnector, socialIdName, requestJson.get(socialIdName).asText());
+    if (socialIdType != null) {
+      User user = User.getUserFromSocialId(Global.mongoConnector, socialIdType, requestJson.get(socialIdType).asText());
       if (user != null) {
         return ok(new ObjectMapper().createObjectNode()
             .put(Constants.User.ID_TOKEN, user.generateUserToken().toHexString())
@@ -99,25 +99,25 @@ public class Users extends Controller {
           .put(Constants.Generic.ERROR, "Username already taken"));
     }
 
-    String socialIdName = null;
+    String socialIdType = null;
     if (requestJson.has(Constants.User.ID_FB) && requestJson.has(Constants.User.ID_GOOGLE)) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Can only specify 1 social id!"));
     } else if (requestJson.has(Constants.User.ID_FB)) {
-      socialIdName = Constants.User.ID_FB;
+      socialIdType = Constants.User.ID_FB;
     } else if (requestJson.has(Constants.User.ID_GOOGLE)) {
-      socialIdName = Constants.User.ID_GOOGLE;
+      socialIdType = Constants.User.ID_GOOGLE;
     }
-    if (socialIdName != null) {
-      String socialId = requestJson.get(socialIdName).asText();
-      if (User.getUserFromSocialId(Global.mongoConnector, socialIdName, socialId) != null) {
+    if (socialIdType != null) {
+      String socialId = requestJson.get(socialIdType).asText();
+      if (User.getUserFromSocialId(Global.mongoConnector, socialIdType, socialId) != null) {
         return badRequest(new ObjectMapper().createObjectNode()
             .put(Constants.Generic.ERROR, "social id already taken"));
       }
       User u = new User(userNode.asText());
       u.doc = new Document();
       u.addAttribute(Constants.User.ID_USER, userNode.asText());
-      u.addAttribute(socialIdName, socialId);
+      u.addAttribute(socialIdType, socialId);
       u.persist(Global.mongoConnector);
       return ok(new ObjectMapper().createObjectNode()
         .put(Constants.User.ID_USER, userNode.asText())
@@ -167,26 +167,26 @@ public class Users extends Controller {
           .put(Constants.Generic.ERROR, "Expecting user info!"));
     }
 
-    String socialIdName;
+    String socialIdType;
     if (requestJson.has(Constants.User.ID_FB) && requestJson.has(Constants.User.ID_GOOGLE)) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Expecting either fb user id or google user id"));
     }
     else if (requestJson.has(Constants.User.ID_FB)) {
-      socialIdName = Constants.User.ID_FB;
+      socialIdType = Constants.User.ID_FB;
     } else if (requestJson.has(Constants.User.ID_GOOGLE)) {
-      socialIdName = Constants.User.ID_GOOGLE;
+      socialIdType = Constants.User.ID_GOOGLE;
     } else {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Expecting either fb user id or google user id"));
     }
-    String socialId = requestJson.get(socialIdName).asText();
-    User existingUser = User.getUserFromSocialId(Global.mongoConnector, socialIdName, socialId);
+    String socialId = requestJson.get(socialIdType).asText();
+    User existingUser = User.getUserFromSocialId(Global.mongoConnector, socialIdType, socialId);
     if (existingUser != null) {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Social id already taken"));
     }
-    user.changeAttribute(socialIdName, socialId);
+    user.changeAttribute(socialIdType, socialId);
     user.persist(Global.mongoConnector);
     return ok();
   }
