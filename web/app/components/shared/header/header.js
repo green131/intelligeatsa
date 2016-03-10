@@ -32,4 +32,8 @@ function HeaderController($http,$rootScope,userSession,SESSION_EVENTS){
   ctrl.logout = function(){
     userSession.closeSession();
   };
+
+  ctrl.showLinkAccountsFormModal = function(){
+    $('#linkAccountsFormModal').modal('toggle');
+  };
 }
