@@ -1,0 +1,27 @@
+<header></header>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div style="overflow:auto;">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tr ng-repeat="listElement in $ctrl.groceryList">
+          <td>{{listElement.item}}</td>
+          <td>{{listElement.quantity}}</td>
+        </tr>
+      </table>
+    </div>
+    </div>
+    <div class="col-md-3"><br>
+      <div class="alert alert-warning" role="alert">
+        <h2>{{$ctrl.groceryList.length}} items in your grocery list.</h2>
+      </div>
+    </div>
+  </div>
+</div>
