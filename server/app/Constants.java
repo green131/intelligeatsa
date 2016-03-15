@@ -63,5 +63,7 @@ public class Constants {
   
   public static final class Routes {
     public static final String ID_USER = "userID";
+    public static final String RECIPE_ID_LIST = "recipeIDList";
+    public static final String INGREDIENTS = "ingredients";
   }
 }

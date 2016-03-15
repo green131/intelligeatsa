@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -214,6 +215,7 @@ public class Users extends Controller {
 
   public static Result getGroceryList(){
 
+    ArrayList<String> recipeIdList = new ArrayList<String>();
     ArrayList<Ingredient> cumulativeIngredientList = new ArrayList<Ingredient>();
     try{
       //get user
@@ -231,15 +233,19 @@ public class Users extends Controller {
           ArrayList<Document> groceryListDoc = (ArrayList<Document>)groceryListObj;
           for(Document doc : groceryListDoc){
             Object idObj = doc.get(Constants.User.GroceryList.ID_RECIPE);
+            
             if(idObj instanceof ObjectId){
               ObjectId recipeID = (ObjectId)idObj;
               Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
               List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
+              
+              recipeIdList.add(recipeID.toHexString());
               cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
             }
             else{
               return internalServerError("Recipe ID not stored as ObjectId in database!");
             }
+            
           }
         }
       }
@@ -249,12 +255,20 @@ public class Users extends Controller {
       return e.errorResult;
     }
 
-    //create JsonNode and return
+    //create ObjectNode and return
     try {
       ObjectMapper mapper = new ObjectMapper();
-      String json = mapper.writeValueAsString(cumulativeIngredientList);
-      JsonNode retNode = mapper.readTree(json);
+      String recipeIDListJson = mapper.writeValueAsString(recipeIdList);
+      String ingredientsJson = mapper.writeValueAsString(cumulativeIngredientList);
+      
+      JsonNode recipeIDListNode = mapper.readTree(recipeIDListJson);
+      JsonNode ingredientsNode = mapper.readTree(ingredientsJson);
+      
+      ObjectNode retNode = mapper.createObjectNode();
+      retNode.put(Constants.Routes.RECIPE_ID_LIST, recipeIDListNode);
+      retNode.put(Constants.Routes.INGREDIENTS, ingredientsNode);
       return ok(retNode);
+      
     } catch (Exception e) {
       e.printStackTrace();
       return internalServerError();
