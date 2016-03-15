@@ -57,7 +57,7 @@ function RecipePageController($http, $routeParams, $rootScope, groceryList, SESS
   }).then(function successCallback(response) {
     ctrl.recipe = response.data;
     ctrl.instructionList = ctrl.recipe.preparation[0];
-<<<<<<< HEAD
+
     ctrl.recipeId = ctrl.recipe._id.$oid;
     // round
     if(ctrl.recipe.hasOwnProperty('rating')){
@@ -68,14 +68,11 @@ function RecipePageController($http, $routeParams, $rootScope, groceryList, SESS
         numOfRaters: 0
       };
     }
-=======
-    console.log(response);
->>>>>>> master
   }, function errorCallback(response){
     console.log(response);
   });
 
-<<<<<<< HEAD
+
   ctrl.rateRecipe = function(rating){
     if(!userSession.sessionExists()){
       $('#loginModal').modal('show');
@@ -113,7 +110,7 @@ function RecipePageController($http, $routeParams, $rootScope, groceryList, SESS
     });
 
   };
-=======
+
 
   $rootScope.$on(SESSION_EVENTS.SESSION_CREATED,function(){
     ctrl.sessionExists = true;
@@ -127,5 +124,5 @@ function RecipePageController($http, $routeParams, $rootScope, groceryList, SESS
   });
 
   init();
->>>>>>> master
+
 }
