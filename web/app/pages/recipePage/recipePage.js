@@ -10,17 +10,13 @@ angular.module('intelligeatsa.pages')
   });
 }]);
 
-<<<<<<< HEAD
-function RecipePageController($http, $routeParams,apiRateUrl,userSession,rate){
-  var ctrl = this;
-  var recipeUrl = "http://localhost:8080/recipe/id/" + $routeParams.id;
-  var previousRating = -1;
-=======
-function RecipePageController($http, $routeParams, $rootScope, groceryList, SESSION_EVENTS, userSession){
+
+function RecipePageController($http, $routeParams, $rootScope, groceryList, SESSION_EVENTS, apiRateUrl,userSession,rate){
   var ctrl = this;
   var recipeId = $routeParams.id;
+  var previousRating = -1;
   var recipeUrl = "http://localhost:8080/recipe/id/" + recipeId;
->>>>>>> master
+
   ctrl.recipe = '';
   ctrl.instructionList=[];
   ctrl.inGroceryList = false;
