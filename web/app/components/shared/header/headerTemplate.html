@@ -13,7 +13,6 @@
         </div>
       </div>
       <div ng-if="$ctrl.sessionExists">
-
         <!-- Split button -->
         <div class="btn-group">
           <button type="button" ng-click="$ctrl.logout();" class="btn btn-default">Logout</button>
@@ -26,7 +25,9 @@
           </ul>
         </div>
       </div>
+      <button type="button" ng-if="$ctrl.sessionExists" ng-click="$ctrl.showGroceryList();" class="btn btn-default"><img style="height:24px;width:24px;" src="assets/grocery-cart.png"/></button>
     </div>
+  </div>
   </div>
   <modal-window modal-id="loginModal">
     <div class="modal-header">
@@ -46,8 +47,6 @@
       </div>
     </div>
     <div class="modal-footer">
-
     </div>
   </modal-window>
   <link-accounts-form></link-accounts-form>
-</div>
