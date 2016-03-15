@@ -1,7 +1,15 @@
 <header></header>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3"></div>
+    <div class="col-md-3">
+      <br>
+      <div class="panel panel-danger">
+        <div class="list-group-item" ng-if="$ctrl.recipesInfo.length==0">Go add a recipe to the grocery list!</div>
+          <div class="list-group-item" ng-repeat="recipeInfo in $ctrl.recipesInfo">
+            <p>{{recipeInfo.title}}</p><a href="" ng-click="$ctrl.removeRecipe(recipeInfo.id)">remove</a>
+          </div>
+      </div>
+    </div>
     <div class="col-md-6">
       <div style="overflow:auto;">
       <table class="table table-hover">
