@@ -33,6 +33,56 @@ function SearchBarController($window,$http){
       // close the window
       $('#ingredientSearchModal').modal('toggle');
       $window.location.href= '#/search/'+ingredientsSelected.join() + '/ingredients';
+    }else{
+      console.log('no ingredients selected');
     }
   }
+
+  // configure autocomplete
+  var autoCompletePossibilities = [
+    'apple',
+    'banana',
+    'cherry',
+    'grapes',
+    'mangoes',
+    'melons',
+    'orange',
+    'peaches',
+    'pears',
+    'pineapple',
+    'strawberry',
+    'tomato',
+    'chicken',
+    'avocado',
+    'egg',
+    'white rice',
+    'brown rice',
+    'tuna',
+    'salmon',
+    'shrimp',
+    'peanut',
+    'pork',
+    'onion',
+    'thai',
+    'pasta',
+    'indian',
+    'panner',
+    'chicken tikka',
+    'salsa',
+    'sweet potato',
+    'tofu',
+    'lentils',
+    'curry'
+  ];
+  $('#searchBar').autocomplete({
+    source: autoCompletePossibilities,
+    minLength:1,
+    select: function(event, ui){
+      if(ui.item){
+        ctrl.searchQuery = ui.item.value;
+      }
+    }
+  });
+
+
 }

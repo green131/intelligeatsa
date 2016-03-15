@@ -46,4 +46,5 @@ function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchS
     return '#/recipe/' + mongoUtils.mongoIdObjToString(mongoIdObj);
   };
 
+
 }

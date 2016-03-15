@@ -1,5 +1,5 @@
 <div class="input-group">
-    <input type="text" data-provide="typeahead" autocomplete="off"  id="searchBar" class="form-control typeahead" ng-model="$ctrl.searchQuery" placeholder="{{$ctrl.placeholder}}">
+  <input type="text" id="searchBar" class="form-control ui-widget" ng-model="$ctrl.searchQuery" placeholder="{{$ctrl.placeholder}}">
   <div class="input-group-btn">
     <button ng-click="$ctrl.search();" type="button" class="btn btn-default">Search</button>
     <button style= type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -33,6 +33,11 @@
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> cilantro </label> </div></td>
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> mango </label> </div></td>
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> mushroom </label> </div></td>
+          </tr>
+          <tr>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> pineapple </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> avocado </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> lime </label> </div></td>
           </tr>
         </tbody>
       </table>
