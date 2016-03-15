@@ -2,10 +2,10 @@ package server.app;
 
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
-
 import java.util.Collection;
 
-public class Utils {
+
+public class Utils{
 
   public static void setupPaginator(FindIterable<Document> iter, int range_start, int range_end) {
     // get results in range
@@ -28,4 +28,5 @@ public class Utils {
     for (Object obj : it) i++;
     return i;
   }
+
 }
