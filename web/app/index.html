@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="components/shared/header/header.css"/>
   <link rel="stylesheet" href="components/shared/carousel/carousel.css"/>
   <link rel="stylesheet" href="components/shared/modalWindow/modalWindow.css"/>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="app.css"/>
 
 </head>
@@ -29,6 +30,7 @@
 
   <!-- js dependencies -->
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="bower_components/bootstrap/js/dropdown.js"></script>
   <script src="bower_components/bootstrap/js/modal.js"></script>
   <script type="text/javascript"></script>
@@ -36,7 +38,6 @@
   <!-- angular -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
-
   <!-- services -->
   <script src="services/services.js"></script>
   <script src="services/userSession.js"></script>
@@ -60,7 +61,10 @@
   <script src="pages/searchResultsPage/searchResultsPage.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
+  // constructs the suggestion engine
+  window.onload = function(){
 
+  };
   </script>
 </body>
 </html>

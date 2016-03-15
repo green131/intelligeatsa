@@ -1,15 +1,15 @@
 'use strict';
 
-var pagesModule = angular.module('intelligeatsa.pages');
-
-// attach to url route
-pagesModule.config(['$routeProvider', function($routeProvider) {
+angular.module('intelligeatsa.pages')
+.constant('apiRateUrl','http://localhost:8080/recipe/')
+.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/recipe/:id',{
     templateUrl: 'pages/recipePage/recipePage.html',
     controller: RecipePageController,
     controllerAs: '$ctrl'
   });
 }]);
+
 
 function RecipePageController($http, $routeParams, $rootScope, groceryList, SESSION_EVENTS, userSession){
   var ctrl = this;
@@ -53,8 +53,9 @@ function RecipePageController($http, $routeParams, $rootScope, groceryList, SESS
     method: 'POST',
     url: recipeUrl,
   }).then(function successCallback(response) {
-    ctrl.recipe = response.data;
-    ctrl.instructionList = ctrl.recipe.preparation[0];
+      ctrl.recipe = response.data;
+      ctrl.instructionList = ctrl.recipe.preparation[0];
+      ctrl.recipeId = ctrl.recipe._id.$oid;
     console.log(response);
   }, function errorCallback(response){
     console.log(response);
