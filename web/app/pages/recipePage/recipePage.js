@@ -10,48 +10,68 @@ angular.module('intelligeatsa.pages')
   });
 }]);
 
-function RecipePageController($http, $routeParams,apiRateUrl,userSession,rate){
+
+function RecipePageController($http, $routeParams, $rootScope, groceryList, SESSION_EVENTS, userSession){
   var ctrl = this;
-  var recipeUrl = "http://localhost:8080/recipe/id/" + $routeParams.id;
+  var recipeId = $routeParams.id;
+  var recipeUrl = "http://localhost:8080/recipe/id/" + recipeId;
   ctrl.recipe = '';
   ctrl.instructionList=[];
+  ctrl.inGroceryList = false;
+  ctrl.sessionExists = false;
+  ctrl.user = null;
+
+  function init(){
+    if(userSession.sessionExists()){
+      ctrl.user = userSession.getUser();
+      ctrl.sessionExists = true;
+      groceryList.contains(recipeId, function success(resultBool){
+        ctrl.inGroceryList = resultBool;
+      }, function error(){
+        $('#loginModal').modal('show');
+      });
+    }
+  }
+
+  ctrl.addToGroceryList = function(){
+    groceryList.add(recipeId, function success(){
+      ctrl.inGroceryList = true;
+    }, function error(){
+      $('#loginModal').modal('show');
+    });
+  };
+
+  ctrl.removeFromGroceryList = function(){
+    groceryList.remove(recipeId, function success(){
+      ctrl.inGroceryList = false;
+    }, function error(){
+      $('#loginModal').modal('show');
+    });
+  };
+
   $http({
-  method: 'POST',
-  url: recipeUrl,
+    method: 'POST',
+    url: recipeUrl,
   }).then(function successCallback(response) {
       ctrl.recipe = response.data;
       ctrl.instructionList = ctrl.recipe.preparation[0];
       ctrl.recipeId = ctrl.recipe._id.$oid;
-      // round
-      if(ctrl.recipe.hasOwnProperty('rating')){
-        ctrl.recipe.rating.value = Math.floor(ctrl.recipe.rating.value);
-      }else{
-        ctrl.recipe.rating = {
-          value: 0,
-          numOfRaters: 0
-        };
-      }
+    console.log(response);
   }, function errorCallback(response){
     console.log(response);
   });
 
-  ctrl.rateRecipe = function(rating){
-    if(!userSession.sessionExists()){
-      $('#loginModal').modal('show');
-      return;
-    }
-    var user = userSession.getUser();
 
-    rate(ctrl.recipeId, rating, user.token, function(response){
-        var originalSum = (ctrl.recipe.rating.value * ctrl.recipe.rating.numOfRaters);
-        var updatedSum = originalSum + rating;
-        ctrl.recipe.rating.numOfRaters++;
-        var newRating = Math.floor(updatedSum / ctrl.recipe.rating.numOfRaters);
-        ctrl.recipe.rating.value = newRating;
-        console.log(response);
-    }, function(err){
+  $rootScope.$on(SESSION_EVENTS.SESSION_CREATED,function(){
+    ctrl.sessionExists = true;
+    ctrl.user = userSession.getUser();
+    init();
+  });
 
-    });
+  $rootScope.$on(SESSION_EVENTS.SESSION_CLOSED,function(){
+    ctrl.sessionExists = false;
+    ctrl.user = null;
+  });
 
-  };
+  init();
 }
