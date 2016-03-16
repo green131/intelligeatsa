@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -217,7 +218,7 @@ public class Users extends Controller {
 
       if(groceryListContains(groceryListDoc, rID)){
         return badRequest(new ObjectMapper().createObjectNode()
-            .put(Constants.Generic.ERROR, "User's grocery list already contains the given recipeID"));  
+            .put(Constants.Generic.ERROR, "User's grocery list already contains the given recipeID"));
       }
       else{
         //create new groceryList element
@@ -261,7 +262,7 @@ public class Users extends Controller {
       }
       else if(groceryListObj == null){
         return badRequest(new ObjectMapper().createObjectNode()
-            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID")); 
+            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));
       }
       else{
         return internalServerError("Grocery list in database not actually a list!");
@@ -270,7 +271,7 @@ public class Users extends Controller {
 
       if(groceryListContains(groceryListDoc, rID) == false){
         return badRequest(new ObjectMapper().createObjectNode()
-            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));  
+            .put(Constants.Generic.ERROR, "User's grocery list does not contain the given recipeID"));
       }
       else{
         //update groceryList field in document
@@ -301,6 +302,7 @@ public class Users extends Controller {
 
   public static Result getGroceryList(){
 
+    ArrayList<Document> recipeIdList = new ArrayList<Document>();
     ArrayList<Ingredient> cumulativeIngredientList = new ArrayList<Ingredient>();
     try{
       //get user
@@ -318,15 +320,18 @@ public class Users extends Controller {
           ArrayList<Document> groceryListDoc = (ArrayList<Document>)groceryListObj;
           for(Document doc : groceryListDoc){
             Object idObj = doc.get(Constants.User.GroceryList.ID_RECIPE);
+
             if(idObj instanceof ObjectId){
               ObjectId recipeID = (ObjectId)idObj;
               Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
               List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
+              recipeIdList.add(new Document().append(Constants.Recipe.KEY_ID,recipeID.toHexString()).append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE)));
               cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
             }
             else{
               return internalServerError("Recipe ID not stored as ObjectId in database!");
             }
+
           }
         }
       }
@@ -336,17 +341,25 @@ public class Users extends Controller {
       return e.errorResult;
     }
 
-    //create JsonNode and return
+    //create ObjectNode and return
     try {
       ObjectMapper mapper = new ObjectMapper();
-      String json = mapper.writeValueAsString(cumulativeIngredientList);
-      JsonNode retNode = mapper.readTree(json);
+      String recipeIDListJson = mapper.writeValueAsString(recipeIdList);
+      String ingredientsJson = mapper.writeValueAsString(cumulativeIngredientList);
+
+      JsonNode recipeIDListNode = mapper.readTree(recipeIDListJson);
+      JsonNode ingredientsNode = mapper.readTree(ingredientsJson);
+
+      ObjectNode retNode = mapper.createObjectNode();
+      retNode.put(Constants.Routes.RECIPE_ID_LIST, recipeIDListNode);
+      retNode.put(Constants.Routes.INGREDIENTS, ingredientsNode);
       return ok(retNode);
+
     } catch (Exception e) {
       e.printStackTrace();
       return internalServerError();
     }
-    
+
   }
 
 
