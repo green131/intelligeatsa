@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="intelligeatsa" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="intelligeatsa" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="intelligeatsa" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="intelligeatsa" class="no-js"> <!--<![endif]-->
+ <html lang="en" ng-app="intelligeatsa" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +11,6 @@
   <link rel="stylesheet" href="components/shared/carousel/carousel.css"/>
   <link rel="stylesheet" href="components/shared/modalWindow/modalWindow.css"/>
   <link rel="stylesheet" href="app.css"/>
-
 </head>
 <body>
   <!--[if lt IE 7]>
@@ -36,12 +32,14 @@
   <!-- angular -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
-
+  <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+  <script src="bower_components/angular-directive.g-signin/google-plus-signin.js"></script>
   <!-- services -->
   <script src="services/services.js"></script>
   <script src="services/userSession.js"></script>
   <script src="services/search.js"></script>
-    <script src="services/mongoUtils.js"></script>
+  <script src="services/mongoUtils.js"></script>
+  <script src="services/groceryList.js"></script>
 
   <!-- components -->
   <script src="components/components.js"></script>
@@ -51,10 +49,15 @@
   <script src="components/shared/loginForm/loginForm.js"></script>
   <script src="components/shared/registerForm/registerForm.js"></script>
   <script src="components/shared/searchBar/searchBar.js"></script>
+  <script src="components/shared/thirdPartyLoginForm/thirdPartyLoginForm.js"></script>
+  <script src="components/shared/thirdPartyRegisterForm/thirdPartyRegisterForm.js"></script>
+  <script src="components/shared/linkAccountsForm/linkAccountsForm.js"></script>
+
 
   <script src="pages/pages.js"></script>
   <script src="pages/homePage/homePage.js"></script>
   <script src="pages/recipePage/recipePage.js"></script>
+  <script src="pages/groceryListPage/groceryListPage.js"></script>
   <script src="pages/searchResultsPage/searchResultsPage.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">

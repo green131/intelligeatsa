@@ -8,7 +8,7 @@ angular.module('intelligeatsa.components')
   }
 });
 
-function HeaderController($http,$rootScope,userSession,SESSION_EVENTS){
+function HeaderController($http,$rootScope,$window,userSession,SESSION_EVENTS){
   var ctrl = this;
   ctrl.sessionExists = false;
   if(userSession.sessionExists()){
@@ -31,5 +31,12 @@ function HeaderController($http,$rootScope,userSession,SESSION_EVENTS){
 
   ctrl.logout = function(){
     userSession.closeSession();
+  };
+
+  ctrl.showLinkAccountsFormModal = function(){
+    $('#linkAccountsFormModal').modal('toggle');
+  }
+  ctrl.showGroceryList = function(){
+    $window.location.href= '#/groceryList/';
   };
 }
