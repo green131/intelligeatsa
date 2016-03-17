@@ -3,13 +3,14 @@
 angular.module('intelligeatsa.services')
 .constant('apiRegistrationUrl','http://localhost:8080/user/register')
 .constant('apiLoginUrl','http://localhost:8080/user/login')
+.constant('apiLinkAccountsUrl','http://localhost:8080/user/linkUserAccount')
 .constant('SESSION_EVENTS',{
   SESSION_CREATED: 'SESSION_CREATED',
   SESSION_CLOSED: 'SESSION_CLOSED'
 })
-.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl','ezfb','$window','$cookies',UserSessionServiceFactory]);
+.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl','apiLinkAccountsUrl','ezfb','$window','$cookies',UserSessionServiceFactory]);
 
-function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl,ezfb,$window,$cookies){
+function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl,apiLinkAccountsUrl,ezfb,$window,$cookies){
 
   /**
   * User session service, creates session based on login or registration
@@ -168,6 +169,26 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         user = response.data;
         user.sessionType = 'google';
         broadcast(SESSION_EVENTS.SESSION_CREATED);
+        successCallback();
+      }, function (response) {
+        errorCallback(response);
+      });
+    };
+
+    this.linkSocialAccount = function(socialAccountType, socialId, successCallback, errorCallback){
+      if(!user){
+        return errorCallback('no user');
+      }
+      var postData = {};
+      postData[socialAccountType] = socialId;
+      postData['token'] = user.token;
+      console.log('linking accounts', socialAccountType);
+      $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        url: apiLinkAccountsUrl,
+        data:postData
+      }).then(function (response) {
         successCallback();
       }, function (response) {
         errorCallback(response);
