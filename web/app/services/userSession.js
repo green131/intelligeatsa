@@ -109,6 +109,14 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
       });
     };
 
+    /**
+    * Creates a session from login using facebook auth
+    * @function
+    * @param {string} name - facebook name of user
+    * @param {string} fbUserId - facebook user id
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
 
     this.createSessionFromFacebookLogin = function(name, fbUserId, successCallback, errorCallback){
       $http({
@@ -155,6 +163,14 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         errorCallback(response);
       });
     };
+     /**
+    * Creates a session from login using Google Auth
+    * @function
+    * @param {string} name - Google name of user
+    * @param {string} googleUserId - Google user id
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
 
     this.createSessionFromGoogleLogin = function(name, googleUserId, successCallback, errorCallback){
       $http({
@@ -174,6 +190,15 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         errorCallback(response);
       });
     };
+
+     /**
+    * Links a social account to the current user
+    * @function
+    * @param {string} socialAccountType - fbId or googleId
+    * @param {string} socialId - social account user id
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
 
     this.linkSocialAccount = function(socialAccountType, socialId, successCallback, errorCallback){
       if(!user){
