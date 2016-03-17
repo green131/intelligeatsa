@@ -65,14 +65,20 @@ function SearchBarController($window,$http){
     'onion',
     'thai',
     'pasta',
-    'indian',
     'panner',
     'chicken tikka',
     'salsa',
     'sweet potato',
     'tofu',
     'lentils',
-    'curry'
+    'curry',
+    'indian',
+    'mexican',
+    'vietnamese',
+    'chinese',
+    'pita',
+    'turkey',
+    'sandwich'
   ];
   $('#searchBar').autocomplete({
     source: autoCompletePossibilities,
