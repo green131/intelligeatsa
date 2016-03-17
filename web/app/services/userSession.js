@@ -7,9 +7,9 @@ angular.module('intelligeatsa.services')
   SESSION_CREATED: 'SESSION_CREATED',
   SESSION_CLOSED: 'SESSION_CLOSED'
 })
-.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl',UserSessionServiceFactory]);
+.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl','ezfb','$window','$cookies',UserSessionServiceFactory]);
 
-function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl){
+function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl,ezfb,$window,$cookies){
 
   /**
   * User session service, creates session based on login or registration
@@ -96,11 +96,11 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         url: apiRegistrationUrl,
         data:{
           'user':name,
-          'fbUserId': fbUserId
+          'fbId': fbUserId
         }
       }).then(function (response) {
         user = response.data;
-        user.sessionType = facebook;
+        user.sessionType = 'facebook';
         broadcast(SESSION_EVENTS.SESSION_CREATED);
         successCallback();
       }, function (response) {
@@ -110,7 +110,22 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
 
 
     this.createSessionFromFacebookLogin = function(name, fbUserId, successCallback, errorCallback){
-
+      $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        url: apiLoginUrl,
+        data:{
+          'user':name,
+          'fbId': fbUserId
+        }
+      }).then(function (response) {
+        user = response.data;
+        user.sessionType = 'facebook';
+        broadcast(SESSION_EVENTS.SESSION_CREATED);
+        successCallback();
+      }, function (response) {
+        errorCallback(response);
+      });
     };
 
     /**
@@ -128,7 +143,7 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
         url: apiRegistrationUrl,
         data:{
           'user':name,
-          'googleUserId': googleUserId
+          'googleId': googleUserId
         }
       }).then(function (response) {
         user = response.data;
@@ -141,7 +156,22 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
     };
 
     this.createSessionFromGoogleLogin = function(name, googleUserId, successCallback, errorCallback){
-
+      $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        url: apiLoginUrl,
+        data:{
+          'user':name,
+          'googleId': googleUserId
+        }
+      }).then(function (response) {
+        user = response.data;
+        user.sessionType = 'google';
+        broadcast(SESSION_EVENTS.SESSION_CREATED);
+        successCallback();
+      }, function (response) {
+        errorCallback(response);
+      });
     };
 
     /**
@@ -168,13 +198,16 @@ function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrati
     */
     this.closeSession = function(){
       if(user.sessionType == 'google'){
-        gapi.auth.signOut();
-        console.log('signed out');
+        window.googleAuth.signOut();
+        console.log('logged out Google')
       }else if(user.sessionType == 'facebook'){
-
+        ezfb.logout();
+        console.log('logged out Facebook');
       }
       user = null;
       broadcast(SESSION_EVENTS.SESSION_CLOSED);
+      // redirect to home page
+      $window.location.href= '#/';
     };
   };
 

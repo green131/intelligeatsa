@@ -3,11 +3,11 @@
 // Declare root level module and dependencies
 angular.module('intelligeatsa', [
   'ngRoute',
+  'ngCookies',
   'intelligeatsa.services',
   'intelligeatsa.components',
   'intelligeatsa.pages',
-  'ezfb',
-  'directive.g+signin'
+  'ezfb'
 ]).config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/home'});
 }]).config(['ezfbProvider',function(ezfbProvider){

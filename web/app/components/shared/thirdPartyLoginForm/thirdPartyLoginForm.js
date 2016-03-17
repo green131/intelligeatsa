@@ -8,20 +8,39 @@ angular.module('intelligeatsa.components')
 
 function ThirdPartyLoginFormController($http,userSession,ezfb,$scope){
   var ctrl = this;
+  var loginWithGoogle = false;
 
+  ctrl.loginFB = function(){
+    ezfb.login(function(res){
+      if(res.authResponse){
+        var userId = res.authResponse.userID;
+        ezfb.api('/me',function(res){
+          if(res.hasOwnProperty('name')){
+            userSession.createSessionFromFacebookLogin(res.name,userId,function success(){
+                $('#loginModal').modal('hide');
+            },function error(err){
+              console.log(err);
+            })
+          }
+        });
+      }else{
 
-  // google authentication handler
-  $scope.$on('event:google-plus-signin-success', function (event,authResult) {
-    gapi.client.load('plus', 'v1', function(){
-      gapi.client.plus.people.get({userId: 'me'}).execute(function(res){
-        console.log(res.displayName);
-        console.log(res.id)
-        // create session from existing google user.
+      }
+    });
+  };
+
+  ctrl.loginGoogle = function(){
+    window.googleAuth.signIn().then(function(googleUser){
+      var profile = googleUser.getBasicProfile();
+      var id = profile.getId();
+      var name = profile.getName();
+      userSession.createSessionFromGoogleLogin(name, id,
+        function success(){
+          $('#loginModal').modal('hide');
+          console.log('registered with with google');
+        }, function error(){
+          userSession.closeSession();
         });
       });
-    });
-
-    $scope.$on('event:google-plus-signin-failure', function (event,authResult) {
-      // Auth failure or signout detected
-    });
+    };
 }

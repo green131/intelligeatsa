@@ -36,7 +36,7 @@ function HeaderController($http,$rootScope,$window,userSession,SESSION_EVENTS){
   ctrl.showLinkAccountsFormModal = function(){
     $('#linkAccountsFormModal').modal('toggle');
   };
-  
+
   ctrl.showGroceryList = function(){
     $window.location.href= '#/groceryList/';
   };

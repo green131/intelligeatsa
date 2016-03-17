@@ -95,10 +95,6 @@ public class Users extends Controller {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Expecting text user name"));
     }
-    if (User.usernameExists(userNode.asText())) {
-      return badRequest(new ObjectMapper().createObjectNode()
-          .put(Constants.Generic.ERROR, "Username already taken"));
-    }
 
     String socialIdType = null;
     if (requestJson.has(Constants.User.ID_FB) && requestJson.has(Constants.User.ID_GOOGLE)) {
@@ -115,6 +111,7 @@ public class Users extends Controller {
         return badRequest(new ObjectMapper().createObjectNode()
             .put(Constants.Generic.ERROR, "social id already taken"));
       }
+
       User u = new User(userNode.asText());
       u.doc = new Document();
       u.addAttribute(Constants.User.ID_USER, userNode.asText());
@@ -123,6 +120,11 @@ public class Users extends Controller {
       return ok(new ObjectMapper().createObjectNode()
         .put(Constants.User.ID_USER, userNode.asText())
         .put(Constants.User.ID_TOKEN, u.generateUserToken().toHexString()));
+    }
+    // duplicate email check
+    if (User.usernameExists(userNode.asText())) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Username already taken"));
     }
 
     JsonNode passNode = requestJson.findPath(Constants.User.ID_PASS);
