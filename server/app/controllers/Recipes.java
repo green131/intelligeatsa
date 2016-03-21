@@ -28,10 +28,10 @@ public class Recipes extends Controller {
 
     //get recipes
     ArrayList<Recipe> recipes = Recipe.getRecipesByTag(Global.mongoConnector, tags_list, range_start, range_end);
-    if (recipes.size() == 0) {
+    /*if (recipes.size() == 0) {
       return badRequest(mapper.createObjectNode()
           .put(Constants.Generic.ERROR, "no recipes found"));
-    }
+    }*/
     try {
       String json = mapper.writeValueAsString(recipes);
       JsonNode retNode = mapper.readTree(json);
@@ -96,6 +96,17 @@ public class Recipes extends Controller {
     }
   }
 
+  /*
+  # Search using multiple filters
+  # INCLUDE AT LEAST ONE: {
+    #    "title":       <keyword>,
+    #    "tags":        <recipe_tags>,
+    #    "ingredients": <recipe_ingredients>,
+    #    "prep_time":   <prep_time>,
+    #    "sort_alpha":  <true|false>
+    #    "sort_rating": <true|false>
+    # }
+  */
   public static Result searchRecipes() {
     // TODO FIX THIS
     //check if request is json
@@ -106,15 +117,16 @@ public class Recipes extends Controller {
     }
 
     //check if request is json array
-    JsonNode userNode = requestJson.findPath(Constants.User.KEY_USER);
-    JsonNode passNode = requestJson.findPath(Constants.User.KEY_PASS);
-    if(!userNode.isTextual() || !passNode.isTextual()){
+    JsonNode titleNode = requestJson.findPath(Constants.Recipe.KEY_TITLE);
+    JsonNode tagsNode = requestJson.findPath(Constants.Recipe.KEY_TAGS);
+    JsonNode ingredientsNode = requestJson.findPath(Constants.Recipe.KEY_INGREDIENTS);
+    JsonNode prepTimeNode = requestJson.findPath(Constants.Recipe.KEY_PREPTIME);
+    JsonNode sortAlphaNode = requestJson.findPath(Constants.Sorting.KEY_ALPHASORT);
+    JsonNode sortRatingNode = requestJson.findPath(Constants.Sorting.KEY_RATINGSORT);
+    if(!titleNode.isTextual() && !tagsNode.isTextual() && !ingredientsNode.isArray() && !prepTimeNode.isInt()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
     }
-
-
-
 
     return badRequest(new ObjectMapper().createObjectNode()
         .put(Constants.Generic.ERROR, "invalid credentials"));

@@ -35,7 +35,7 @@ public class Recipe extends BaseModelClass {
     //create query
     ArrayList<Bson> filters = new ArrayList<Bson>();
     for (String tag : tags) {
-      Bson filter = eq(Constants.Recipe.KEY_TAGS, tag);
+      Bson filter = and(Constants.Recipe.KEY_TAGS, tag);
       filters.add(filter);
     }
     Bson finalQuery = and(filters);

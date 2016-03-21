@@ -22,6 +22,11 @@ public class Constants {
     public static final String ID = "_id";
   }
 
+  public static final class Sorting {
+    public static final String KEY_ALPHASORT = "sort_alpha";
+    public static final String KEY_RATINGSORT = "sort_ratings";
+  }
+
   public static final class Recipe {
     public static final String INDEX_TITLE_TEXT = "title_text";
     public static final String KEY_TITLE = "title";
