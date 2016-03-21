@@ -39,12 +39,42 @@ public class Constants {
     public static final String KEY_INGREDIENTS = "ingredients";
     public static final String KEY_NUMINGREDIENTS = "numOfIngredients";
     public static final String KEY_NUMPREPARATION = "numOfPreparationSteps";
+
+    public static final class Rating {
+      public static final String FIELD_NAME = "rating";
+      public static final String VALUE = "value";
+      public static final String NUM_OF_RATERS = "numOfRaters";
+    }
+
+    public static final class Ingredients {
+      public static final String FIELD_NAME = "ingredients";
+      public static final String SECTION_INGREDIENTS = "sectionIngredients";
+      public static final String ITEM = "item";
+      public static final String QUANTITY = "quantity";
+    }
   }
 
   public static final class User {
     public static final String KEY_USER = "user";
     public static final String KEY_PASS = "pass";
     public static final String KEY_TOKEN = "token";
+
+    public static final class GroceryList {
+      public static final String FIELD_NAME = "groceryList";
+      public static final String ID_RECIPE = "recipeID";
+    }
+
+    public static final class RatingList {
+      public static final String FIELD_NAME = "ratingList";
+      public static final String ID_RECIPE = "recipeID";
+      public static final String MY_RATING = "myRating";
+    }
+  }
+
+  public static final class Routes {
+    public static final String ID_USER = "userID";
+    public static final String RECIPE_ID_LIST = "recipeIDList";
+    public static final String INGREDIENTS = "ingredients";
   }
 
 }
