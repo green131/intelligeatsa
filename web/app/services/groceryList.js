@@ -3,9 +3,20 @@ angular.module('intelligeatsa.services')
 .factory('groceryList',GroceryListServiceFactory);
 
 function GroceryListServiceFactory($http,apiGroceryListBaseUrl, userSession){
+
+  /**
+  * grocery list service, handles CRUD with user grocery list
+  * @constructor
+  */
   var groceryListService = function(){
     var groceryList = null;
 
+    /**
+    * gets the user grocery list
+    * @function
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
     this.get = function(successCallback, errorCallback){
       var user = userSession.getUser();
       if(!user){
@@ -27,6 +38,13 @@ function GroceryListServiceFactory($http,apiGroceryListBaseUrl, userSession){
       });
     };
 
+    /**
+    * checks if a recipe is in the user's groceryList
+    * @function
+    * @param {string} recipeId - recipe id to check
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
     this.contains = function(recipeId, successCallback, errorCallback){
       this.get(function success(){
         var recipesInfo = groceryList.recipeIDList;
@@ -40,6 +58,14 @@ function GroceryListServiceFactory($http,apiGroceryListBaseUrl, userSession){
         errorCallback();
       });
     };
+
+    /**
+    * add a recipe to the grocery list
+    * @function
+    * @param {string} recipeId - recipe id to check
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
 
     this.add = function(recipeId, successCallback, errorCallback){
       var user = userSession.getUser();
@@ -61,6 +87,14 @@ function GroceryListServiceFactory($http,apiGroceryListBaseUrl, userSession){
       });
     };
 
+    /**
+    * remove recipe from grocery list
+    * @function
+    * @param {string} recipeId - recipe id to check
+    * @param {function} successCallback - callback after successful registration
+    * @param {function} errorCallback - callback after error in registration
+    */
+
     this.remove = function(recipeId, successCallback, errorCallback){
       var user = userSession.getUser();
       if(!user){
@@ -78,12 +112,6 @@ function GroceryListServiceFactory($http,apiGroceryListBaseUrl, userSession){
         successCallback();
       }, function error(response){
         errorCallback();
-      });
-    };
-
-    this.clear = function(){
-      groceryList.forEach(function(listItem){
-
       });
     };
   };

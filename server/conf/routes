@@ -14,6 +14,11 @@ POST /user/login            server.app.controllers.Users.loginUser()
 # Returns user token
 POST /user/register         server.app.controllers.Users.registerUser()
 
+# Link user account endpoint
+# REQUIRED {"token":<token>, ("fbId":<facebook id>|"googleId":<google id>)}
+# Returns user token
+POST /user/linkUserAccount  server.app.controllers.Users.linkUserAccount()
+
 
 # Get recipe list given a list of tags
 # REQUIRED: { :<recipe_tags> }
