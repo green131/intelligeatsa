@@ -65,7 +65,33 @@ public class Recipe extends BaseModelClass {
     final ArrayList<String> recipeList = new ArrayList<String>();
     MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
 
-    FindIterable<Document> iter = mongoCollection.find(query);//TODO sorting: .sort(new Document("title", -1));
+    FindIterable<Document> iter;
+    if (query == null) iter = mongoCollection.find();
+    else iter = mongoCollection.find(query);
+
+    switch (sortMode) {
+      case Constants.Sorting.ALPHA_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, 1));
+        break;
+      case Constants.Sorting.ALPHA_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, -1));
+        break;
+      case Constants.Sorting.RATING_SORT:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, 1));
+        break;
+      case Constants.Sorting.RATING_SORT_R:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, -1));
+        break;
+      case Constants.Sorting.PREP_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, 1));
+        break;
+      case Constants.Sorting.PREP_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, -1));
+        break;
+      case Constants.Sorting.DEFAULT_SORT:
+        break;
+    }
+
     Utils.setupPaginator(iter, range_start, range_end);
 
     for (Document d : iter) {

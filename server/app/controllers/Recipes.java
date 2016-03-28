@@ -118,9 +118,9 @@ public class Recipes extends Controller {
     #    "tags":        <recipe_tags>,
     #    "ingredients": <recipe_ingredients>,
     #    "prepTime":    <prep_time>
+    #    OPTIONAL:
+    #      "sort":        <alpha|alphaR|rating|ratingR|prep|prepR|default>
   # }
-  # OPTIONAL:
-    #    "sort":        <alpha|rating|prep|default>
   */
   public static Result searchRecipes(int range_start, int range_end) {
     ObjectMapper mapper = new ObjectMapper();
@@ -143,7 +143,7 @@ public class Recipes extends Controller {
     JsonNode ingredientsNode = requestJson.findPath(Constants.Recipe.KEY_INGREDIENTS);
     JsonNode prepTimeNode = requestJson.findPath(Constants.Recipe.KEY_PREPTIME);
     JsonNode sortModeNode = requestJson.findPath(Constants.Sorting.KEY_SORT_METHOD);
-    if(!titleNode.isTextual() && !tagsNode.isArray() && !ingredientsNode.isArray() && !prepTimeNode.isInt()){
+    if(!titleNode.isTextual() && !tagsNode.isArray() && !ingredientsNode.isArray() && !prepTimeNode.isInt() &&!sortModeNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
     }
@@ -181,10 +181,13 @@ public class Recipes extends Controller {
     if (prepTimeNode.intValue() > 0) {
       String prepTime = String.valueOf(prepTimeNode.intValue()) + " minutes";
       System.out.println(String.format("DEBUG prepTime:%s", prepTime));
-      Bson filter = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
-      filters.add(filter);
+      Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
+      //filters.add(filter);
       // I'm so sorry
-      filter = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
+      Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
+      Bson filterc = regex(Constants.Recipe.KEY_PREPTIME, "^(?!\\s*$).+");
+      Bson filterd = exists(Constants.Recipe.KEY_PREPTIME);
+      Bson filter = and(filtera, filterb, filterc, filterd);
       filters.add(filter);
     }
 
@@ -193,8 +196,11 @@ public class Recipes extends Controller {
     if (sortModeNode.isTextual() && sortModeNode.textValue().length() > 0) {
       switch (sortModeNode.textValue()) {
         case Constants.Sorting.ALPHA_SORT:
+        case Constants.Sorting.ALPHA_SORT_R:
         case Constants.Sorting.RATING_SORT:
+        case Constants.Sorting.RATING_SORT_R:
         case Constants.Sorting.PREP_SORT:
+        case Constants.Sorting.PREP_SORT_R:
           sortMode = sortModeNode.textValue();
           break;
         case Constants.Sorting.DEFAULT_SORT:
@@ -204,8 +210,8 @@ public class Recipes extends Controller {
               .put(Constants.Generic.ERROR, "Malformed request: unknown sort type!"));
       }
     }
-
-    Bson query = and(filters);
+    Bson query = null;
+    if (filters.size() > 0) query = and(filters);
     ArrayList<String> recipes = Recipe.find(Global.mongoConnector, query, range_start, range_end, sortMode);
 
     System.out.println(String.format("DEBUG: Return num - %s", recipes.size()));

@@ -26,8 +26,11 @@ public class Constants {
     public static final String KEY_SORT_METHOD = "sort";
     public static final String DEFAULT_SORT = "default";
     public static final String ALPHA_SORT = "alpha";
+    public static final String ALPHA_SORT_R = "alphaR";
     public static final String RATING_SORT = "rating";
+    public static final String RATING_SORT_R = "ratingR";
     public static final String PREP_SORT = "prep";
+    public static final String PREP_SORT_R = "prepR";
   }
 
   public static final class Recipe {
