@@ -23,6 +23,17 @@ public class Constants {
     public static final String ID = "_id";
   }
 
+  public static final class Sorting {
+    public static final String KEY_SORT_METHOD = "sort";
+    public static final String DEFAULT_SORT = "default";
+    public static final String ALPHA_SORT = "alpha";
+    public static final String ALPHA_SORT_R = "alphaR";
+    public static final String RATING_SORT = "rating";
+    public static final String RATING_SORT_R = "ratingR";
+    public static final String PREP_SORT = "prep";
+    public static final String PREP_SORT_R = "prepR";
+  }
+
   public static final class Recipe {
     public static final String KEY_ID = "id";
     public static final String KEY_NAME = "title";
@@ -30,6 +41,16 @@ public class Constants {
     public static final String KEY_DESC = "description";
     public static final String KEY_PIC_URL = "pictureURL";
     public static final String INDEX_TITLE_TEXT = "title_text";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_PICTUREURL = "pictureURL";
+    public static final String KEY_SERVINGS = "servings";
+    public static final String KEY_PREPTIME = "prepTime";
+    public static final String KEY_TAGS = "tags";
+    public static final String KEY_PREPARATION = "preparation";
+    public static final String KEY_INGREDIENTS = "ingredients";
+    public static final String KEY_INGREDIENTS_INDIVIDUAL = "ingredients.sectionIngredients.item";
+    public static final String KEY_NUMINGREDIENTS = "numOfIngredients";
+    public static final String KEY_NUMPREPARATION = "numOfPreparationSteps";
 
     public static final class Ingredients {
       public static final String FIELD_NAME = "ingredients";

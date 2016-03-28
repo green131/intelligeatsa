@@ -1,12 +1,11 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-
 import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
@@ -15,13 +14,12 @@ import server.app.exceptions.ServerResultException;
 import server.app.models.Recipe;
 import server.app.models.User;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.client.MongoCollection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.text;
+import static com.mongodb.client.model.Filters.*;
 
 
 //API for getting recipes
@@ -116,6 +114,124 @@ public class Recipes extends Controller {
     }
   }
 
+
+  /*
+  # Search using multiple filters
+  # INCLUDE AT LEAST ONE: {
+    #    "title":       <keyword>,
+    #    "tags":        <recipe_tags>,
+    #    "ingredients": <recipe_ingredients>,
+    #    "prepTime":    <prep_time>
+    #    OPTIONAL:
+    #      "sort":        <alpha|alphaR|rating|ratingR|prep|prepR|default>
+  # }
+  */
+  public static Result searchRecipes(int range_start, int range_end) {
+    ObjectMapper mapper = new ObjectMapper();
+
+    if (range_end < range_start || range_end < 0 || range_start < 0) {
+      return badRequest(mapper.createObjectNode()
+          .put(Constants.Generic.ERROR, String.format("invalid recipe range: '%d' -> '%d'", range_start, range_end)));
+    }
+
+    //check if request is json
+    JsonNode requestJson = request().body().asJson();
+    if(requestJson == null) {
+      return badRequest(mapper.createObjectNode()
+          .put(Constants.Generic.ERROR, "Expecting Json data!"));
+    }
+
+    //check if request is json array
+    JsonNode titleNode = requestJson.findPath(Constants.Recipe.KEY_TITLE);
+    JsonNode tagsNode = requestJson.findPath(Constants.Recipe.KEY_TAGS);
+    JsonNode ingredientsNode = requestJson.findPath(Constants.Recipe.KEY_INGREDIENTS);
+    JsonNode prepTimeNode = requestJson.findPath(Constants.Recipe.KEY_PREPTIME);
+    JsonNode sortModeNode = requestJson.findPath(Constants.Sorting.KEY_SORT_METHOD);
+    if(!titleNode.isTextual() && !tagsNode.isArray() && !ingredientsNode.isArray() && !prepTimeNode.isTextual() && !sortModeNode.isTextual()){
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
+    }
+
+    // create query
+    List<Bson> filters = new ArrayList<Bson>();
+    // search title
+    if (titleNode.size() > 0) filters.add(text(titleNode.textValue()));
+    // search tags
+    Iterator<JsonNode> tagsNodeIterator = tagsNode.elements();
+    while (tagsNodeIterator.hasNext()) {
+      JsonNode tagNode = tagsNodeIterator.next();
+      if (tagNode.textValue().length() > 0) {
+        Bson filter = eq(Constants.Recipe.KEY_TAGS, tagNode.textValue());
+        filters.add(filter);
+      }
+    }
+    // search ingredients
+    Iterator<JsonNode> ingredientsNodeIterator = ingredientsNode.elements();
+    List<Bson> filteri = new ArrayList<Bson>();
+    while (ingredientsNodeIterator.hasNext()) {
+      JsonNode ingredientNode = ingredientsNodeIterator.next();
+      if (ingredientNode.textValue().length() > 0) {
+        Bson filter = eq(Constants.Recipe.KEY_INGREDIENTS_INDIVIDUAL, ingredientNode.textValue());
+        filteri.add(filter);
+      }
+    }
+    if (filteri.size() > 0) filters.add(or(filteri));
+    // search prepTime
+    // Needs serious improvement. Should change / create a new value in the db for
+    //  prepTimeMinutes to avoid string comparisons
+    int prepTimeInt = 0;
+    try {
+      prepTimeInt = Integer.parseInt(prepTimeNode.textValue());
+      String prepTime = String.valueOf(prepTimeNode.textValue()) + " minutes";
+      Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
+      // I'm so sorry
+      Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
+      Bson filterc = regex(Constants.Recipe.KEY_PREPTIME, "^(?!\\s*$).+");
+      Bson filterd = exists(Constants.Recipe.KEY_PREPTIME);
+      Bson filter = and(filtera, filterb, filterc, filterd);
+      filters.add(filter);
+    } catch (NumberFormatException e) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: prep time not valid integer string!"));
+    }
+
+    // sort by requested settings
+    String sortMode = Constants.Sorting.DEFAULT_SORT;
+    if (sortModeNode.isTextual() && sortModeNode.textValue().length() > 0) {
+      switch (sortModeNode.textValue()) {
+        case Constants.Sorting.ALPHA_SORT:
+        case Constants.Sorting.ALPHA_SORT_R:
+        case Constants.Sorting.RATING_SORT:
+        case Constants.Sorting.RATING_SORT_R:
+        case Constants.Sorting.PREP_SORT:
+        case Constants.Sorting.PREP_SORT_R:
+          sortMode = sortModeNode.textValue();
+          break;
+        case Constants.Sorting.DEFAULT_SORT:
+          break;
+        default:
+          return badRequest(new ObjectMapper().createObjectNode()
+              .put(Constants.Generic.ERROR, "Malformed request: unknown sort type!"));
+      }
+    }
+    Bson query = null;
+    if (filters.size() > 0) query = and(filters);
+    ArrayList<String> recipes = Recipe.find(Global.mongoConnector, query, range_start, range_end, sortMode);
+
+    try {
+      String json = Arrays.toString(recipes.toArray());
+      JsonNode retNode = mapper.readTree(json);
+      return ok(retNode);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return internalServerError();
+    }
+  }
+
+
+  public static Result searchRecipesDefault() {
+    return searchRecipes(0, Constants.Mongo.DEFAULT_LIMIT);
+  }
 
 
   public static Result updateRating(String recipeID, double rating){

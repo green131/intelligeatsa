@@ -43,6 +43,20 @@ POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controll
 POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeById(recipe_id: String)
 
 
+# Search using multiple filters
+# INCLUDE AT LEAST ONE: {
+#    "title":       <keyword>,
+#    "tags":        <recipe_tags>,
+#    "ingredients": <recipe_ingredients>,
+#    "prepTime":   <prep_time>
+# }
+# OPTIONAL
+#   "sort":         <alpha|rating|prep|default>
+# EXAMPLE:  body {"title":"pasta", "tags":["Vegetarian"], "ingredients":["peas"], "prepTime":30}
+POST /recipe/search/:range_start/:range_end         server.app.controllers.Recipes.searchRecipes(range_start: Integer, range_end: Integer)
+POST /recipe/search                                 server.app.controllers.Recipes.searchRecipesDefault()
+
+
 # Update recipe rating
 # REQUIRED: { "userID":<userID> + recipe/:<recipe_id>/rate/:<rating>}
 # EXAMPLE:  userID = xyz789, recipe_id = 12345, rating = 4.5
