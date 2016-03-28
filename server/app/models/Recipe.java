@@ -64,6 +64,53 @@ public class Recipe extends BaseModelClass {
 
   }
 
+  public static ArrayList<String> find(MongoConnector conn, Bson query, int range_start, int range_end, String sortMode) {
+    final ArrayList<String> recipeList = new ArrayList<String>();
+    MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
+
+    FindIterable<Document> iter;
+    if (query == null) iter = mongoCollection.find();
+    else iter = mongoCollection.find(query);
+
+    switch (sortMode) {
+      case Constants.Sorting.ALPHA_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, 1));
+        break;
+      case Constants.Sorting.ALPHA_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, -1));
+        break;
+      case Constants.Sorting.RATING_SORT:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, 1));
+        break;
+      case Constants.Sorting.RATING_SORT_R:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, -1));
+        break;
+      case Constants.Sorting.PREP_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, 1));
+        break;
+      case Constants.Sorting.PREP_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, -1));
+        break;
+      case Constants.Sorting.DEFAULT_SORT:
+        break;
+    }
+
+    Utils.setupPaginator(iter, range_start, range_end);
+
+    for (Document d : iter) {
+      System.out.println(d.toJson());
+      TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
+      keyMap.put(Constants.Mongo.ID, new ObjectId(d.get(Constants.Mongo.ID).toString()).toString());
+      keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
+      keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
+      keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
+      Document doc = new Document(keyMap);
+      //Recipe recipe = new Recipe(doc);
+      recipeList.add(doc.toJson());
+    }
+    return recipeList;
+  }
+
   /**
    * Sets up a full text search index
    * on the {@link Constants.Mongo#RECIPES_COLLECTION} if it
@@ -129,9 +176,9 @@ public class Recipe extends BaseModelClass {
     if (recipe == null) {
       throw new ServerResultException(Results.badRequest(new ObjectMapper().createObjectNode().put(Constants.Generic.ERROR, "Could not find recipe matching id")));
     }
-    
+
     return recipe;
-    
+
   }
 
   @Override
