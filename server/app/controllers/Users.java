@@ -1,28 +1,23 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.bson.conversions.Bson;
-
+import org.bson.types.ObjectId;
 import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
 import server.app.Global;
 import server.app.exceptions.ServerResultException;
+import server.app.models.Ingredient;
 import server.app.models.Recipe;
 import server.app.models.User;
-import server.app.models.Ingredient;
-import server.app.Utils;
 
-import com.mongodb.client.MongoCollection;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -61,6 +56,7 @@ public class Users extends Controller {
     //check if request is json array
     JsonNode userNode = requestJson.findPath(Constants.User.ID_USER);
     JsonNode passNode = requestJson.findPath(Constants.User.ID_PASS);
+
     if(!userNode.isTextual() || !passNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
@@ -114,8 +110,8 @@ public class Users extends Controller {
 
       User u = new User(userNode.asText());
       u.doc = new Document();
-      u.addAttribute(Constants.User.ID_USER, userNode.asText());
-      u.addAttribute(socialIdType, socialId);
+      u.updateAttribute(Constants.User.ID_USER, userNode.asText());
+      u.updateAttribute(socialIdType, socialId);
       u.persist(Global.mongoConnector);
       return ok(new ObjectMapper().createObjectNode()
         .put(Constants.User.ID_USER, userNode.asText())
@@ -143,9 +139,9 @@ public class Users extends Controller {
     // create new user doc and store in db
     User u = new User(username);
     u.doc = new Document();
-    u.addAttribute(Constants.User.ID_USER, username);
-    u.addAttribute(Constants.User.ID_PASS, password);
-    Global.mongoConnector.saveDocument(u.collection, u.doc);
+    u.updateAttribute(Constants.User.ID_USER, username);
+    u.updateAttribute(Constants.User.ID_PASS, password);
+    u.saveDoc();
 
     // check doc was saved correctly and return token
     if (u.isAuthValid(password)) {
@@ -189,7 +185,7 @@ public class Users extends Controller {
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Social id already taken"));
     }
-    user.changeAttribute(socialIdType, socialId);
+    user.updateAttribute(socialIdType, socialId);
     user.persist(Global.mongoConnector);
     return ok();
   }
@@ -327,7 +323,7 @@ public class Users extends Controller {
               ObjectId recipeID = (ObjectId)idObj;
               Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
               List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
-              recipeIdList.add(new Document().append(Constants.Recipe.KEY_ID,recipeID.toHexString()).append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE)));
+              recipeIdList.add(new Document().append(Constants.Mongo.ID,recipeID.toHexString()).append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE)));
               cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
             }
             else{

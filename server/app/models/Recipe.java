@@ -5,29 +5,26 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-
 import play.mvc.Results;
 import server.app.Constants;
-import server.app.Utils;
 import server.app.Global;
+import server.app.Utils;
 import server.app.exceptions.ServerResultException;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.text;
+import static com.mongodb.client.model.Filters.*;
 
 public class Recipe extends BaseModelClass {
 
   public Recipe(Document doc) {
     super(Constants.Mongo.RECIPES_COLLECTION, doc);
   }
+
 
   /*
    * Returns a list of recipes that contain ALL of the specified tags.
@@ -41,7 +38,7 @@ public class Recipe extends BaseModelClass {
     //create query
     ArrayList<Bson> filters = new ArrayList<Bson>();
     for (String tag : tags) {
-      Bson filter = eq("tags", tag);
+      Bson filter = eq(Constants.Recipe.KEY_TAGS, tag);
       filters.add(filter);
     }
     Bson finalQuery = and(filters);
@@ -52,17 +49,65 @@ public class Recipe extends BaseModelClass {
 
     for (Document d : iter) {
       TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
-      keyMap.put(Constants.Mongo.ID, d.get(Constants.Mongo.ID));
+      keyMap.put(Constants.Mongo.ID, new ObjectId(d.get(Constants.Mongo.ID).toString()).toString());
       keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
-      keyMap.put(Constants.Recipe.KEY_DESC, d.get(Constants.Recipe.KEY_DESC));
-      keyMap.put(Constants.Recipe.KEY_PIC_URL, d.get(Constants.Recipe.KEY_PIC_URL));
+      keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
+      keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
       Document doc = new Document(keyMap);
       Recipe recipe = new Recipe(doc);
       recipeList.add(recipe);
     }
     return recipeList;
-
   }
+
+
+  public static ArrayList<String> find(MongoConnector conn, Bson query, int range_start, int range_end, String sortMode) {
+    final ArrayList<String> recipeList = new ArrayList<String>();
+    MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
+
+    FindIterable<Document> iter;
+    if (query == null) iter = mongoCollection.find();
+    else iter = mongoCollection.find(query);
+
+    switch (sortMode) {
+      case Constants.Sorting.ALPHA_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, 1));
+        break;
+      case Constants.Sorting.ALPHA_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_TITLE, -1));
+        break;
+      case Constants.Sorting.RATING_SORT:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, 1));
+        break;
+      case Constants.Sorting.RATING_SORT_R:
+        iter.sort(new Document(Constants.Recipe.Rating.FIELD_NAME, -1));
+        break;
+      case Constants.Sorting.PREP_SORT:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, 1));
+        break;
+      case Constants.Sorting.PREP_SORT_R:
+        iter.sort(new Document(Constants.Recipe.KEY_PREPTIME, -1));
+        break;
+      case Constants.Sorting.DEFAULT_SORT:
+        break;
+    }
+
+    Utils.setupPaginator(iter, range_start, range_end);
+
+    for (Document d : iter) {
+      System.out.println(d.toJson());
+      TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
+      keyMap.put(Constants.Mongo.ID, new ObjectId(d.get(Constants.Mongo.ID).toString()).toString());
+      keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
+      keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
+      keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
+      Document doc = new Document(keyMap);
+      //Recipe recipe = new Recipe(doc);
+      recipeList.add(doc.toJson());
+    }
+    return recipeList;
+  }
+
 
   /**
    * Sets up a full text search index
@@ -86,6 +131,7 @@ public class Recipe extends BaseModelClass {
     }
   }
 
+
   public static ArrayList<Recipe> searchRecipesByTitle(MongoConnector conn, String recipe_title, int range_start, int range_end) {
     // Find all titles matching this title
     MongoCollection<Document> recipeCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
@@ -100,6 +146,7 @@ public class Recipe extends BaseModelClass {
 
     return recipeList;
   }
+
 
   public static Recipe getRecipeById(MongoConnector conn, ObjectId id) {
     MongoCollection<Document> mongoCollection = conn.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);

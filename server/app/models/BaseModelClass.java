@@ -5,6 +5,7 @@ import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import server.app.Global;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -41,7 +42,8 @@ public abstract class BaseModelClass {
     return Document.parse(json);
   }
 
-  public void addAttribute(String key, String val) {
+  // Always use updateAttribute to prevent conflicts!
+  private void addAttribute(String key, String val) {
     this.doc.put(key, val);
   }
 
@@ -49,7 +51,7 @@ public abstract class BaseModelClass {
     this.doc.remove(key);
   }
 
-  public void changeAttribute(String key, String val) {
+  public void updateAttribute(String key, String val) {
     if (this.doc.containsKey(key)) {
       this.removeAttribute(key);
     }
@@ -57,6 +59,10 @@ public abstract class BaseModelClass {
   }
 
   public Object getAttribute(Object key) { return this.doc.get(key); }
+
+  public void saveDoc() {
+    Global.mongoConnector.saveDocument(this.collection, this.doc);
+  }
 
   public boolean hasAttribute(String key) {
     return doc.containsKey(key);

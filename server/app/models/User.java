@@ -1,20 +1,18 @@
 package server.app.models;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-
 import play.mvc.Http.Request;
-import play.mvc.Result;
 import play.mvc.Results;
 import server.app.Constants;
 import server.app.Global;
 import server.app.exceptions.ServerResultException;
+
 import static com.mongodb.client.model.Filters.eq;
 
 public class User extends BaseModelClass {

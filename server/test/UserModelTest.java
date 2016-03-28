@@ -97,7 +97,7 @@ public class UserModelTest {
       return iter;
     });
     JsonNode param = new ObjectMapper().createObjectNode()
-      .put(Constants.User.ID_TOKEN, userId.toHexString());
+      .put(Constants.User.KEY_TOKEN, userId.toHexString());
     User actualUser = User.getUserFromRequest(conn, param);
     assertNotNull(actualUser);
     assertEquals(new User(expectedUserDocument), actualUser);
@@ -112,7 +112,7 @@ public class UserModelTest {
       return null;
     });
     JsonNode param = new ObjectMapper().createObjectNode()
-      .put(Constants.User.ID_TOKEN, "z");
+      .put(Constants.User.KEY_TOKEN, "z");
     User actualUser = User.getUserFromRequest(conn, param);
     assertNull(actualUser);
   }
