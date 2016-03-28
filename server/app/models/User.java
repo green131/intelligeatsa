@@ -26,7 +26,7 @@ public class User extends BaseModelClass {
     MongoCollection<Document> mongoCollection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
 
     //create query
-    Bson query = eq(Constants.User.KEY_USER, username);
+    Bson query = eq(Constants.User.ID_USER, username);
 
     //get user
     FindIterable<Document> iter = mongoCollection.find(query);
@@ -37,7 +37,7 @@ public class User extends BaseModelClass {
     // TODO decrypt pass using private key
     // return whether password is valid
     if (this.doc == null || pass == null) return false;
-    return this.getAttribute(Constants.User.KEY_PASS).equals(pass);
+    return this.getAttribute(Constants.User.ID_PASS).equals(pass);
   }
 
   public ObjectId generateUserToken() {
@@ -48,7 +48,7 @@ public class User extends BaseModelClass {
     MongoCollection<Document> mongoCollection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
 
     //create query
-    Bson query = eq(Constants.User.KEY_USER, username);
+    Bson query = eq(Constants.User.ID_USER, username);
 
     //get user
     FindIterable<Document> iter = mongoCollection.find(query);
@@ -62,13 +62,20 @@ public class User extends BaseModelClass {
     return userDoc != null ? new User(userDoc) : null;
   }
 
+  public static User getUserFromSocialId(MongoConnector conn, String idType, String id) {
+    Document userDoc = conn.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
+      .find(eq(idType, id))
+      .first();
+    return userDoc != null ? new User(userDoc) : null;
+  }
+
   public static User getUserFromRequest(MongoConnector conn, JsonNode json) {
-    if (!json.has(Constants.User.KEY_TOKEN)) {
+    if (!json.has(Constants.User.ID_TOKEN)) {
       return null;
     }
     ObjectId id;
     try {
-      id = new ObjectId(json.get(Constants.User.KEY_TOKEN).textValue());
+      id = new ObjectId(json.get(Constants.User.ID_TOKEN).textValue());
     } catch (IllegalArgumentException e) {
       return null;
     }

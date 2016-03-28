@@ -59,9 +59,11 @@ public class Constants {
   }
 
   public static final class User {
-    public static final String KEY_USER = "user";
-    public static final String KEY_PASS = "pass";
-    public static final String KEY_TOKEN = "token";
+    public static final String ID_USER = "user";
+    public static final String ID_PASS = "pass";
+    public static final String ID_TOKEN = "token";
+    public static final String ID_FB = "fbId";
+    public static final String ID_GOOGLE = "googleId";
 
     public static final class GroceryList {
       public static final String FIELD_NAME = "groceryList";
