@@ -182,7 +182,6 @@ public class Recipes extends Controller {
       String prepTime = String.valueOf(prepTimeNode.intValue()) + " minutes";
       System.out.println(String.format("DEBUG prepTime:%s", prepTime));
       Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
-      //filters.add(filter);
       // I'm so sorry
       Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
       Bson filterc = regex(Constants.Recipe.KEY_PREPTIME, "^(?!\\s*$).+");
