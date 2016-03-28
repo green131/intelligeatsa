@@ -98,14 +98,12 @@ public class Recipe extends BaseModelClass {
     Utils.setupPaginator(iter, range_start, range_end);
 
     for (Document d : iter) {
-      System.out.println(d.toJson());
       TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
       keyMap.put(Constants.Mongo.ID, new ObjectId(d.get(Constants.Mongo.ID).toString()).toString());
       keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
       keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
       keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
       Document doc = new Document(keyMap);
-      //Recipe recipe = new Recipe(doc);
       recipeList.add(doc.toJson());
     }
     return recipeList;

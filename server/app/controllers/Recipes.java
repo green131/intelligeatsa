@@ -155,36 +155,32 @@ public class Recipes extends Controller {
     // create query
     List<Bson> filters = new ArrayList<Bson>();
     // search title
-    System.out.println(String.format("DEBUG titleNode:%s", titleNode));
     if (titleNode.size() > 0) filters.add(text(titleNode.textValue()));
     // search tags
-    System.out.println(String.format("DEBUG tagsNode:%s", tagsNode));
     Iterator<JsonNode> tagsNodeIterator = tagsNode.elements();
     while (tagsNodeIterator.hasNext()) {
       JsonNode tagNode = tagsNodeIterator.next();
       if (tagNode.textValue().length() > 0) {
-        System.out.println(String.format("DEBUG tag:%s", tagNode.textValue()));
         Bson filter = eq(Constants.Recipe.KEY_TAGS, tagNode.textValue());
         filters.add(filter);
       }
     }
     // search ingredients
-    System.out.println(String.format("DEBUG ingredientsNode:%s", ingredientsNode));
     Iterator<JsonNode> ingredientsNodeIterator = ingredientsNode.elements();
+    List<Bson> filteri = new ArrayList<Bson>();
     while (ingredientsNodeIterator.hasNext()) {
       JsonNode ingredientNode = ingredientsNodeIterator.next();
       if (ingredientNode.textValue().length() > 0) {
-        System.out.println(String.format("DEBUG ingredient:%s", ingredientNode.textValue()));
         Bson filter = eq(Constants.Recipe.KEY_INGREDIENTS_INDIVIDUAL, ingredientNode.textValue());
-        filters.add(filter);
+        filteri.add(filter);
       }
     }
+    if (filteri.size() > 0) filters.add(or(filteri));
     // search prepTime
     // Needs serious improvement. Should change / create a new value in the db for
     //  prepTimeMinutes to avoid string comparisons
     if (prepTimeNode.intValue() > 0) {
       String prepTime = String.valueOf(prepTimeNode.intValue()) + " minutes";
-      System.out.println(String.format("DEBUG prepTime:%s", prepTime));
       Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
       // I'm so sorry
       Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
@@ -217,7 +213,6 @@ public class Recipes extends Controller {
     if (filters.size() > 0) query = and(filters);
     ArrayList<String> recipes = Recipe.find(Global.mongoConnector, query, range_start, range_end, sortMode);
 
-    System.out.println(String.format("DEBUG: Return num - %s", recipes.size()));
     try {
       String json = Arrays.toString(recipes.toArray());
       JsonNode retNode = mapper.readTree(json);
