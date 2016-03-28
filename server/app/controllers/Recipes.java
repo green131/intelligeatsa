@@ -147,7 +147,7 @@ public class Recipes extends Controller {
     JsonNode ingredientsNode = requestJson.findPath(Constants.Recipe.KEY_INGREDIENTS);
     JsonNode prepTimeNode = requestJson.findPath(Constants.Recipe.KEY_PREPTIME);
     JsonNode sortModeNode = requestJson.findPath(Constants.Sorting.KEY_SORT_METHOD);
-    if(!titleNode.isTextual() && !tagsNode.isArray() && !ingredientsNode.isArray() && !prepTimeNode.isInt() &&!sortModeNode.isTextual()){
+    if(!titleNode.isTextual() && !tagsNode.isArray() && !ingredientsNode.isArray() && !prepTimeNode.isTextual() && !sortModeNode.isTextual()){
       return badRequest(new ObjectMapper().createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
     }
@@ -179,8 +179,10 @@ public class Recipes extends Controller {
     // search prepTime
     // Needs serious improvement. Should change / create a new value in the db for
     //  prepTimeMinutes to avoid string comparisons
-    if (prepTimeNode.intValue() > 0) {
-      String prepTime = String.valueOf(prepTimeNode.intValue()) + " minutes";
+    int prepTimeInt = 0;
+    try {
+      prepTimeInt = Integer.parseInt(prepTimeNode.textValue());
+      String prepTime = String.valueOf(prepTimeNode.textValue()) + " minutes";
       Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
       // I'm so sorry
       Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
@@ -188,6 +190,9 @@ public class Recipes extends Controller {
       Bson filterd = exists(Constants.Recipe.KEY_PREPTIME);
       Bson filter = and(filtera, filterb, filterc, filterd);
       filters.add(filter);
+    } catch (NumberFormatException e) {
+      return badRequest(new ObjectMapper().createObjectNode()
+          .put(Constants.Generic.ERROR, "Malformed request: prep time not valid integer string!"));
     }
 
     // sort by requested settings

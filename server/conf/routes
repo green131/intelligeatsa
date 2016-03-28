@@ -51,7 +51,7 @@ POST /recipe/id/:recipe_id           server.app.controllers.Recipes.getRecipeByI
 #    "prep_time":   <prep_time>,
 #    "sort_alpha":  <true|false>
 #    "sort_rating": <true|false>
-#    "prep_time":   <prep_time>
+#    "prep_time":   <prepTime>
 # }
 # OPTIONAL
 #   "sort":         <alpha|rating|prep|default>
