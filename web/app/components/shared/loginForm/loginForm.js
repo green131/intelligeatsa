@@ -10,7 +10,6 @@ angular.module('intelligeatsa.components')
   }
 });
 
-
 function LoginFormController($http, userSession){
   var ctrl = this;
   ctrl.authenticate = function(){

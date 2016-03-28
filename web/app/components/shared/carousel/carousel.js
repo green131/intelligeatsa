@@ -11,6 +11,12 @@ componentsModule.component('carousel',{
   }
 });
 
+  /**
+  * Carousel Controller. 
+  * @constructor
+  * @param {$http} $http - angular http service
+  * @param {mongUtils} mongoUtils - mongoUtils service
+  */
 
 function CarouselController($http,mongoUtils){
   var ctrl = this;

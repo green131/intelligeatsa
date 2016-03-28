@@ -1,8 +1,12 @@
 package server.app.models;
 
 import server.app.Constants;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public abstract class BaseModelClass {
 
@@ -54,8 +58,27 @@ public abstract class BaseModelClass {
 
   public Object getAttribute(Object key) { return this.doc.get(key); }
 
+  public boolean hasAttribute(String key) {
+    return doc.containsKey(key);
+  }
+
   public ObjectId getId() {
     return doc.getObjectId(Constants.Mongo.ID);
+  }
+
+  /**
+   * Save a model back to MongoDB
+   * If this model doesn't already have an id, one is added
+   * @param conn database connection
+   * @return true if this model didn't exist in the database before, false if it did
+   */
+  public boolean persist(MongoConnector conn) {
+    MongoCollection<Document> coll = conn.getCollectionByName(collection);
+    if (!hasAttribute(Constants.Mongo.ID)) {
+      doc.put(Constants.Mongo.ID, ObjectId.get());
+    }
+    return coll.findOneAndReplace(eq(Constants.Mongo.ID, getId()), doc,
+        new FindOneAndReplaceOptions().upsert(true)) != null;
   }
 
 }

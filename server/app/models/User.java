@@ -64,6 +64,13 @@ public class User extends BaseModelClass {
     return userDoc != null ? new User(userDoc) : null;
   }
 
+  public static User getUserFromSocialId(MongoConnector conn, String idType, String id) {
+    Document userDoc = conn.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
+      .find(eq(idType, id))
+      .first();
+    return userDoc != null ? new User(userDoc) : null;
+  }
+
   public static User getUserFromRequest(MongoConnector conn, JsonNode json) {
     if (!json.has(Constants.User.ID_TOKEN)) {
       return null;
