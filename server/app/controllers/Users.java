@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -29,17 +30,18 @@ import static com.mongodb.client.model.Filters.eq;
 //API for user information
 public class Users extends Controller {
   public static Result loginUser() {
+    ObjectMapper objectMapper = new ObjectMapper();
     //check if request is json
     JsonNode requestJson = request().body().asJson();
     if(requestJson == null) {
-      return badRequest(new ObjectMapper().createObjectNode()
+      return badRequest(objectMapper.createObjectNode()
           .put(Constants.Generic.ERROR, "Expecting Json data!"));
     }
 
     // check for social login
     String socialIdType = null;
     if (requestJson.has(Constants.User.ID_FB) && requestJson.has(Constants.User.ID_GOOGLE)) {
-      return badRequest(new ObjectMapper().createObjectNode()
+      return badRequest(objectMapper.createObjectNode()
           .put(Constants.Generic.ERROR, "Can only specify 1 social id!"));
     } else if (requestJson.has(Constants.User.ID_FB)) {
       socialIdType = Constants.User.ID_FB;
@@ -49,11 +51,23 @@ public class Users extends Controller {
     if (socialIdType != null) {
       User user = User.getUserFromSocialId(Global.mongoConnector, socialIdType, requestJson.get(socialIdType).asText());
       if (user != null) {
-        return ok(new ObjectMapper().createObjectNode()
-            .put(Constants.User.ID_TOKEN, user.generateUserToken().toHexString())
-            .put(Constants.User.ID_USER, user.doc.getString(Constants.User.ID_USER)));
+        ArrayList<Document> ratings = (ArrayList<Document>) user.doc.get(Constants.User.RatingList.FIELD_NAME);
+        ArrayNode ratingsArray = objectMapper.createArrayNode();
+        if (ratings != null) {
+          for (Document doc : ratings) {
+            ObjectNode ratingsObject = objectMapper.createObjectNode();
+            ratingsObject.put(Constants.User.RatingList.ID_RECIPE, doc.getString(Constants.User.RatingList.ID_RECIPE));
+            ratingsObject.put(Constants.User.RatingList.MY_RATING, doc.getDouble(Constants.User.RatingList.MY_RATING));
+            ratingsArray.add(ratingsObject);
+          }
+        }
+        ObjectNode result = objectMapper.createObjectNode();
+        result.put(Constants.User.ID_TOKEN, user.generateUserToken().toHexString());
+        result.put(Constants.User.ID_USER, user.doc.getString(Constants.User.ID_USER));
+        result.put(Constants.User.RatingList.FIELD_NAME, ratingsArray);
+        return ok(result);
       } else {
-        return badRequest(new ObjectMapper().createObjectNode()
+        return badRequest(objectMapper.createObjectNode()
             .put(Constants.Generic.ERROR, "bad social id"));
       }
     }
@@ -62,7 +76,7 @@ public class Users extends Controller {
     JsonNode userNode = requestJson.findPath(Constants.User.ID_USER);
     JsonNode passNode = requestJson.findPath(Constants.User.ID_PASS);
     if(!userNode.isTextual() || !passNode.isTextual()){
-      return badRequest(new ObjectMapper().createObjectNode()
+      return badRequest(objectMapper.createObjectNode()
           .put(Constants.Generic.ERROR, "Malformed request: expecting text information!"));
     }
 
@@ -71,11 +85,11 @@ public class Users extends Controller {
 
     User u = new User(username);
     if (u.isAuthValid(password)) {
-      return ok(new ObjectMapper().createObjectNode()
+      return ok(objectMapper.createObjectNode()
           .put(Constants.User.ID_TOKEN, u.generateUserToken().toHexString())
           .put(Constants.User.ID_USER, u.doc.getString(Constants.User.ID_USER)));
     }
-    return badRequest(new ObjectMapper().createObjectNode()
+    return badRequest(objectMapper.createObjectNode()
         .put(Constants.Generic.ERROR, "invalid credentials"));
   }
 
