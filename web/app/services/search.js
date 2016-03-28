@@ -6,7 +6,7 @@ angular.module('intelligeatsa.services')
 
 function SearchServiceFactory($http,apiSearchUrl){
   /**
-  * User session service, creates session based on login or registration
+  * Search Service
   * @constructor
   */
   var searchService = function(){
