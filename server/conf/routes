@@ -38,11 +38,13 @@ POST /recipe/search/:recipe_title/:range_start/:range_end    server.app.controll
 #    "title":       <keyword>,
 #    "tags":        <recipe_tags>,
 #    "ingredients": <recipe_ingredients>,
-#    "prep_time":   <prep_time>,
-#    "sort_alpha":  <true|false>
-#    "sort_rating": <true|false>
+#    "prep_time":   <prep_time>
 # }
-POST /recipe/search                  server.app.controllers.Recipes.searchRecipes()
+# OPTIONAL (NOT YET IMPLEMENTED)
+#   "sort":         <alpha|rating|prep|default>
+# EXAMPLE:  body {"title":"pasta", "tags":["Vegetarian"], "ingredients":["peas"], "prepTime":30}
+POST /recipe/search/:range_start/:range_end         server.app.controllers.Recipes.searchRecipes(range_start: Integer, range_end: Integer)
+POST /recipe/search                                 server.app.controllers.Recipes.searchRecipesDefault()
 
 
 # Get recipe by id
@@ -78,5 +80,5 @@ POST /user/groceryList/remove/:recipe_id		server.app.controllers.Users.removeRec
 POST /user/groceryList   						server.app.controllers.Users.getGroceryList()
 
 
-#OPTIONS Request
+# OPTIONS Request
 OPTIONS /*path                       server.app.Application.preflight(path: String)

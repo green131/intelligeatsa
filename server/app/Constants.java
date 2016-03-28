@@ -23,8 +23,11 @@ public class Constants {
   }
 
   public static final class Sorting {
-    public static final String KEY_ALPHASORT = "sort_alpha";
-    public static final String KEY_RATINGSORT = "sort_ratings";
+    public static final String KEY_SORT_METHOD = "sort";
+    public static final String DEFAULT_SORT = "default";
+    public static final String ALPHA_SORT = "alpha";
+    public static final String RATING_SORT = "rating";
+    public static final String PREP_SORT = "prep";
   }
 
   public static final class Recipe {
@@ -37,6 +40,7 @@ public class Constants {
     public static final String KEY_TAGS = "tags";
     public static final String KEY_PREPARATION = "preparation";
     public static final String KEY_INGREDIENTS = "ingredients";
+    public static final String KEY_INGREDIENTS_INDIVIDUAL = "ingredients.sectionIngredients.item";
     public static final String KEY_NUMINGREDIENTS = "numOfIngredients";
     public static final String KEY_NUMPREPARATION = "numOfPreparationSteps";
 
