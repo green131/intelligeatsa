@@ -82,6 +82,7 @@ public class Constants {
       public static final String FIELD_NAME = "ratingList";
       public static final String ID_RECIPE = "recipeID";
       public static final String MY_RATING = "myRating";
+      public static final double UNINITIALIZED_RATING_VALUE = 0;
     }
   }
 

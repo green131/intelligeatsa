@@ -234,7 +234,7 @@ public class Recipes extends Controller {
   }
 
 
-  public static Result updateRating(String recipeID, double rating){
+  public static Result updateRating(String recipeID, double newUserRating){
     try{
       //get user and recipe
       User user = User.getUserFromJsonRequest(request());
@@ -243,8 +243,9 @@ public class Recipes extends Controller {
       ObjectId rID = recipe.getId();
       
       //perform the required database updates
-      updateRecipeRating(rID, recipe, rating);  
-      updateUsersListOfRatedRecipes(uID, user, rID, rating);
+      double oldUserRating = user.getRecipeRating(rID);
+      updateRecipeRating(rID, recipe, oldUserRating, newUserRating); 
+      updateUsersListOfRatedRecipes(uID, user, rID, newUserRating);
       return ok("Recipe rating updated!");
     }
     catch(ServerResultException e){
@@ -253,32 +254,40 @@ public class Recipes extends Controller {
   }
 
 
+  //if a user is rating this recipe for the first time, then 'oldUserRating' should be equal to Constants.User.RatingList.UNINITIALIZED_RATING_VALUE
+  private static void updateRecipeRating(ObjectId recipeID, Recipe recipe, double oldUserRating, double newUserRating){
 
-  private static void updateRecipeRating(ObjectId recipeID, Recipe recipe, double rating){
-
-    //get current rating
     Document recipeDoc = (Document)recipe.doc.get(Constants.Recipe.Rating.FIELD_NAME);
-    int newNumOfRaters = 1;
-    double newRating = rating;
-
-    //update rating if needed
+    double newRecipeRating = newUserRating;
+    int numOfRaters = 1;
+    
+    //update recipe rating if needed
     if(recipeDoc != null){
-      double currentRating = recipeDoc.getDouble(Constants.Recipe.Rating.VALUE);
-      int numOfRaters = recipeDoc.getInteger(Constants.Recipe.Rating.NUM_OF_RATERS);
-      newNumOfRaters = numOfRaters + 1;
-      newRating = ((currentRating*numOfRaters) + rating) / newNumOfRaters;
+      double currentRecipeRating = recipeDoc.getDouble(Constants.Recipe.Rating.VALUE);
+      numOfRaters = recipeDoc.getInteger(Constants.Recipe.Rating.NUM_OF_RATERS);
+      
+      if(oldUserRating == Constants.User.RatingList.UNINITIALIZED_RATING_VALUE){
+        //first time that the user is rating this recipe
+        newRecipeRating = ((currentRecipeRating*numOfRaters) + newUserRating) / (numOfRaters+1);
+        numOfRaters++;
+      }
+      else{
+        //user is re-rating this recipe
+        newRecipeRating = currentRecipeRating - (oldUserRating/numOfRaters) + (newUserRating/numOfRaters);
+      }
     }
 
     //update rating field in document
     Document ratingDoc = new Document();
-    ratingDoc.append(Constants.Recipe.Rating.VALUE, newRating);
-    ratingDoc.append(Constants.Recipe.Rating.NUM_OF_RATERS, newNumOfRaters);
+    ratingDoc.append(Constants.Recipe.Rating.VALUE, newRecipeRating);
+    ratingDoc.append(Constants.Recipe.Rating.NUM_OF_RATERS, numOfRaters);
     recipe.doc.append(Constants.Recipe.Rating.FIELD_NAME, ratingDoc);
 
     //update database
     MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.RECIPES_COLLECTION);
     Bson query = eq(Constants.Mongo.ID, recipeID);
     collection.replaceOne(query, recipe.doc);
+    
   }
 
 
@@ -301,6 +310,15 @@ public class Recipes extends Controller {
     }
     else{
       throw new ServerResultException(internalServerError("Rating list in database not actually a list!"));
+    }
+    
+    //removes previous rating of this recipe, if it exists
+    for (Iterator<Document> iterator = ratingListDoc.iterator(); iterator.hasNext();) {
+      Document doc = iterator.next();
+      if(doc.get(Constants.User.RatingList.ID_RECIPE).equals(recipeID)){
+        iterator.remove();
+        break;
+      }
     }
     
     //update ratingList field in document
