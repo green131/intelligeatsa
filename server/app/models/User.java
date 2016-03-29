@@ -128,9 +128,9 @@ public class User extends BaseModelClass {
 
     if(ratingListObj!=null &&  ratingListObj instanceof ArrayList){
       ratingListDoc = (ArrayList<Document>)ratingListObj;
-      for(Document doc : ratingListDoc){
-        if(doc.get(Constants.User.RatingList.ID_RECIPE).equals(recipeID)){
-          double recipeRating = doc.getDouble(Constants.User.RatingList.MY_RATING);
+      for(Document ratingListElementDoc : ratingListDoc){
+        if(ratingListElementDoc.get(Constants.User.RatingList.ID_RECIPE).equals(recipeID)){
+          double recipeRating = ratingListElementDoc.getDouble(Constants.User.RatingList.MY_RATING);
           return recipeRating;
         }
       }
