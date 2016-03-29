@@ -17,6 +17,8 @@ import server.app.Global;
 import server.app.exceptions.ServerResultException;
 import static com.mongodb.client.model.Filters.eq;
 
+import java.util.ArrayList;
+
 public class User extends BaseModelClass {
 
   public User(Document doc) {
@@ -59,15 +61,15 @@ public class User extends BaseModelClass {
 
   public static User getUserFromToken(MongoConnector conn, ObjectId userToken) {
     Document userDoc = conn.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
-      .find(eq(Constants.Mongo.ID, userToken))
-      .first();
+        .find(eq(Constants.Mongo.ID, userToken))
+        .first();
     return userDoc != null ? new User(userDoc) : null;
   }
 
   public static User getUserFromSocialId(MongoConnector conn, String idType, String id) {
     Document userDoc = conn.getCollectionByName(Constants.Mongo.USERS_COLLECTION)
-      .find(eq(idType, id))
-      .first();
+        .find(eq(idType, id))
+        .first();
     return userDoc != null ? new User(userDoc) : null;
   }
 
@@ -84,9 +86,9 @@ public class User extends BaseModelClass {
     return getUserFromToken(conn, id);
   }
 
-  
+
   public static User getUserFromJsonRequest(Request request) throws ServerResultException{
-    
+
     //check if request is json
     JsonNode requestJson = request.body().asJson();
     if(requestJson == null) {
@@ -115,10 +117,28 @@ public class User extends BaseModelClass {
     }
 
     return user;
-    
+
   }
+
   
-  
+  //gets recipe rating if it exists, else returns Constants.User.RatingList.UNINITIALIZED_RATING_VALUE
+  public double getRecipeRating(ObjectId recipeID){
+    ArrayList<Document> ratingListDoc;
+    Object ratingListObj = doc.get(Constants.User.RatingList.FIELD_NAME);
+
+    if(ratingListObj!=null &&  ratingListObj instanceof ArrayList){
+      ratingListDoc = (ArrayList<Document>)ratingListObj;
+      for(Document doc : ratingListDoc){
+        if(doc.get(Constants.User.RatingList.ID_RECIPE).equals(recipeID)){
+          double recipeRating = doc.getDouble(Constants.User.RatingList.MY_RATING);
+          return recipeRating;
+        }
+      }
+    }
+    return Constants.User.RatingList.UNINITIALIZED_RATING_VALUE;
+  }
+
+
   @Override
   public boolean equals(Object other) {
     if (other instanceof User) {
