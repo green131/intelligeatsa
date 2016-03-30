@@ -1,6 +1,49 @@
 <div class="input-group">
-     <input type="text" class="form-control" ng-model="$ctrl.searchQuery" placeholder="{{$ctrl.placeholder}}">
-     <span class="input-group-btn">
-       <button class="btn btn-default" ng-click="$ctrl.search();" type="button">Search</button>
-     </span>
+  <input type="text" id="searchBar" class="form-control ui-widget" ng-model="$ctrl.searchQuery" placeholder="{{$ctrl.placeholder}}">
+  <div class="input-group-btn">
+    <button ng-click="$ctrl.search();" type="button" class="btn btn-default">Search</button>
+    <button style= type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a ng-click="$ctrl.showIngredientSearchModal();" >Search by ingredients</a></li>
+    </ul>
+  </div>
 </div>
+<modal-window modal-id="ingredientSearchModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Search by ingredients</h4>
+  </div>
+  <div class="modal-body">
+    <div class="well">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> chicken </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> pork </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> white rice </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> pasta </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> garlic clove </label> </div></td>
+          </tr>
+          <tr>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> spinach </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> white onion </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> cilantro </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> mango </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> mushroom </label> </div></td>
+          </tr>
+          <tr>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> pineapple </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> avocado </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> lime </label> </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="$ctrl.searchByIngredients();" class="btn btn-danger" data-dismiss="modal" aria-label="Close">Search</button>
+  </div>
+</modal-window>
