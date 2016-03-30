@@ -8,6 +8,7 @@
     </button>
     <ul class="dropdown-menu">
       <li><a ng-click="$ctrl.showIngredientSearchModal();" >Search by ingredients</a></li>
+      <li><a ng-click="$ctrl.showPrepTimeSearchModal();" >Search by time</a></li>
     </ul>
   </div>
 </div>
@@ -47,3 +48,22 @@
     <button type="button" ng-click="$ctrl.searchByIngredients();" class="btn btn-danger" data-dismiss="modal" aria-label="Close">Search</button>
   </div>
 </modal-window>
+<modal-window modal-id="prepTimeSearchModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Search by Preparation Time</h4>
+  </div>
+  <div class="modal-body">
+    <div class="well">
+      <select id="prepTimeSelectBox" class="form-control" style="font-size:24px;">
+      <option ng-repeat="prepTime in $ctrl.prepTimes" value="{{prepTime}}" >
+        {{prepTime + ' minutes'}}
+      </option>
+    </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="$ctrl.searchByPrepTime();" class="btn btn-danger" data-dismiss="modal" aria-label="Close">Search</button>
+  </div>
+</modal-window>
+

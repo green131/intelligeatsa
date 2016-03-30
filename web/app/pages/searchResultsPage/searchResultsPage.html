@@ -19,15 +19,15 @@
     <div class="col-md-1"></div>
     <div class="col-md-10" style="text-align:center;">
       <ul class="list-inline" style="padding:10px;">
-        <li ng-repeat="recipe in $ctrl.recipes" style="width:200px;">
-          <div class="panel panel-default">
+        <li ng-repeat="recipe in $ctrl.recipes" ng-if="recipe.title != 'NO TITLE'" style="width:200px;">
+          <div  class="panel panel-default">
             <div class="panel-body">
-              <a href="{{$ctrl.generateRecipePageUrl(recipe.doc._id)}}">
-                <img class="img-rounded" style="width:128px;height:128px;" src="assets/crossed-knife-and-fork.png" ng-src="{{recipe.doc.pictureURL}}"/>
+              <a href="#/recipe/{{recipe._id}}">
+                <img class="img-rounded" style="width:128px;height:128px;" src="assets/crossed-knife-and-fork.png" ng-src="{{recipe.pictureURL}}"/>
               </a>
             </div>
             <div class="panel-footer">
-              <a href="{{$ctrl.generateRecipePageUrl(recipe.doc._id)}}"><h5  title="{{recipe.doc.title}}" class="panel-title carousel-item-title">{{recipe.doc.title}}</h5></a>
+              <a href="#/recipe/{{recipe._id}}"><h5  title="{{recipe.title}}" class="panel-title carousel-item-title">{{recipe.title}}</h5></a>
             </div>
           </div>
         </li>

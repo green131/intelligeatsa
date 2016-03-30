@@ -3,7 +3,7 @@
 angular.module('intelligeatsa.pages')
 .constant('searchResultsBatchSize',20)
 .config(['$routeProvider',function($routeProvider) {
-  $routeProvider.when('/search/:query',{
+  $routeProvider.when('/search/:query/:searchType',{
     templateUrl: 'pages/searchResultsPage/searchResultsPage.html',
     controller: 'SearchResultsPageController',
     controllerAs: '$ctrl'
@@ -13,11 +13,21 @@ angular.module('intelligeatsa.pages')
 
 function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchSize,$routeParams){
   var ctrl = this;
+  ctrl.searchType = $routeParams.searchType;
   ctrl.query = $routeParams.query;
   var batchSize = searchResultsBatchSize;
-  var paginator = search.query(ctrl.query,batchSize);
+  var paginator = search.query({
+    query:ctrl.query,
+    searchType:ctrl.searchType
+    }
+    ,batchSize);
 
   var paginateSuccess = function(data){
+    data.forEach(function(recipe){
+      if(recipe.title == null){
+        recipe.title='NO TITLE';
+      }
+    })
     ctrl.recipes = data;
     if(ctrl.recipes.length < batchSize){
       ctrl.lastPage = true;

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('intelligeatsa.services')
-.constant('apiSearchUrl','http://localhost:8080/recipe/search/')
+.constant('apiSearchUrl','http://localhost:8080/recipe/search')
 .factory('search',['$http', 'apiSearchUrl', SearchServiceFactory]);
 
 function SearchServiceFactory($http,apiSearchUrl){
@@ -11,28 +11,63 @@ function SearchServiceFactory($http,apiSearchUrl){
   */
   var searchService = function(){
     var service = this;
-    var request = function(searchQuery,start,end,successCallback,errorCallback){
-      $http({
+    var request = function(searchQueryInfo,start,end,successCallback,errorCallback){
+      console.log(searchQueryInfo.searchType);
+      if(searchQueryInfo.searchType === 'tags'){
+        $http({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        url: (apiSearchUrl + searchQuery + '/' + start + '/' + end)
+        data:{
+          tags:[searchQueryInfo.query]
+        },
+        url: (apiSearchUrl + '/' + start + '/' + end)
       }).then(function success(response){
         successCallback(response.data);
       }, function error(response){
         errorCallback(response);
       });
+      }else
+      if(searchQueryInfo.searchType === 'ingredients'){
+         $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data:{
+          ingredients:searchQueryInfo.query.split(',')
+        },
+        url: (apiSearchUrl + '/' + start + '/' + end)
+      }).then(function success(response){
+        successCallback(response.data);
+      }, function error(response){
+        errorCallback(response);
+      });
+      }
+      else
+      if(searchQueryInfo.searchType === 'prepTime'){
+         $http({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data:{
+          prepTime:searchQueryInfo.query
+        },
+        url: (apiSearchUrl + '/' + start + '/' + end)
+      }).then(function success(response){
+        successCallback(response.data);
+      }, function error(response){
+        errorCallback(response);
+      });
+      }
     };
 
 
     /**
-    * Creates a session from email registration
+    * Query search
     * @function
-    * @param {string} searchQuery - query to search
+    * @param {SearchQueryO} searchQuery - object with search query info
     * @param {string} batchSize - size of each batch of results
     * @returns {Paginator} - paginator object
     */
 
-    this.query = function(searchQuery,batchSize){
+    this.query = function(searchQueryInfo,batchSize){
       /**
       * Paginator instance
       * @constructor
@@ -50,7 +85,7 @@ function SearchServiceFactory($http,apiSearchUrl){
         this.next = function(successCallback, errorCallback){
           start += batchSize;
           end += batchSize;
-          request(searchQuery, start, end, successCallback, errorCallback);
+          request(searchQueryInfo, start, end, successCallback, errorCallback);
         };
         /**
         * Gets the previous batch of results based on search query
@@ -63,7 +98,7 @@ function SearchServiceFactory($http,apiSearchUrl){
             start -= batchSize;
             end -= batchSize;
           }
-          request(searchQuery, start, end, successCallback, errorCallback);
+          request(searchQueryInfo, start, end, successCallback, errorCallback);
         };
       };
       return new Paginator();

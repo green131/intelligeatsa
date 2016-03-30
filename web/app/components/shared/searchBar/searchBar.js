@@ -17,6 +17,9 @@ function SearchBarController($window,$http){
   ctrl.showIngredientSearchModal = function(){
     $('#ingredientSearchModal').modal('toggle');
   };
+  ctrl.showPrepTimeSearchModal = function(){
+    $('#prepTimeSearchModal').modal('toggle');
+  };
 
   ctrl.searchByIngredients = function(){
     var ingredientsSelected = [];
@@ -36,7 +39,13 @@ function SearchBarController($window,$http){
     }else{
       console.log('no ingredients selected');
     }
-  }
+  };
+
+  ctrl.searchByPrepTime = function(){
+    var prepTimeQuery = $("#prepTimeSelectBox").val();
+    $('#prepTimeSearchModal').modal('toggle');
+      $window.location.href= '#/search/'+prepTimeQuery + '/prepTime';
+  };
 
   // configure autocomplete
   var autoCompletePossibilities = [
@@ -57,6 +66,9 @@ function SearchBarController($window,$http){
     'egg',
     'white rice',
     'brown rice',
+    'mango lassi',
+    'chicken and rice',
+    'tuna sandwich',
     'tuna',
     'salmon',
     'shrimp',
@@ -80,6 +92,11 @@ function SearchBarController($window,$http){
     'turkey',
     'sandwich'
   ];
+
+  ctrl.prepTimes = [
+    5,10,15,20,25,30,35,40,45,50,55,60
+  ];
+
   $('#searchBar').autocomplete({
     source: autoCompletePossibilities,
     minLength:1,
