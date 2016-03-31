@@ -179,20 +179,22 @@ public class Recipes extends Controller {
     // search prepTime
     // Needs serious improvement. Should change / create a new value in the db for
     //  prepTimeMinutes to avoid string comparisons
-    int prepTimeInt = 0;
     try {
-      prepTimeInt = Integer.parseInt(prepTimeNode.textValue());
+      // Test if valid integer
+      Integer.parseInt(prepTimeNode.textValue());
       String prepTime = String.valueOf(prepTimeNode.textValue()) + " minutes";
       Bson filtera = lte(Constants.Recipe.KEY_PREPTIME, prepTime);
-      // I'm so sorry
+      // I'm so sorry - removes items that have "hours" and requires "%d minute(s)"
       Bson filterb = regex(Constants.Recipe.KEY_PREPTIME, "^(?!.*hour(s)?$.*)\\d+\\sminute(s)?");
       Bson filterc = regex(Constants.Recipe.KEY_PREPTIME, "^(?!\\s*$).+");
       Bson filterd = exists(Constants.Recipe.KEY_PREPTIME);
       Bson filter = and(filtera, filterb, filterc, filterd);
       filters.add(filter);
     } catch (NumberFormatException e) {
-      return badRequest(new ObjectMapper().createObjectNode()
-          .put(Constants.Generic.ERROR, "Malformed request: prep time not valid integer string!"));
+      if (prepTimeNode.asText().length() > 0) {
+        return badRequest(new ObjectMapper().createObjectNode()
+            .put(Constants.Generic.ERROR, "Malformed request: prep time not valid integer string!"));
+      }
     }
 
     // sort by requested settings
