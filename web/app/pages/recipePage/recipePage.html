@@ -27,11 +27,12 @@
       <h4>Description</h4>
       <div class="panel panel-danger">
         <div class="panel panel-body">
+          <h4>{{$ctrl.recipe.prepTime}}</h4>
           <p> {{$ctrl.recipe.description}} </p>
           <ul class="nav nav-pills">
             <li role="presentation">Tags: </li>
             <li role="presentation" ng-repeat="tag in $ctrl.recipe.tags">
-              <span class="badge">{{tag}}</span>
+              <a href="#/search/{{tag}}/tags"><span class="badge">{{tag}}</span></a>
             </li>
           </div>
         </div>

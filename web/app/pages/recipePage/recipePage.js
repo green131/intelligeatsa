@@ -97,6 +97,9 @@ function RecipePageController($http, $routeParams, $rootScope, $scope, groceryLi
 
     rate(ctrl.recipeId, rating, user.token, function(response){
       // get ratingList and update it.
+      if(ctrl.user.ratingList == undefined){
+        ctrl.user.ratingList = [];
+      }
       var existingRatingInfo = ctrl.user.ratingList.find(function(ratingObj){
         return (ratingObj.recipeID === recipeId);
       });

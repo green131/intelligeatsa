@@ -20,7 +20,7 @@ function LinkAccountsFormController($http, userSession, ezfb){
               console.log('linked with facebook');
             },function error(err){
               $('#linkAccountsFormModal').modal('hide');
-              alert('You already linked a Facebook account');
+              alert('You already linked a Facebook account.');
 
               console.log(err);
             });
@@ -42,7 +42,7 @@ function LinkAccountsFormController($http, userSession, ezfb){
         console.log('linked with google');
       },function error(err){
         $('#linkAccountsFormModal').modal('hide');
-        alert('You already linked a google account');
+        alert('You already linked a google account.');
         console.log(err);
       });
       });
