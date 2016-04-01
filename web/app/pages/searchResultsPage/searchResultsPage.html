@@ -1,7 +1,8 @@
 <header></header>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12" style="text-align:right;">
+    <div class="col-md-12" style="text-align:right;"><br>
+      <button style="margin-right:20px;" ng-if="$ctrl.searchType == 'tags' || $ctrl.searchType == 'ingredients'" ng-click="$ctrl.sortAlpha();" id="sortAlphaButton" class="btn btn-warning">Sort Alphabetically</button>
       <nav>
         <ul class="pager">
           <li class="previous"><button class="btn btn-primary" ng-click="$ctrl.previous();"><span aria-hidden="true">&larr;</span> Previous</button></li>

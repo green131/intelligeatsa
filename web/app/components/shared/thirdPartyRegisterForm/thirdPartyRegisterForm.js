@@ -19,7 +19,7 @@ function ThirdPartyRegisterFormController($http,$scope,userSession,ezfb){
             userSession.createSessionFromFacebookRegistration(res.name,userId,function success(){
               $('#loginModal').modal('hide');
             },function error(err){
-              console.log(err);
+              alert('Facebook account already registered!');
             })
           }
         });
@@ -39,7 +39,7 @@ function ThirdPartyRegisterFormController($http,$scope,userSession,ezfb){
           $('#loginModal').modal('hide');
           console.log('registered with with google');
         }, function error(){
-          userSession.closeSession();
+          alert('Google account already registered!');
         });
       });
     };

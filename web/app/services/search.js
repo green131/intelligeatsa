@@ -12,57 +12,45 @@ function SearchServiceFactory($http,apiSearchUrl){
   var searchService = function(){
     var service = this;
     var request = function(searchQueryInfo,start,end,successCallback,errorCallback){
-      console.log(searchQueryInfo.searchType);
+      console.log(searchQueryInfo);
+      var postData = {};
       if(searchQueryInfo.searchType === 'tags'){
-        $http({
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data:{
-          tags:[searchQueryInfo.query]
-        },
-        url: (apiSearchUrl + '/' + start + '/' + end)
-      }).then(function success(response){
-        successCallback(response.data);
-      }, function error(response){
-        errorCallback(response);
-      });
+        var tags = searchQueryInfo.query.split(',');
+        for(var i=0;i<tags.length;i++){
+          tags[i] = tags[i].trim();
+        }
+        postData.tags = tags;
+        if(searchQueryInfo.hasOwnProperty('sort'))
+          postData.sort = searchQueryInfo.sort;
       }else
       if(searchQueryInfo.searchType === 'ingredients'){
-         $http({
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data:{
-          ingredients:searchQueryInfo.query.split(',')
-        },
-        url: (apiSearchUrl + '/' + start + '/' + end)
-      }).then(function success(response){
-        successCallback(response.data);
-      }, function error(response){
-        errorCallback(response);
-      });
+         postData.ingredients = searchQueryInfo.query.split(',');
+         if(searchQueryInfo.hasOwnProperty('sort'))
+          postData.sort = searchQueryInfo.sort;
       }
       else
       if(searchQueryInfo.searchType === 'prepTime'){
-         $http({
+        postData.prepTime = searchQueryInfo.query;
+        postData.sort = 'prepR';
+      }
+
+       $http({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        data:{
-          prepTime:searchQueryInfo.query
-        },
+        data:postData,
         url: (apiSearchUrl + '/' + start + '/' + end)
       }).then(function success(response){
         successCallback(response.data);
       }, function error(response){
         errorCallback(response);
       });
-      }
     };
 
 
     /**
     * Query search
     * @function
-    * @param {SearchQueryO} searchQuery - object with search query info
+    * @param {SearchQuery} searchQuery - object with search query info
     * @param {string} batchSize - size of each batch of results
     * @returns {Paginator} - paginator object
     */

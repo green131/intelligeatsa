@@ -11,8 +11,13 @@ angular.module('intelligeatsa.components')
 
 function SearchBarController($window,$http){
   var ctrl = this;
+  ctrl.searchQuery = '';
   ctrl.search = function(){
-    $window.location.href= '#/search/'+ctrl.searchQuery + '/tags';
+    if(ctrl.searchQuery.trim() == ''){
+      alert('Type in something to search!');
+    }else{
+      $window.location.href= '#/search/'+ctrl.searchQuery + '/tags';
+    }
   };
   ctrl.showIngredientSearchModal = function(){
     $('#ingredientSearchModal').modal('toggle');
@@ -37,7 +42,8 @@ function SearchBarController($window,$http){
       $('#ingredientSearchModal').modal('toggle');
       $window.location.href= '#/search/'+ingredientsSelected.join() + '/ingredients';
     }else{
-      console.log('no ingredients selected');
+      alert('Select some ingredients to search.');
+      $('#ingredientSearchModal').modal('show');
     }
   };
 
@@ -49,48 +55,55 @@ function SearchBarController($window,$http){
 
   // configure autocomplete
   var autoCompletePossibilities = [
-    'apple',
-    'banana',
-    'cherry',
-    'grapes',
-    'mangoes',
-    'melons',
-    'orange',
-    'peaches',
-    'pears',
-    'pineapple',
-    'strawberry',
-    'tomato',
-    'chicken',
-    'avocado',
-    'egg',
-    'white rice',
-    'brown rice',
-    'mango lassi',
-    'chicken and rice',
-    'tuna sandwich',
-    'tuna',
-    'salmon',
-    'shrimp',
-    'peanut',
-    'pork',
-    'onion',
-    'thai',
-    'pasta',
-    'panner',
-    'chicken tikka',
-    'salsa',
-    'sweet potato',
-    'tofu',
-    'lentils',
-    'curry',
-    'indian',
-    'mexican',
-    'vietnamese',
-    'chinese',
-    'pita',
-    'turkey',
-    'sandwich'
+    'Apple',
+    'Banana',
+    'Cherry',
+    'Grapes',
+    'Mangoes',
+    'Melons',
+    'Orange',
+    'Peaches',
+    'Pears',
+    'Pineapple',
+    'Strawberry',
+    'Tomato',
+    'Chicken',
+    'Avocado',
+    'Egg',
+    'White rice',
+    'Brown rice',
+    'Mango lassi',
+    'Chicken and rice',
+    'Vegetarian, Gluten Free',
+    'Vegetarian',
+    'High Fiber',
+    'Kosher',
+    'Low Cholesterol',
+    'Low Cholesterol, High Fiber',
+    'Indian, Vegetarian',
+    'Tuna sandwich',
+    'Tuna',
+    'Salmon',
+    'Shrimp',
+    'Peanut',
+    'Pork',
+    'Onion',
+    'Thai',
+    'Pasta',
+    'Paneer',
+    'Chicken tikka',
+    'Salsa',
+    'Sweet potato',
+    'Tofu',
+    'Lentils',
+    'Curry',
+    'Indian',
+    'Mexican',
+    'Vietnamese',
+    'Chinese',
+    'Pita',
+    'Turkey',
+    'Sandwich'
   ];
 
   ctrl.prepTimes = [

@@ -21,6 +21,12 @@ function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchS
     searchType:ctrl.searchType
     }
     ,batchSize);
+  var sortAlpha = false;
+
+  // first page.
+  function init(){
+    paginator.next(paginateSuccess,paginateError);
+  }
 
   var paginateSuccess = function(data){
     data.forEach(function(recipe){
@@ -48,12 +54,34 @@ function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchS
     paginator.previous(paginateSuccess,paginateError);
   };
 
-  // first page.
-  paginator.next(paginateSuccess,paginateError);
-
   // quick hack
   ctrl.generateRecipePageUrl = function(mongoIdObj){
     return '#/recipe/' + mongoUtils.mongoIdObjToString(mongoIdObj);
   };
 
+  ctrl.sortAlpha = function(){
+    if(sortAlpha){
+      // remove sorting alpha
+      sortAlpha = false;
+      paginator = search.query({
+        query:ctrl.query,
+        searchType:ctrl.searchType
+      }
+      ,batchSize);
+      $('#sortAlphaButton').html('Sort Alphabetically');
+    }else{
+      sortAlpha = true;
+      paginator = search.query({
+        query:ctrl.query,
+        searchType:ctrl.searchType,
+        sort:'alpha'
+      }
+      ,batchSize);
+      $('#sortAlphaButton').html('Revert');
+    }
+    init();
+   };
+
+   // on page load
+  init();
 }

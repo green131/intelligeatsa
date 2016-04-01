@@ -19,7 +19,7 @@
   </div>
   <div class="modal-body">
     <div class="well">
-      <table class="table">
+      <table class="table" style="overflow:auto;">
         <tbody>
           <tr>
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> chicken </label> </div></td>
@@ -39,13 +39,23 @@
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> pineapple </label> </div></td>
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> avocado </label> </div></td>
             <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> lime </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> beef </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> salmon </label> </div></td>
+          </tr>
+            <tr>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> apple </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> fish </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> green pepper </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> steak </label> </div></td>
+            <td><div class="checkbox"> <label class="ingredient_checkbox"> <input type="checkbox"> milk </label> </div></td>
+
           </tr>
         </tbody>
       </table>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" ng-click="$ctrl.searchByIngredients();" class="btn btn-danger" data-dismiss="modal" aria-label="Close">Search</button>
+    <button type="button" ng-click="$ctrl.searchByIngredients();" class="btn btn-danger"  aria-label="Close">Search</button>
   </div>
 </modal-window>
 <modal-window modal-id="prepTimeSearchModal">
