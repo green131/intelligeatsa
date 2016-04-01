@@ -19,7 +19,7 @@ function ThirdPartyLoginFormController($http,userSession,ezfb,$scope){
             userSession.createSessionFromFacebookLogin(res.name,userId,function success(){
                 $('#loginModal').modal('hide');
             },function error(err){
-              console.log(err);
+              alert('Facebook user does not exist.');
             })
           }
         });
@@ -37,9 +37,8 @@ function ThirdPartyLoginFormController($http,userSession,ezfb,$scope){
       userSession.createSessionFromGoogleLogin(name, id,
         function success(){
           $('#loginModal').modal('hide');
-          console.log('registered with with google');
         }, function error(){
-          userSession.closeSession();
+          alert('Google user does not exist.');
         });
       });
     };
