@@ -14,7 +14,10 @@ pagesModule.config(['$routeProvider', function($routeProvider) {
 function RecipePageController($http, $routeParams, $rootScope, $scope, groceryList, SESSION_EVENTS, userSession, rate){
   var ctrl = this;
   var recipeId = $routeParams.id;
+  ctrl.recipeId = recipeId;
   var recipeUrl = "http://localhost:8080/recipe/id/" + recipeId;
+  ctrl.recipeUrl = recipeUrl;
+  ctrl.encodedRecipeUrl = encodeURIComponent(recipeUrl);
   /* rating*/
   ctrl.previousRating = 0;
 
@@ -64,14 +67,51 @@ function RecipePageController($http, $routeParams, $rootScope, $scope, groceryLi
     });
   };
 
+  ctrl.shareToFb = function(){
+    FB.ui(
+       {
+         method: 'stream.publish',
+         message: 'Check out this awesome recipe!',
+         attachment: {
+           name: ctrl.recipe.title,
+           caption: 'Intelligeatsa - The best recipe website!',
+           description: (
+             ctrl.recipe.description
+           ),
+           href: ctrl.recipe.url
+         },
+         user_prompt_message: 'Check out this awesome recipe!'
+       },
+       function(response) {
+         if (response && response.post_id) {
+         } else {
+         }
+       }
+     );  
+  };
+
+
+  ctrl.shareToGoogle = function(){
+    var params = {
+    clientid: '790030169806-2os08flcrvpqo4iql2b3slborg5jmuds.apps.googleusercontent.com',
+    cookiepolicy: 'single_host_origin',
+    scope: 'https://www.googleapis.com/auth/plus.login',
+    contenturl: 'https://plus.google.com/pages/',
+    calltoactionurl: 'https://plus.google.com/pages/',
+    prefilltext: 'Hello Stack Overflow',
+  };
+  window.ginteractivepost.render('post', params);
+  }
+ 
+
    var fetchRecipe = function(){
     $http({
     method: 'POST',
     url: recipeUrl,
   }).then(function successCallback(response) {
     ctrl.recipe = response.data;
+    ctrl.encodedRecipeTitle = ctrl.recipe.title;
     ctrl.instructionList = ctrl.recipe.preparation[0];
-
     ctrl.recipeId = ctrl.recipe._id.$oid;
     // round
     if(ctrl.recipe.hasOwnProperty('rating')){
