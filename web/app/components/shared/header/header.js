@@ -40,4 +40,8 @@ function HeaderController($http,$rootScope,$window,userSession,SESSION_EVENTS){
   ctrl.showGroceryList = function(){
     $window.location.href= '#/groceryList/';
   };
+
+  ctrl.showSaveList = function(){
+    $window.location.href = '#/saveList/';
+  };
 }
