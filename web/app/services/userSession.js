@@ -8,9 +8,9 @@ angular.module('intelligeatsa.services')
   SESSION_CREATED: 'SESSION_CREATED',
   SESSION_CLOSED: 'SESSION_CLOSED'
 })
-.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl','apiLinkAccountsUrl','ezfb','$window','$cookies',UserSessionServiceFactory]);
+.factory('userSession',['$http','$rootScope','SESSION_EVENTS','apiRegistrationUrl','apiLoginUrl','apiLinkAccountsUrl','ezfb','$window',UserSessionServiceFactory]);
 
-function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl,apiLinkAccountsUrl,ezfb,$window,$cookies){
+function UserSessionServiceFactory($http,$rootScope,SESSION_EVENTS,apiRegistrationUrl,apiLoginUrl,apiLinkAccountsUrl,ezfb,$window){
 
   /**
   * User session service, creates session based on login or registration

@@ -3,7 +3,6 @@
 // Declare root level module and dependencies
 angular.module('intelligeatsa', [
   'ngRoute',
-  'ngCookies',
   'intelligeatsa.services',
   'intelligeatsa.components',
   'intelligeatsa.pages',
