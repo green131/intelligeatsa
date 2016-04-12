@@ -16,6 +16,7 @@
         <!-- Split button -->
         <div class="btn-group">
            <button type="button" ng-if="$ctrl.sessionExists" ng-click="$ctrl.showGroceryList();" class="btn btn-default">Grocery List</button>
+          <button type="button" ng-if="$ctrl.sessionExists" ng-click="$ctrl.showSaveList();" class="btn btn-default">Save List</button>
           <button type="button" ng-click="$ctrl.logout();" class="btn btn-default">Logout</button>
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="caret"></span>
