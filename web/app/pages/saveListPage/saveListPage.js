@@ -9,6 +9,15 @@ angular.module('intelligeatsa.pages')
   });
 }]);
 
-function SaveListPageController($http){
+function SaveListPageController($http, saveList){
   var ctrl = this;
+  var saveListObj = null;
+  saveList.get(function success(resp){
+    console.log(resp);
+    saveListObj = resp;
+  }, function error(err){
+    console.log(err);
+  });
+
+
 }
