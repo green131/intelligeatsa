@@ -11,13 +11,28 @@ angular.module('intelligeatsa.pages')
 
 function SaveListPageController($http, saveList){
   var ctrl = this;
-  var saveListObj = null;
-  saveList.get(function success(resp){
-    console.log(resp);
-    saveListObj = resp;
-  }, function error(err){
-    console.log(err);
-  });
+  ctrl.recipeIDList = null;
+  ctrl.saveCount = 0;
 
+  ctrl.fetchList = function(){
+    saveList.get(function success(resp){
+      ctrl.recipeIDList = resp.recipeIDList;
+      ctrl.saveCount = ctrl.recipeIDList.length;
+      console.log(ctrl.recipeIDList);
+    }, function error(err){
+      console.log(err);
+    });
+  };
 
+  ctrl.removeRecipe = function(recipeId){
+    saveList.removeRecipe(recipeId, function(){
+      // now re-fetch
+      ctrl.fetchList();
+    }, function(err){
+      console.log(err);
+    });
+  };
+
+  // init
+  ctrl.fetchList();
 }

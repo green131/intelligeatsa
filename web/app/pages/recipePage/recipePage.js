@@ -11,7 +11,7 @@ pagesModule.config(['$routeProvider', function($routeProvider) {
   });
 }]);
 
-function RecipePageController($http, $routeParams, $rootScope, $scope, groceryList, SESSION_EVENTS, userSession, rate){
+function RecipePageController($http, $routeParams, $rootScope, $scope, groceryList, SESSION_EVENTS, userSession, rate, saveList){
   var ctrl = this;
   var recipeId = $routeParams.id;
   ctrl.recipeId = recipeId;
@@ -24,6 +24,7 @@ function RecipePageController($http, $routeParams, $rootScope, $scope, groceryLi
   ctrl.recipe = '';
   ctrl.instructionList=[];
   ctrl.inGroceryList = false;
+  ctrl.inSaveList = false;
   ctrl.sessionExists = false;
   ctrl.user = null;
 
@@ -48,6 +49,14 @@ function RecipePageController($http, $routeParams, $rootScope, $scope, groceryLi
         console.log(ctrl.previousRating);
       }
       }
+      
+      saveList.contains(ctrl.recipeId, function(resultBool){
+        ctrl.inSaveList = resultBool;
+      }, function(err){
+        console.log(err);
+      });
+
+
     }
   }
 
@@ -169,6 +178,24 @@ function RecipePageController($http, $routeParams, $rootScope, $scope, groceryLi
 
     });
 
+  };
+
+
+  ctrl.addToSaveList = function(){
+    saveList.addRecipe(ctrl.recipeId, function(){
+      ctrl.inSaveList = true;
+    },function(err){
+      console.log(err);
+    });
+  };
+
+
+  ctrl.removeFromSaveList = function(){
+    saveList.removeRecipe(ctrl.recipeId,function(){
+      ctrl.inSaveList = false;
+    },function(err){
+      console.log(err);
+    });
   };
 
   $rootScope.$on(SESSION_EVENTS.SESSION_CREATED,function(){

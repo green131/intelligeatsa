@@ -12,7 +12,7 @@ function SaveListServiceFactory($http,apiSaveListBaseUrl, userSession){
       var user = userSession.getUser();
       if(!user){
         console.log('no user');
-        return;
+        errorCallback('no user');
       }
       $http({
         method: 'POST',
@@ -33,7 +33,7 @@ function SaveListServiceFactory($http,apiSaveListBaseUrl, userSession){
       var user = userSession.getUser();
       if(!user){
         console.log('no user');
-        return;
+        errorCallback('no user');
       }
       $http({
         method: 'POST',
@@ -50,7 +50,12 @@ function SaveListServiceFactory($http,apiSaveListBaseUrl, userSession){
     };
 
 
-    this.removeRecipe = function(recipeId, successCb, errorCb){
+    this.removeRecipe = function(recipeId, successCallback, errorCallback){
+      var user = userSession.getUser();
+      if(!user){
+        console.log('no user');
+        errorCallback('no user');
+      }
       $http({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,7 +74,7 @@ function SaveListServiceFactory($http,apiSaveListBaseUrl, userSession){
       var user = userSession.getUser();
       if(!user){
         console.log('no user');
-        return;
+        errorCallback('no user');
       }
       $http({
         method: 'POST',
@@ -87,7 +92,7 @@ function SaveListServiceFactory($http,apiSaveListBaseUrl, userSession){
             break;
           }
         }
-        successCallback(found);
+        successCallback(foundFlag);
       }, function error(response){
         errorCallback(response);
       });
