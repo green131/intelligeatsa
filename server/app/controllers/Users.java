@@ -1,29 +1,24 @@
 package server.app.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.bson.conversions.Bson;
-
+import org.bson.types.ObjectId;
 import play.mvc.Controller;
 import play.mvc.Result;
 import server.app.Constants;
 import server.app.Global;
 import server.app.exceptions.ServerResultException;
+import server.app.models.Ingredient;
 import server.app.models.Recipe;
 import server.app.models.User;
-import server.app.models.Ingredient;
-import server.app.Utils;
 
-import com.mongodb.client.MongoCollection;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -405,7 +400,184 @@ public class Users extends Controller {
     }
     return false;
   }
+
+
+  public static Result addRecipeToSavedList(String recipeID){
+
+    try{
+      //get user and recipe
+      User user = User.getUserFromJsonRequest(request());
+      Recipe recipe = Recipe.getRecipeById(recipeID);
+      ObjectId uID = user.getId();
+      ObjectId rID = recipe.getId();
+
+      //check if this user has a savedList field
+      ArrayList<Document> savedListDoc;
+      Object savedListObj = user.doc.get(Constants.User.SavedList.FIELD_NAME);
+      if(savedListObj!=null &&  savedListObj instanceof ArrayList){
+        savedListDoc = (ArrayList<Document>)savedListObj;
+      }
+      else if(savedListObj == null){
+        savedListDoc = new ArrayList<Document>();
+      }
+      else{
+        return internalServerError("Saved list in database not actually a list!");
+      }
+
+
+      if(savedListContains(savedListDoc, rID)){
+        return badRequest(new ObjectMapper().createObjectNode()
+            .put(Constants.Generic.ERROR, "User's saved list already contains the given recipeID"));
+      }
+      else{
+        //create new savedList element
+        Document savedListElementDoc = new Document();
+        savedListElementDoc.append(Constants.User.SavedList.ID_RECIPE, rID);
+
+        //update savedList field in document
+        savedListDoc.add(savedListElementDoc);
+        user.doc.append(Constants.User.SavedList.FIELD_NAME, savedListDoc);
+
+        //update database
+        MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
+        Bson query = eq(Constants.Mongo.ID, uID);
+        collection.replaceOne(query, user.doc);
+        return ok("Saved list updated!");
+      }
+
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
+    }
+
+  }
+
+
+
+  public static Result removeRecipeFromSavedList(String recipeID){
+
+    try{
+      //get user and recipe
+      User user = User.getUserFromJsonRequest(request());
+      Recipe recipe = Recipe.getRecipeById(recipeID);
+      ObjectId uID = user.getId();
+      ObjectId rID = recipe.getId();
+
+      //check if this user has a savedList field
+      ArrayList<Document> savedListDoc;
+      Object savedListObj = user.doc.get(Constants.User.SavedList.FIELD_NAME);
+      if(savedListObj!=null &&  savedListObj instanceof ArrayList){
+        savedListDoc = (ArrayList<Document>)savedListObj;
+      }
+      else if(savedListObj == null){
+        return badRequest(new ObjectMapper().createObjectNode()
+            .put(Constants.Generic.ERROR, "User's saved list does not contain the given recipeID"));
+      }
+      else{
+        return internalServerError("Saved list in database not actually a list!");
+      }
+
+
+      if(savedListContains(savedListDoc, rID) == false){
+        return badRequest(new ObjectMapper().createObjectNode()
+            .put(Constants.Generic.ERROR, "User's saved list does not contain the given recipeID"));
+      }
+      else{
+        //update savedList field in document
+        Document recipeIDToRemove = null;
+        for(Document doc : savedListDoc){
+          if(doc.get(Constants.User.SavedList.ID_RECIPE).equals(rID)){
+            recipeIDToRemove = doc;
+            break;
+          }
+        }
+        savedListDoc.remove(recipeIDToRemove);
+        user.doc.append(Constants.User.SavedList.FIELD_NAME, savedListDoc);
+
+        //update database
+        MongoCollection<Document> collection = Global.mongoConnector.getCollectionByName(Constants.Mongo.USERS_COLLECTION);
+        Bson query = eq(Constants.Mongo.ID, uID);
+        collection.replaceOne(query, user.doc);
+        return ok("Saved list updated!");
+      }
+
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
+    }
+  }
   
+
+  public static Result getSavedList(){
+
+    ArrayList<Document> recipeIdList = new ArrayList<Document>();
+    try{
+      //get user
+      User user = User.getUserFromJsonRequest(request());
+
+      //check if this user has a savedList field
+      Object savedListObj = user.doc.get(Constants.User.SavedList.FIELD_NAME);
+      if(savedListObj != null){
+        if( !(savedListObj instanceof ArrayList) ){
+          return internalServerError("Saved list in database not actually a list!");
+        }
+        else{
+
+          //add ingredients from each recipe into the cumulative list
+          ArrayList<Document> savedListDoc = (ArrayList<Document>)savedListObj;
+          for(Document doc : savedListDoc){
+            Object idObj = doc.get(Constants.User.SavedList.ID_RECIPE);
+
+            if(idObj instanceof ObjectId){
+              ObjectId recipeID = (ObjectId)idObj;
+              Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
+              recipeIdList.add(new Document()
+                  .append(Constants.Recipe.KEY_ID,recipeID.toHexString())
+                  .append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE))
+                  .append(Constants.Recipe.KEY_DESCRIPTION, recipe.getAttribute(Constants.Recipe.KEY_DESCRIPTION))
+                  .append(Constants.Recipe.KEY_PICTUREURL, recipe.getAttribute(Constants.Recipe.KEY_PICTUREURL))
+              );
+            }
+            else{
+              return internalServerError("Recipe ID not stored as ObjectId in database!");
+            }
+
+          }
+        }
+      }
+
+    }
+    catch(ServerResultException e){
+      return e.errorResult;
+    }
+
+    //create ObjectNode and return
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String recipeIDListJson = mapper.writeValueAsString(recipeIdList);
+
+      JsonNode recipeIDListNode = mapper.readTree(recipeIDListJson);
+
+      ObjectNode retNode = mapper.createObjectNode();
+      retNode.put(Constants.Routes.RECIPE_ID_LIST, recipeIDListNode);
+      return ok(retNode);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return internalServerError();
+    }
+
+  }
+
+  
+  private static boolean savedListContains(ArrayList<Document> savedList, ObjectId recipeID){
+    for(Document doc : savedList){
+      if(doc.get(Constants.User.SavedList.ID_RECIPE).equals(recipeID)){
+        return true;
+      }
+    }
+    return false;
+  }
   
   
   private static List<Ingredient> getIngredientsInRecipe(Recipe recipe){

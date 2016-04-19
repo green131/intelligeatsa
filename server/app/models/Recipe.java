@@ -54,8 +54,8 @@ public class Recipe extends BaseModelClass {
       TreeMap<String, Object> keyMap = new TreeMap<String, Object>();
       keyMap.put(Constants.Mongo.ID, d.get(Constants.Mongo.ID));
       keyMap.put(Constants.Recipe.KEY_TITLE, d.get(Constants.Recipe.KEY_TITLE));
-      keyMap.put(Constants.Recipe.KEY_DESC, d.get(Constants.Recipe.KEY_DESC));
-      keyMap.put(Constants.Recipe.KEY_PIC_URL, d.get(Constants.Recipe.KEY_PIC_URL));
+      keyMap.put(Constants.Recipe.KEY_DESCRIPTION, d.get(Constants.Recipe.KEY_DESCRIPTION));
+      keyMap.put(Constants.Recipe.KEY_PICTUREURL, d.get(Constants.Recipe.KEY_PICTUREURL));
       Document doc = new Document(keyMap);
       Recipe recipe = new Recipe(doc);
       recipeList.add(recipe);
