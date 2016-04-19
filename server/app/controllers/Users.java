@@ -511,7 +511,6 @@ public class Users extends Controller {
   public static Result getSavedList(){
 
     ArrayList<Document> recipeIdList = new ArrayList<Document>();
-    ArrayList<Ingredient> cumulativeIngredientList = new ArrayList<Ingredient>();
     try{
       //get user
       User user = User.getUserFromJsonRequest(request());
@@ -532,9 +531,12 @@ public class Users extends Controller {
             if(idObj instanceof ObjectId){
               ObjectId recipeID = (ObjectId)idObj;
               Recipe recipe = Recipe.getRecipeById(Global.mongoConnector, recipeID);
-              List<Ingredient> ingredientsInCurrentRecipe = getIngredientsInRecipe(recipe);
-              recipeIdList.add(new Document().append(Constants.Recipe.KEY_ID,recipeID.toHexString()).append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE)));
-              cumulativeIngredientList.addAll(ingredientsInCurrentRecipe);
+              recipeIdList.add(new Document()
+                  .append(Constants.Recipe.KEY_ID,recipeID.toHexString())
+                  .append(Constants.Recipe.KEY_TITLE, recipe.getAttribute(Constants.Recipe.KEY_TITLE))
+                  .append(Constants.Recipe.KEY_DESCRIPTION, recipe.getAttribute(Constants.Recipe.KEY_DESCRIPTION))
+                  .append(Constants.Recipe.KEY_PICTUREURL, recipe.getAttribute(Constants.Recipe.KEY_PICTUREURL))
+              );
             }
             else{
               return internalServerError("Recipe ID not stored as ObjectId in database!");
@@ -553,14 +555,11 @@ public class Users extends Controller {
     try {
       ObjectMapper mapper = new ObjectMapper();
       String recipeIDListJson = mapper.writeValueAsString(recipeIdList);
-      String ingredientsJson = mapper.writeValueAsString(cumulativeIngredientList);
 
       JsonNode recipeIDListNode = mapper.readTree(recipeIDListJson);
-      JsonNode ingredientsNode = mapper.readTree(ingredientsJson);
 
       ObjectNode retNode = mapper.createObjectNode();
       retNode.put(Constants.Routes.RECIPE_ID_LIST, recipeIDListNode);
-      retNode.put(Constants.Routes.INGREDIENTS, ingredientsNode);
       return ok(retNode);
 
     } catch (Exception e) {

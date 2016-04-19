@@ -36,10 +36,7 @@ public class Constants {
 
   public static final class Recipe {
     public static final String KEY_ID = "id";
-    public static final String KEY_NAME = "title";
     public static final String KEY_TITLE = "title";
-    public static final String KEY_DESC = "description";
-    public static final String KEY_PIC_URL = "pictureURL";
     public static final String INDEX_TITLE_TEXT = "title_text";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_PICTUREURL = "pictureURL";
