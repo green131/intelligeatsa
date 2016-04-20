@@ -21,9 +21,9 @@
             </tr>
           </thead>
           <tr ng-repeat="recipe in $ctrl.recipeIDList">
-            <td><h3>{{recipe.title}}</h3></td>
+            <td><h3><a href="#/recipe/{{recipe.id}}">{{recipe.title}}</a></h3></td>
             <td>{{recipe.description}}</td>
-            <td><img  style="width:128px;height:128px;" ng-src="{{recipe.pictureURL}}"/></td>
+            <td><img  style="width:128px;height:128px;" ng-src="{{recipe.pictureURL}}" src="assets/crossed-knife-and-fork.png"/></td>
             <td><br><button type="button" ng-click="$ctrl.removeRecipe(recipe.id);" class="btn btn-danger">x</button></td>
           </tr>
         </table>
