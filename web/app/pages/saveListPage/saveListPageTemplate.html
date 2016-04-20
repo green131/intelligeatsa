@@ -1,3 +1,36 @@
 <header></header>
+<div class="container-fluid">
+  <br><br>
+  <div class="row">
+    <div class="col-md-2">
 
-<h1>save list</h1>
+    </div>
+    <div class="col-md-8">
+      <div class="panel panel-primary">
+  <!-- Default panel contents -->
+      <div class="panel-heading">Save List</div>
+      <h3 ng-if="$ctrl.saveCount == 0" style="margin-left:25px;">No recipes saved!</h3>
+  <!-- Table -->
+        <table ng-if="$ctrl.saveCount > 0" class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Sample Picture</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tr ng-repeat="recipe in $ctrl.recipeIDList">
+            <td><h3><a href="#/recipe/{{recipe.id}}">{{recipe.title}}</a></h3></td>
+            <td>{{recipe.description}}</td>
+            <td><img  style="width:128px;height:128px;" ng-src="{{recipe.pictureURL}}" src="assets/crossed-knife-and-fork.png"/></td>
+            <td><br><button type="button" ng-click="$ctrl.removeRecipe(recipe.id);" class="btn btn-danger">x</button></td>
+          </tr>
+        </table>
+     </div>
+    </div>
+    <div class="col-md-2">
+
+    </div>
+  </div>
+</div>

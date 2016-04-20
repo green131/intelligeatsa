@@ -9,9 +9,14 @@
   <br>
   <div class="row">
     <div style="text-align:center;" class="col-md-4">
-      <button ng-click="$ctrl.addToGroceryList();" ng-if="$ctrl.sessionExists == true && $ctrl.inGroceryList == false"  class="btn btn-danger">Add to grocery list <img style="height:24px;width:24px;" src="assets/grocery-cart.png"/></button>
-      <button ng-click="$ctrl.removeFromGroceryList();" ng-if="$ctrl.sessionExists == true && $ctrl.inGroceryList == true"  class="btn btn-danger">Remove from grocery list <img style="height:24px;width:24px;" src="assets/grocery-cart.png"/></button>
+      <!-- groceryList buttons -->
+        <button ng-click="$ctrl.addToGroceryList();" ng-if="$ctrl.sessionExists == true && $ctrl.inGroceryList == false"  class="btn btn-danger">Add to grocery list <img style="height:24px;width:24px;" src="assets/grocery-cart.png"/></button>
+        <button ng-click="$ctrl.removeFromGroceryList();" ng-if="$ctrl.sessionExists == true && $ctrl.inGroceryList == true"  class="btn btn-danger">Remove from grocery list <img style="height:24px;width:24px;" src="assets/grocery-cart.png"/></button>
+      <!-- image for recipe -->
       <img style="width:320px;height:320px;padding:25px;" class="img-rounded" src="assets/crossed-knife-and-fork.png" ng-src="{{$ctrl.recipe.pictureURL}}"/>
+      <!-- saveList buttons -->
+      <button ng-click="$ctrl.addToSaveList();" ng-if="$ctrl.sessionExists == true && $ctrl.inSaveList == false" class="btn btn-primary">Add to save list</button>
+      <button ng-click="$ctrl.removeFromSaveList();"  ng-if="$ctrl.sessionExists == true && $ctrl.inSaveList == true" class="btn btn-primary">Remove from save list</button>
     </div>
     <div class="col-md-8">
       <div ng-if="$ctrl.sessionExists == true">
