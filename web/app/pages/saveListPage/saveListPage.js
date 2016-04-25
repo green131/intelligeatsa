@@ -9,7 +9,7 @@ angular.module('intelligeatsa.pages')
   });
 }]);
 
-function SaveListPageController($http, saveList){
+function SaveListPageController($http, saveList, groceryList){
   var ctrl = this;
   ctrl.recipeIDList = null;
   ctrl.saveCount = 0;
@@ -32,6 +32,14 @@ function SaveListPageController($http, saveList){
       console.log(err);
     });
   };
+
+  ctrl.addToGroceryList = function(recipeId){
+    groceryList.add(recipeId, function success(){
+    }, function error(){
+      $('#loginModal').modal('show');
+    });
+  };
+
 
   // init
   ctrl.fetchList();

@@ -3,34 +3,39 @@
   <br><br>
   <div class="row">
     <div class="col-md-2">
-
     </div>
     <div class="col-md-8">
-      <div class="panel panel-primary">
-  <!-- Default panel contents -->
-      <div class="panel-heading">Save List</div>
-      <h3 ng-if="$ctrl.saveCount == 0" style="margin-left:25px;">No recipes saved!</h3>
-  <!-- Table -->
-        <table ng-if="$ctrl.saveCount > 0" class="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Sample Picture</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tr ng-repeat="recipe in $ctrl.recipeIDList">
-            <td><h3><a href="#/recipe/{{recipe.id}}">{{recipe.title}}</a></h3></td>
-            <td>{{recipe.description}}</td>
-            <td><img  style="width:128px;height:128px;" ng-src="{{recipe.pictureURL}}" src="assets/crossed-knife-and-fork.png"/></td>
-            <td><br><button type="button" ng-click="$ctrl.removeRecipe(recipe.id);" class="btn btn-danger">x</button></td>
-          </tr>
-        </table>
-     </div>
+     <h3 ng-if="$ctrl.saveCount == 0" style="margin-left:25px;">No recipes saved!</h3>
+      <ul ng-if="$ctrl.saveCount > 0" class="list-inline" style="padding:10px;">
+        <!-- Recipe Card -->
+        <li ng-repeat="recipe in $ctrl.recipeIDList" style="width:200px;">
+          <div  class="panel panel-default">
+            <div class="panel-body" style="position:relative" >
+              <!-- Remove button
+              <span class="badge" style="background-color:#FF1414;cursor:pointer;" ng-click="$ctrl.removeRecipe(recipe.id);">X</span>
+              -->
+              <!-- Recipe Image -->
+              <div style="text-align:center;">
+                <a href="#/recipe/{{recipe._id}}">
+                  <img class="img-rounded" style="width:128px;height:128px;" src="assets/crossed-knife-and-fork.png" ng-src="{{recipe.pictureURL}}"/>
+                </a>
+              </div>
+              <div class="button-overlay" style="text-align:center;position:absolute;top:10px;width:100%">
+                <!-- Remove from save list button -->
+                <button ng-click="$ctrl.removeRecipe(recipe.id);" class="btn btn-primary" style="width:30px;height:30px;position:absolute;left:0px;padding:0px;">X</button>
+                <!-- Add to grocery list button -->
+                <button ng-click="$ctrl.addToGroceryList(recipe.id);" class="btn btn-danger"style="width:30px;height:30px;position:absolute;top:0px;right:25px;padding:0px;background-image:url(assets/grocery-cart.png);"></button>
+              </div>
+            </div>
+            <!-- Recipe Title -->
+            <div class="panel-footer" style="text-align:left;">
+              <a href="#/recipe/{{recipe.id}}"><h5  title="{{recipe.title}}" class="panel-title carousel-item-title">{{recipe.title}}</h5></a>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
     <div class="col-md-2">
-
     </div>
   </div>
 </div>
