@@ -32,7 +32,6 @@ function SaveListPageController($http, saveList){
       console.log(err);
     });
   };
-
   // init
   ctrl.fetchList();
 }
