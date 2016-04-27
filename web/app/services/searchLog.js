@@ -4,7 +4,7 @@ angular.module('intelligeatsa.services')
 function SearchLogServiceFactory(){
   var searchLogService = function(){
     var log = [];
-    this.push = function(query){
+    this.pushQuery = function(query){
       log.push(query);
     };
 

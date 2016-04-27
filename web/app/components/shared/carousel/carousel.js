@@ -18,7 +18,7 @@ componentsModule.component('carousel',{
   * @param {mongUtils} mongoUtils - mongoUtils service
   */
 
-function CarouselController($http,mongoUtils, userSession, groceryList, saveList){
+function CarouselController($http,mongoUtils, userSession, groceryList, saveList, searchLog){
   var ctrl = this;
   ctrl.recommendationMode = false;
   if(ctrl.cuisineType != 'RECOMMENDATION_MODE'){
@@ -37,6 +37,11 @@ function CarouselController($http,mongoUtils, userSession, groceryList, saveList
     ctrl.recommenderJobData = [];
 
     // call the recommendation api after aggregating data
+    var searchRecipeIds = searchLog.getLog();
+    for(var i=0;i<searchRecipeIds.length;i++){
+      ctrl.recommenderJobData.push(searchRecipeIds[i]);
+    }
+
     var user = userSession.getUser();
     var userRatings = user.ratingList;
     for(var i=0;i<userRatings.length;i++){
