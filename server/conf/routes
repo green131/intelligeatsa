@@ -106,5 +106,9 @@ POST /user/savedList/remove/:recipe_id        server.app.controllers.Users.remov
 POST /user/savedList                          server.app.controllers.Users.getSavedList()
 
 
+# Get recommendations
+# REQUIRED: {"recipes": ['id_1','id_2',...,'id_N']}
+POST /recommendations/                        server.app.controllers.Recommendation.getRecommendations()     
+
 #OPTIONS Request
-OPTIONS /*path                       server.app.Application.preflight(path: String)
+OPTIONS /*path                                server.app.Application.preflight(path: String)

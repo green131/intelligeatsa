@@ -9,9 +9,9 @@ angular.module('intelligeatsa.pages')
     controllerAs: '$ctrl'
   });
 }])
-.controller('SearchResultsPageController',['$http','search','mongoUtils','searchResultsBatchSize','$routeParams',SearchResultsPageController]);
+.controller('SearchResultsPageController',['$http','search','mongoUtils','searchResultsBatchSize','searchLog','$routeParams',SearchResultsPageController]);
 
-function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchSize,$routeParams){
+function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchSize,searchLog,$routeParams){
   var ctrl = this;
   ctrl.searchType = $routeParams.searchType;
   ctrl.query = $routeParams.query;
@@ -25,7 +25,15 @@ function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchS
 
   // first page.
   function init(){
-    paginator.next(paginateSuccess,paginateError);
+    paginator.next(function successInitWrapper(data){
+      // push query to aggregate laster
+      if(data.length > 0){
+        searchLog.pushQuery(data[0]._id);
+      }
+      paginateSuccess(data);
+    },function errorInitWrapper(response){
+      paginateError(response);
+    });
   }
 
   var paginateSuccess = function(data){
@@ -79,7 +87,7 @@ function SearchResultsPageController($http,search,mongoUtils,searchResultsBatchS
       ,batchSize);
       $('#sortAlphaButton').html('Revert');
     }
-    init();
+    paginator.next(paginateSuccess,paginateError);
    };
 
    // on page load

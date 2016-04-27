@@ -9,7 +9,7 @@ angular.module('intelligeatsa.components')
   }
 });
 
-function SearchBarController($window,$http){
+function SearchBarController($window,$http, $rootScope){
   var ctrl = this;
   ctrl.searchQuery = '';
   ctrl.search = function(){
@@ -25,6 +25,7 @@ function SearchBarController($window,$http){
   ctrl.showPrepTimeSearchModal = function(){
     $('#prepTimeSearchModal').modal('toggle');
   };
+
 
   ctrl.searchByIngredients = function(){
     var ingredientsSelected = [];

@@ -93,4 +93,8 @@ public class Constants {
     public static final String RECIPE_ID_LIST = "recipeIDList";
     public static final String INGREDIENTS = "ingredients";
   }
+
+   public static final class Recommendation {
+    public static final String RECIPES_FIELD_NAME = "recipes";
+  }
 }

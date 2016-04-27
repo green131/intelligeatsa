@@ -2,12 +2,20 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+      <!-- recommendation carousel -->
+      <carousel ng-if="$ctrl.sessionExists" title="Recommended for you" cuisine-type="RECOMMENDATION_MODE"></carousel>
+      <!-- theme carousels -->
+      <carousel ng-if="$ctrl.Weekday == 1" title="Mediterranean Monday" cuisine-type="Mediterranean"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 2" title="Tomato Tuesday" cuisine-type="Tomato"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 3" title="Southern Wednesday" cuisine-type="Southern"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 4" title="Healthy Thursday" cuisine-type="Healthy"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 5" title="French Friday" cuisine-type="French"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 6" title="American Saturday" cuisine-type="American"></Carousel>
+      <carousel ng-if="$ctrl.Weekday == 7" title="Bacon Sunday" cuisine-type="Bacon"></Carousel>
+      <!-- static carousels -->
       <carousel title="Mexican" cuisine-type="Mexican"></carousel>
-      <carousel title="Italian" cuisine-type="Italian"></carousel>
-      <carousel title="Bacon" cuisine-type="Bacon"></carousel>
       <carousel title="Asian" cuisine-type="Asian"></carousel>
-      <carousel title="Indian" cuisine-type="Indian"></carousel>
-      <carousel title="Vegetarian" cuisine-type="Vegetarian"></carousel>
+      <carousel title="Vegetarian" cuisine-type="Italian"></carousel>
       <carousel title="Low Fat" cuisine-type="Low Fat"></carousel>
     </div>
   </div>
